@@ -875,9 +875,9 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
    };
 
    return (
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex">
-         {/* Settings Sidebar */}
-         <div className="w-64 bg-slate-50 border-r border-slate-200 p-4">
+      <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row">
+         {/* Settings Sidebar - Hidden on Mobile */}
+         <div className="hidden md:block w-64 bg-slate-50 border-r border-slate-200 p-4">
             <h3 className="font-bold text-slate-800 mb-4 px-2">Settings</h3>
             <nav className="space-y-1">
                <button onClick={() => setActiveSettingTab('profile')} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${activeSettingTab === 'profile' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
@@ -895,13 +895,31 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
             </nav>
          </div>
 
+         {/* Mobile Tabs - Visible only on Mobile */}
+         <div className="md:hidden w-full border-b border-slate-200">
+            <div className="flex overflow-x-auto">
+               <button onClick={() => setActiveSettingTab('profile')} className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeSettingTab === 'profile' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500'}`}>
+                  <User className="w-4 h-4 inline mr-1" /> Profile
+               </button>
+               <button onClick={() => setActiveSettingTab('system')} className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeSettingTab === 'system' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500'}`}>
+                  <Server className="w-4 h-4 inline mr-1" /> System
+               </button>
+               <button onClick={() => setActiveSettingTab('security')} className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeSettingTab === 'security' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500'}`}>
+                  <ShieldCheck className="w-4 h-4 inline mr-1" /> Security
+               </button>
+               <button onClick={() => setActiveSettingTab('data')} className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeSettingTab === 'data' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500'}`}>
+                  <Database className="w-4 h-4 inline mr-1" /> Data
+               </button>
+            </div>
+         </div>
+
          {/* Settings Content */}
-         <div className="flex-1 p-8">
+         <div className="flex-1 p-4 md:p-8">
             {activeSettingTab === 'profile' && (
-               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+               <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-100 pb-3 md:pb-4 gap-3">
                      <div>
-                        <h4 className="font-bold text-lg text-slate-900">Admin Profile</h4>
+                        <h4 className="font-bold text-base md:text-lg text-slate-900">Admin Profile</h4>
                         <p className="text-xs text-slate-500">Manage your personal account details.</p>
                      </div>
                      {!isEditing ? (
@@ -913,61 +931,61 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
                         </div>
                      )}
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-3 md:space-y-4">
                         <div>
                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Display Name</label>
-                           <input type="text" disabled={!isEditing} className={`w-full px-4 py-2 border rounded-lg outline-none text-sm ${isEditing ? 'border-emerald-300 focus:ring-2 focus:ring-emerald-500' : 'bg-slate-50 border-slate-200 text-slate-500'}`} value={profile.displayName} onChange={e => setProfile({...profile, displayName: e.target.value})} />
+                           <input type="text" disabled={!isEditing} className={`w-full px-3 md:px-4 py-2 border rounded-lg outline-none text-sm ${isEditing ? 'border-emerald-300 focus:ring-2 focus:ring-emerald-500' : 'bg-slate-50 border-slate-200 text-slate-500'}`} value={profile.displayName} onChange={e => setProfile({...profile, displayName: e.target.value})} />
                         </div>
                         <div>
                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Username</label>
-                           <input type="text" disabled={!isEditing} className={`w-full px-4 py-2 border rounded-lg outline-none text-sm ${isEditing ? 'border-emerald-300 focus:ring-2 focus:ring-emerald-500' : 'bg-slate-50 border-slate-200 text-slate-500'}`} value={profile.username} onChange={e => setProfile({...profile, username: e.target.value})} />
+                           <input type="text" disabled={!isEditing} className={`w-full px-3 md:px-4 py-2 border rounded-lg outline-none text-sm ${isEditing ? 'border-emerald-300 focus:ring-2 focus:ring-emerald-500' : 'bg-slate-50 border-slate-200 text-slate-500'}`} value={profile.username} onChange={e => setProfile({...profile, username: e.target.value})} />
                         </div>
                         <div>
                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Email</label>
-                           <input type="email" disabled={!isEditing} className={`w-full px-4 py-2 border rounded-lg outline-none text-sm ${isEditing ? 'border-emerald-300 focus:ring-2 focus:ring-emerald-500' : 'bg-slate-50 border-slate-200 text-slate-500'}`} value={profile.email} onChange={e => setProfile({...profile, email: e.target.value})} />
+                           <input type="email" disabled={!isEditing} className={`w-full px-3 md:px-4 py-2 border rounded-lg outline-none text-sm ${isEditing ? 'border-emerald-300 focus:ring-2 focus:ring-emerald-500' : 'bg-slate-50 border-slate-200 text-slate-500'}`} value={profile.email} onChange={e => setProfile({...profile, email: e.target.value})} />
                         </div>
                    </div>
-                   <div className="pt-4 border-t border-slate-100">
+                   <div className="pt-3 md:pt-4 border-t border-slate-100">
                      <button onClick={setShowPassword} className="flex items-center gap-2 text-xs text-emerald-600 font-bold uppercase tracking-wide hover:text-emerald-800"><Lock className="w-3.5 h-3.5"/> Change Password</button>
                   </div>
                </div>
             )}
 
             {activeSettingTab === 'system' && (
-               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="border-b border-slate-100 pb-4">
-                     <h4 className="font-bold text-lg text-slate-900">System Preferences</h4>
+               <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="border-b border-slate-100 pb-3 md:pb-4">
+                     <h4 className="font-bold text-base md:text-lg text-slate-900">System Preferences</h4>
                      <p className="text-xs text-slate-500">Global settings for the MediVend network.</p>
                   </div>
                   
-                  <div className="space-y-4">
-                     <div className="flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
-                        <div className="flex items-center gap-3">
-                           <div className={`p-2 rounded-lg ${systemSettings.maintenanceMode ? 'bg-amber-100 text-amber-600' : 'bg-slate-200 text-slate-500'}`}>
-                              <Power className="w-5 h-5" />
+                  <div className="space-y-3 md:space-y-4">
+                     <div className="flex items-center justify-between p-3 md:p-4 border border-slate-200 rounded-lg md:rounded-xl bg-slate-50">
+                        <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                           <div className={`p-2 rounded-lg flex-shrink-0 ${systemSettings.maintenanceMode ? 'bg-amber-100 text-amber-600' : 'bg-slate-200 text-slate-500'}`}>
+                              <Power className="w-4 h-4 md:w-5 md:h-5" />
                            </div>
-                           <div>
-                              <p className="font-bold text-sm text-slate-800">Maintenance Mode</p>
-                              <p className="text-xs text-slate-500">Disable all kiosks for updates</p>
+                           <div className="min-w-0">
+                              <p className="font-bold text-xs md:text-sm text-slate-800">Maintenance Mode</p>
+                              <p className="text-xs text-slate-500 hidden sm:block">Disable all kiosks for updates</p>
                            </div>
                         </div>
-                        <button onClick={() => toggleSetting('maintenanceMode')}>
-                           {systemSettings.maintenanceMode ? <ToggleRight className="w-8 h-8 text-emerald-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
+                        <button onClick={() => toggleSetting('maintenanceMode')} className="flex-shrink-0 ml-2">
+                           {systemSettings.maintenanceMode ? <ToggleRight className="w-7 h-7 md:w-8 md:h-8 text-emerald-500" /> : <ToggleLeft className="w-7 h-7 md:w-8 md:h-8 text-slate-300" />}
                         </button>
                      </div>
 
-                     <div className="flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
-                        <div className="flex items-center gap-3">
-                           <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
-                              <Bell className="w-5 h-5" />
+                     <div className="flex items-center justify-between p-3 md:p-4 border border-slate-200 rounded-lg md:rounded-xl bg-slate-50">
+                        <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                           <div className="p-2 rounded-lg bg-blue-100 text-blue-600 flex-shrink-0">
+                              <Bell className="w-4 h-4 md:w-5 md:h-5" />
                            </div>
-                           <div>
-                              <p className="font-bold text-sm text-slate-800">Email Alerts</p>
-                              <p className="text-xs text-slate-500">Receive inventory notifications</p>
+                           <div className="min-w-0">
+                              <p className="font-bold text-xs md:text-sm text-slate-800">Email Alerts</p>
+                              <p className="text-xs text-slate-500 hidden sm:block">Receive inventory notifications</p>
                            </div>
                         </div>
-                        <button onClick={() => toggleSetting('emailAlerts')}>
-                           {systemSettings.emailAlerts ? <ToggleRight className="w-8 h-8 text-emerald-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
+                        <button onClick={() => toggleSetting('emailAlerts')} className="flex-shrink-0 ml-2">
+                           {systemSettings.emailAlerts ? <ToggleRight className="w-7 h-7 md:w-8 md:h-8 text-emerald-500" /> : <ToggleLeft className="w-7 h-7 md:w-8 md:h-8 text-slate-300" />}
                         </button>
                      </div>
                   </div>
@@ -975,58 +993,58 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
             )}
 
             {activeSettingTab === 'security' && (
-                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                   <div className="border-b border-slate-100 pb-4">
-                      <h4 className="font-bold text-lg text-slate-900">Security</h4>
+                <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                   <div className="border-b border-slate-100 pb-3 md:pb-4">
+                      <h4 className="font-bold text-base md:text-lg text-slate-900">Security</h4>
                       <p className="text-xs text-slate-500">Manage account security and access.</p>
                    </div>
-                   <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-3">
-                      <ShieldCheck className="w-5 h-5 text-blue-600 mt-0.5" />
-                      <div>
-                         <p className="text-sm font-bold text-blue-800">Two-Factor Authentication</p>
+                   <div className="p-3 md:p-4 bg-blue-50 border border-blue-100 rounded-lg md:rounded-xl flex items-start gap-3">
+                      <ShieldCheck className="w-4 h-4 md:w-5 md:h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div className="min-w-0">
+                         <p className="text-xs md:text-sm font-bold text-blue-800">Two-Factor Authentication</p>
                          <p className="text-xs text-blue-600 mt-1">2FA is currently <span className="font-bold">Enabled</span> via Email.</p>
                       </div>
                    </div>
                    <div className="space-y-2">
                        <label className="text-xs font-bold text-slate-500 uppercase">Session Timeout</label>
-                       <select className="w-full border border-slate-200 rounded-lg p-2.5 text-sm bg-white">
+                       <select className="w-full border border-slate-200 rounded-lg p-2 md:p-2.5 text-sm bg-white">
                            <option>15 Minutes</option>
                            <option>30 Minutes</option>
                            <option>1 Hour</option>
                            <option>Never</option>
                        </select>
                    </div>
-                   <div className="border-t border-slate-100 pt-4">
-                      <h5 className="font-bold text-sm text-slate-800 mb-2">Recent Login Activity</h5>
-                      <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs text-slate-500">
-                         <div className="flex justify-between mb-1"><span>Manila, PH (Current)</span><span>Just now</span></div>
-                         <div className="flex justify-between"><span>Cebu, PH</span><span>2 hours ago</span></div>
+                   <div className="border-t border-slate-100 pt-3 md:pt-4">
+                      <h5 className="font-bold text-xs md:text-sm text-slate-800 mb-2">Recent Login Activity</h5>
+                      <div className="bg-slate-50 p-2 md:p-3 rounded-lg border border-slate-200 text-xs text-slate-500 space-y-1">
+                         <div className="flex justify-between"><span>Manila, PH (Current)</span><span className="whitespace-nowrap ml-2">Just now</span></div>
+                         <div className="flex justify-between"><span>Cebu, PH</span><span className="whitespace-nowrap ml-2">2 hrs ago</span></div>
                       </div>
                    </div>
                 </div>
             )}
 
             {activeSettingTab === 'data' && (
-               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                   <div className="border-b border-slate-100 pb-4">
-                      <h4 className="font-bold text-lg text-slate-900">Data Management</h4>
+               <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                   <div className="border-b border-slate-100 pb-3 md:pb-4">
+                      <h4 className="font-bold text-base md:text-lg text-slate-900">Data Management</h4>
                       <p className="text-xs text-slate-500">Export logs or clear system caches.</p>
                    </div>
                    
-                   <div className="grid grid-cols-2 gap-4">
-                      <button className="flex flex-col items-center justify-center p-6 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors group">
-                          <Download className="w-8 h-8 text-slate-400 group-hover:text-emerald-600 mb-2" />
-                          <span className="text-sm font-bold text-slate-700">Export Audit Logs</span>
+                   <div className="grid grid-cols-2 gap-2 md:gap-4">
+                      <button className="flex flex-col items-center justify-center p-3 md:p-6 border border-slate-200 rounded-lg md:rounded-xl hover:bg-slate-50 transition-colors group">
+                          <Download className="w-6 h-6 md:w-8 md:h-8 text-slate-400 group-hover:text-emerald-600 mb-2" />
+                          <span className="text-xs md:text-sm font-bold text-slate-700 text-center">Export Logs</span>
                       </button>
-                       <button className="flex flex-col items-center justify-center p-6 border border-slate-200 rounded-xl hover:bg-red-50 transition-colors group border-dashed">
-                          <Trash2 className="w-8 h-8 text-slate-400 group-hover:text-red-600 mb-2" />
-                          <span className="text-sm font-bold text-slate-700 group-hover:text-red-700">Clear System Cache</span>
+                       <button className="flex flex-col items-center justify-center p-3 md:p-6 border border-slate-200 rounded-lg md:rounded-xl hover:bg-red-50 transition-colors group border-dashed">
+                          <Trash2 className="w-6 h-6 md:w-8 md:h-8 text-slate-400 group-hover:text-red-600 mb-2" />
+                          <span className="text-xs md:text-sm font-bold text-slate-700 group-hover:text-red-700 text-center">Clear Cache</span>
                       </button>
                    </div>
-                   <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex gap-3">
-                      <HardDrive className="w-5 h-5 text-amber-600" />
-                      <div>
-                         <p className="text-sm font-bold text-amber-800">Storage Usage</p>
+                   <div className="p-3 md:p-4 bg-amber-50 border border-amber-100 rounded-lg md:rounded-xl flex gap-3">
+                      <HardDrive className="w-4 h-4 md:w-5 md:h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                         <p className="text-xs md:text-sm font-bold text-amber-800">Storage Usage</p>
                          <div className="w-full bg-amber-200 h-1.5 rounded-full mt-2 mb-1 overflow-hidden">
                              <div className="bg-amber-500 h-full w-[45%]"></div>
                          </div>
