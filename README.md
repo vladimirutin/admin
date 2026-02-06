@@ -1,65 +1,62 @@
-MediVend: Automated Prescription Medicine Dispensing System
-Super Admin Control Portal
-MediVend is an integrated hardware and software solution designed to automate pharmaceutical dispensing and streamline medicine distribution in the Philippines. This repository contains the Super Admin Portal, the central nervous system for monitoring and managing the entire MediVend network.
+# 💊 MediVend: Automated Prescription Medicine Dispensing System
+### *Super Admin Control & Network Oversight Portal*
 
-🚀 Key Features
-Network Health Monitoring: Real-time connectivity tracking for all deployed Kiosk units.
+**MediVend** is an integrated hardware and software solution designed to bridge the gap between digital prescriptions and physical medicine distribution in the Philippines. This repository contains the **Super Admin Portal**, which serves as the central command center for monitoring system health, verifying medical practitioners, and auditing transactions.
 
-Physician Verification: A dedicated workflow for Super Admins to review and approve licensed doctors.
+---
 
-Prescription Registry: A comprehensive, read-only log of all digital prescriptions issued across the network for compliance.
+### 🌟 Key Features
+* **Network Health Monitoring**: Real-time status tracking (Online/Offline) for all deployed kiosk units.
+* **Physician Verification**: Administrative workflow to review PRC licenses and approve doctor access.
+* **Prescription Registry**: A secure, read-only ledger of all prescriptions issued across the network.
+* **Remote Maintenance**: Cloud-based tools to ping hardware or trigger system reboots.
+* **Security Audit Logs**: Automated tracking of all administrative actions.
 
-Security Auditing: Automatic logging of system-wide actions to maintain data integrity.
+---
 
-Remote Kiosk Management: Capability to ping or reboot hardware units directly from the cloud.
+### 🛠️ Technology Stack
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | React.js 19 (Vite) |
+| **Styling** | Tailwind CSS v3 |
+| **Icons** | Lucide React |
+| **Database** | Google Firebase Firestore |
+| **Authentication** | Firebase Auth (Anonymous & Admin) |
+| **Deployment** | GitHub Pages |
 
-🛠️ Tech Stack
-Frontend: React.js (Vite) with Tailwind CSS for responsive UI.
+---
 
-Backend/Database: Google Firebase (Firestore & Auth).
+### ⚙️ System Architecture & Hardware
+The MediVend ecosystem is a three-tier integrated system:
 
-Icons: Lucide React.
+1.  **Doctor Portal**: A web interface for physicians to generate secure, QR-coded prescriptions.
+2.  **Super Admin (This App)**: The monitoring and verification hub.
+3.  **Kiosk Unit (Hardware)**: 
+    * **Computing**: Raspberry Pi 5
+    * **Microcontroller**: Arduino Mega
+    * **Input**: LogicOwl Desktop QR Code Scanner
+    * **Output**: Thermal Receipt Printer & AZJ Vending Motors (12V)
 
-Deployment: GitHub Pages.
 
-📦 Installation & Setup
-To run this project locally or in a Codespace:
+---
 
-Clone the repository:
+### 🚀 Getting Started
+1.  **Clone the Repository**:
+    ```bash
+    git clone [https://github.com/vladimirutin/admin.git](https://github.com/vladimirutin/admin.git)
+    ```
+2.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
 
-Bash
-git clone https://github.com/vladimirutin/admin.git
-Install dependencies:
+---
 
-Bash
-npm install
-Setup Environment Variables:
-Create a .env file and add your Firebase credentials:
-
-Plaintext
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_PROJECT_ID=medivend-a3d51
-Run Development Server:
-
-Bash
-npm run dev
-📐 System Architecture
-MediVend operates on a three-tier architecture:
-
-Doctor Portal: Where licensed physicians generate secure QR-coded prescriptions.
-
-Kiosk (Hardware): Raspberry Pi 5 & Arduino Mega based unit that dispenses medicine upon QR scanning.
-
-Super Admin (This App): Oversees all users, transactions, and hardware health.
-
-👨‍💻 Developer
-Jim Vincent P. Sasam 4th Year, Bachelor of Science in Computer Engineering ---
-
-💡 How to use this README
-Open your README.md file in your Codespace.
-
-Delete everything currently inside it.
-
-Paste the content above.
-
-Commit and Push your changes to GitHub.
+### 🎓 Capstone Project Information
+* **Developer**: Jim Vincent P. Sasam
+* **Course**: Bachelor of Science in Computer Engineering
+* **Year**: 4th Year (Senior Project)
