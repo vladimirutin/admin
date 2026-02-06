@@ -670,9 +670,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
                  {/* Quick Actions */}
                  <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 h-full">
                     <h3 className="font-bold text-base text-slate-800 mb-4">Quick Actions</h3>
-                    <div className="space-y-3">
-                       <ActionButton onClick={() => {setActiveTab('doctors'); setFilter('pending')}} icon={<Users className="w-4 h-4"/>} label={`Review ${pendingDocs} Doctors`} variant="primary" />
-                       <ActionButton onClick={() => setActiveTab('audit')} icon={<FileSearch className="w-4 h-4"/>} label="View Security Audit" variant="secondary" />
+                    <div className="flex gap-2 md:flex-col">
+                       <div className="flex-1"><ActionButton onClick={() => {setActiveTab('doctors'); setFilter('pending')}} icon={<Users className="w-4 h-4"/>} label={`Review ${pendingDocs} Doctors`} variant="primary" /></div>
+                       <div className="flex-1"><ActionButton onClick={() => setActiveTab('audit')} icon={<FileSearch className="w-4 h-4"/>} label="View Security Audit" variant="secondary" /></div>
                     </div>
                  </div>
                  
@@ -1117,7 +1117,11 @@ function StatCard({ title, value, icon, color, subtext, trend, onClick }) {
             <div className={`p-2.5 rounded-lg ${colors[color]}`}>{icon}</div>
             {trend && <span className="text-[10px] font-bold bg-slate-50 text-slate-500 px-2 py-1 rounded-full border border-slate-100">{trend}</span>}
          </div>
-         <div><h4 className="text-2xl font-bold text-slate-800">{value}</h4><p className="text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">{title}</p><p className="text-[10px] text-slate-400 mt-1">{subtext}</p></div>
+         <div className="min-w-0">
+            <h4 className="text-xl font-bold text-slate-800">{value}</h4>
+            <p className="text-sm font-bold text-slate-700 tracking-tight mt-1 whitespace-normal leading-tight">{title}</p>
+            {subtext && <p className="text-[10px] text-slate-400 mt-1 truncate">{subtext}</p>}
+         </div>
       </div>
    );
 }
@@ -1134,5 +1138,5 @@ function PrescriptionStatusBadge({ status }) {
 
 function ActionButton({ onClick, label, icon, variant }) {
    const v = variant === 'primary' ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50";
-   return <button onClick={onClick} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide shadow-sm transition-all ${v}`}>{icon}{label}</button>;
+   return <button onClick={onClick} className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide shadow-sm transition-all ${v}`}>{icon}{label}</button>;
 }
