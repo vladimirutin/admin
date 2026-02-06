@@ -1,16 +1,65 @@
-# React + Vite
+MediVend: Automated Prescription Medicine Dispensing System
+Super Admin Control Portal
+MediVend is an integrated hardware and software solution designed to automate pharmaceutical dispensing and streamline medicine distribution in the Philippines. This repository contains the Super Admin Portal, the central nervous system for monitoring and managing the entire MediVend network.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 Key Features
+Network Health Monitoring: Real-time connectivity tracking for all deployed Kiosk units.
 
-Currently, two official plugins are available:
+Physician Verification: A dedicated workflow for Super Admins to review and approve licensed doctors.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Prescription Registry: A comprehensive, read-only log of all digital prescriptions issued across the network for compliance.
 
-## React Compiler
+Security Auditing: Automatic logging of system-wide actions to maintain data integrity.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Remote Kiosk Management: Capability to ping or reboot hardware units directly from the cloud.
 
-## Expanding the ESLint configuration
+🛠️ Tech Stack
+Frontend: React.js (Vite) with Tailwind CSS for responsive UI.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Backend/Database: Google Firebase (Firestore & Auth).
+
+Icons: Lucide React.
+
+Deployment: GitHub Pages.
+
+📦 Installation & Setup
+To run this project locally or in a Codespace:
+
+Clone the repository:
+
+Bash
+git clone https://github.com/vladimirutin/admin.git
+Install dependencies:
+
+Bash
+npm install
+Setup Environment Variables:
+Create a .env file and add your Firebase credentials:
+
+Plaintext
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_PROJECT_ID=medivend-a3d51
+Run Development Server:
+
+Bash
+npm run dev
+📐 System Architecture
+MediVend operates on a three-tier architecture:
+
+Doctor Portal: Where licensed physicians generate secure QR-coded prescriptions.
+
+Kiosk (Hardware): Raspberry Pi 5 & Arduino Mega based unit that dispenses medicine upon QR scanning.
+
+Super Admin (This App): Oversees all users, transactions, and hardware health.
+
+👨‍💻 Developer
+Jim Vincent P. Sasam 4th Year, Bachelor of Science in Computer Engineering ---
+
+💡 How to use this README
+Open your README.md file in your Codespace.
+
+Delete everything currently inside it.
+
+Paste the content above.
+
+Commit and Push your changes to GitHub.
