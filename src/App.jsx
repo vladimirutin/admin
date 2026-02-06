@@ -809,11 +809,13 @@ function MachinesView({ machines, onPing, onReboot, onDelete }) {
 function TransactionsView({ transactions, onClear }) {
    return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-7xl mx-auto">
-         <div className="p-5 border-b border-slate-100 flex justify-between items-center">
+         <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
             <h3 className="font-bold text-base text-slate-800">Prescription Registry</h3>
             <button onClick={onClear} className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors"><Trash2 className="w-3.5 h-3.5"/> Safe Cleanup</button>
          </div>
-         <div className="overflow-x-auto">
+         
+         {/* Desktop Table View */}
+         <div className="hidden sm:block overflow-x-auto">
            <table className="w-full text-left">
               <thead className="bg-slate-50 text-[10px] uppercase font-bold text-slate-500">
                  <tr><th className="px-5 py-3">ID</th><th className="px-5 py-3">Prescribing Doctor</th><th className="px-5 py-3">Patient</th><th className="px-5 py-3">Value</th><th className="px-5 py-3">Status</th></tr>
@@ -830,6 +832,31 @@ function TransactionsView({ transactions, onClear }) {
                  ))}
               </tbody>
            </table>
+         </div>
+
+         {/* Mobile Card View */}
+         <div className="sm:hidden">
+            {transactions.length === 0 ? (
+               <div className="p-4 text-center text-xs text-slate-400">No transactions recorded.</div>
+            ) : (
+               <div className="divide-y divide-slate-100">
+                  {transactions.map(tx => (
+                     <div key={tx.id} className="p-3 hover:bg-slate-50 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                           <div className="flex-1">
+                              <p className="font-semibold text-sm text-slate-800">{tx.doctorName}</p>
+                              <p className="text-xs text-slate-500">{tx.patient?.name}</p>
+                           </div>
+                           <PrescriptionStatusBadge status={tx.status || 'issued'} />
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                           <span className="font-mono text-slate-400 truncate pr-2">{tx.id}</span>
+                           <span className="font-bold text-slate-900 whitespace-nowrap">₱{tx.grandTotal?.toFixed(2)}</span>
+                        </div>
+                     </div>
+                  ))}
+               </div>
+            )}
          </div>
       </div>
    );
