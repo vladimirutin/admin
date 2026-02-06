@@ -565,7 +565,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           {activeTab === 'overview' && (
             <div className="space-y-6 max-w-7xl mx-auto">
               {/* Stat Cards - Enhanced */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
                 <StatCard 
                   title="Pending Approvals" 
                   value={pendingDocs} 
@@ -1112,7 +1112,7 @@ function NavHeader({ title }) { return <div className="px-4 mt-6 mb-2 text-[10px
 function StatCard({ title, value, icon, color, subtext, trend, onClick }) {
    const colors = { amber: "bg-amber-100 text-amber-600", blue: "bg-blue-100 text-blue-600", emerald: "bg-emerald-100 text-emerald-600", indigo: "bg-indigo-100 text-indigo-600", red: "bg-red-100 text-red-600" };
    return (
-      <div onClick={onClick} className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden flex flex-col justify-between" style={{ aspectRatio: '1 / 1', minHeight: 90, maxHeight: 120 }}>
+      <div onClick={onClick} className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden flex flex-col justify-between h-28 sm:h-32 md:h-36 lg:h-40">
          <div className="flex justify-between items-start mb-3">
             <div className={`p-2.5 rounded-lg ${colors[color]}`}>{icon}</div>
             {trend && <span className="text-[10px] font-bold bg-slate-50 text-slate-500 px-2 py-1 rounded-full border border-slate-100">{trend}</span>}
