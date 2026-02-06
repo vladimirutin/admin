@@ -100,6 +100,7 @@ const saveAdminCreds = (creds) => {
 
 // --- MOCK DATA ---
 const MOCK_MACHINES = []; // Cleared mock data
+// Removed MOCK_AUDIT_LOGS to ensure only real system actions are shown
 
 // --- MAIN SUPER ADMIN COMPONENT ---
 export default function SuperAdminApp() {
@@ -522,31 +523,6 @@ function AdminDashboard({ onLogout, initialProfile }) {
           <NavButton id="audit" label="Audit" icon={<ClipboardList className="w-4 h-4" />} active={activeTab === 'audit'} onClick={handleNavClick} />
         </nav>
 
-        {/* ACTIVITY FEED - Mobile optimized for sidebar */}
-        <div className="border-t border-b border-slate-800 px-4 py-3 text-[9px] bg-slate-800/30">
-          <p className="text-[8px] uppercase font-bold text-slate-500 tracking-wider mb-2">Live Activity</p>
-          <div className="space-y-2 max-h-32 overflow-y-auto">
-            {transactions.length === 0 && auditLogs.length === 0 ? (
-              <p className="text-[8px] text-slate-400 italic">No activity</p>
-            ) : (
-              <>
-                {transactions.slice(0, 2).map(tx => (
-                  <div key={tx.id} className="border-l-2 border-blue-500 pl-2 py-1">
-                    <p className="text-[8px] font-bold text-slate-200 truncate">Rx Issued</p>
-                    <p className="text-[7px] text-slate-400 truncate">Dr. {tx.doctorName}</p>
-                  </div>
-                ))}
-                {auditLogs.slice(0, 2).map((log, idx) => (
-                  <div key={idx} className="border-l-2 border-amber-500 pl-2 py-1">
-                    <p className="text-[8px] font-bold text-slate-200 truncate">{log.action}</p>
-                    <p className="text-[7px] text-slate-400 truncate">{log.details}</p>
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-        </div>
-
         <div className="p-3 bg-slate-900 border-t border-slate-800">
           <button onClick={onLogout} className="flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all text-xs font-bold uppercase tracking-wide group">
             <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" /> Sign Out
@@ -557,20 +533,13 @@ function AdminDashboard({ onLogout, initialProfile }) {
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <header className="bg-white h-16 border-b border-slate-200 flex items-center justify-between px-6 shadow-sm z-10">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg">
               <Menu className="w-6 h-6" />
             </button>
-            {/* MediVend Logo - Home Shortcut */}
-            <button onClick={() => { setActiveTab('overview'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 hover:opacity-75 transition-opacity flex-shrink-0 hidden sm:flex">
-              <div className="bg-emerald-600 p-1.5 rounded-lg shadow-lg shadow-emerald-500/20">
-                <ShieldCheck className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-slate-800 text-sm tracking-wide">MediVend</span>
-            </button>
-            <h2 className="text-lg font-bold text-slate-800 capitalize tracking-tight flex items-center gap-2 min-w-0 truncate">
-              {activeTab === 'overview' && <LayoutDashboard className="w-5 h-5 text-slate-400 hidden sm:block flex-shrink-0" />}
-              <span className="truncate">{activeTab.replace('-', ' ')}</span>
+            <h2 className="text-lg font-bold text-slate-800 capitalize tracking-tight flex items-center gap-2">
+              {activeTab === 'overview' && <LayoutDashboard className="w-5 h-5 text-slate-400 hidden sm:block" />}
+              {activeTab.replace('-', ' ')}
             </h2>
           </div>
           <div className="flex items-center gap-5">
@@ -594,13 +563,13 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#f8fafc]">
           {activeTab === 'overview' && (
-            <div className="space-y-3 lg:space-y-6 max-w-7xl mx-auto">
-              {/* Stat Cards - Mobile Optimized */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-5">
+            <div className="space-y-6 max-w-7xl mx-auto">
+              {/* Stat Cards - Enhanced */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <StatCard 
                   title="Pending Approvals" 
                   value={pendingDocs} 
-                  icon={<Users className="w-4 h-4 lg:w-5 lg:h-5 text-amber-600" />} 
+                  icon={<Users className="w-5 h-5 text-amber-600" />} 
                   color="amber" 
                   subtext="Requires attention" 
                   onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} 
@@ -608,15 +577,16 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <StatCard 
                   title="Active Kiosks" 
                   value={`${activeMachines}/${machines.length > 0 ? machines.length : 0}`} 
-                  icon={<Server className="w-4 h-4 lg:w-5 lg:h-5 text-emerald-600" />} 
+                  icon={<Server className="w-5 h-5 text-emerald-600" />} 
                   color="emerald" 
                   subtext="Network Status" 
                   onClick={() => setActiveTab('machines')} 
                 />
+                {/* REPLACED TOTAL REVENUE WITH ACTIVE PHYSICIANS */}
                 <StatCard 
                   title="Active Physicians" 
                   value={activeDocs} 
-                  icon={<Stethoscope className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600" />} 
+                  icon={<Stethoscope className="w-5 h-5 text-blue-600" />} 
                   color="blue" 
                   subtext="Verified prescribers" 
                   onClick={() => { setActiveTab('doctors'); setFilter('active'); }} 
@@ -624,46 +594,46 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <StatCard 
                   title="Security Alerts" 
                   value={auditLogs.length} 
-                  icon={<AlertOctagon className="w-4 h-4 lg:w-5 lg:h-5 text-red-600" />} 
+                  icon={<AlertOctagon className="w-5 h-5 text-red-600" />} 
                   color="red" 
                   subtext="System events" 
                   onClick={() => setActiveTab('audit')} 
                 />
               </div>
 
-              {/* NETWORK HEALTH MONITORING - Mobile Optimized */}
-              <div className="bg-white p-3 lg:p-6 rounded-xl shadow-sm border border-slate-200">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 lg:mb-6 gap-2">
+              {/* NETWORK HEALTH MONITORING */}
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div className="flex justify-between items-center mb-6">
                   <div>
-                    <h3 className="font-bold text-sm lg:text-lg text-slate-800">Network Health</h3>
-                    <p className="text-[10px] lg:text-xs text-slate-500">Real-time infrastructure status</p>
+                    <h3 className="font-bold text-lg text-slate-800">Network Health</h3>
+                    <p className="text-xs text-slate-500">Real-time infrastructure status & capacity</p>
                   </div>
                   <div className="flex gap-2">
-                     <span className="flex items-center gap-1 text-[10px] lg:text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded whitespace-nowrap"><Activity className="w-3 h-3 flex-shrink-0"/> <span>System Normal</span></span>
+                     <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded"><Activity className="w-3 h-3"/> System Normal</span>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    {/* Kiosk Status */}
                    <div>
-                      <h4 className="text-xs lg:text-sm font-bold text-slate-700 mb-2 lg:mb-4 flex items-center gap-2"><Server className="w-3 h-3 lg:w-4 lg:h-4"/> Kiosk Connectivity</h4>
-                      <div className="space-y-2 lg:space-y-4">
+                      <h4 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2"><Server className="w-4 h-4"/> Kiosk Connectivity</h4>
+                      <div className="space-y-4">
                          <div>
-                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
+                            <div className="flex justify-between text-xs mb-1">
                                <span className="font-medium text-slate-600">Online ({activeMachines})</span>
                                <span className="text-emerald-600 font-bold">{machines.length > 0 ? Math.round((activeMachines / machines.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
-                               <div className="bg-emerald-500 h-full rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? (activeMachines / machines.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                               <div className="bg-emerald-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? (activeMachines / machines.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                          <div>
-                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
-                               <span className="font-medium text-slate-600">Offline ({machines.length - activeMachines})</span>
+                            <div className="flex justify-between text-xs mb-1">
+                               <span className="font-medium text-slate-600">Offline / Maintenance ({machines.length - activeMachines})</span>
                                <span className="text-slate-400 font-bold">{machines.length > 0 ? Math.round(((machines.length - activeMachines) / machines.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
-                               <div className="bg-slate-400 h-full rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                               <div className="bg-slate-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                       </div>
@@ -671,24 +641,24 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
                    {/* Doctor Status */}
                    <div>
-                      <h4 className="text-xs lg:text-sm font-bold text-slate-700 mb-2 lg:mb-4 flex items-center gap-2"><Users className="w-3 h-3 lg:w-4 lg:h-4"/> Provider Status</h4>
-                      <div className="space-y-2 lg:space-y-4">
+                      <h4 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2"><Users className="w-4 h-4"/> Provider Status</h4>
+                      <div className="space-y-4">
                          <div>
-                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
-                               <span className="font-medium text-slate-600">Active ({activeDocs})</span>
+                            <div className="flex justify-between text-xs mb-1">
+                               <span className="font-medium text-slate-600">Active Physicians ({activeDocs})</span>
                                <span className="text-blue-600 font-bold">{doctors.length > 0 ? Math.round((activeDocs / doctors.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
-                               <div className="bg-blue-500 h-full rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                               <div className="bg-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                          <div>
-                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
-                               <span className="font-medium text-slate-600">Pending ({pendingDocs})</span>
+                            <div className="flex justify-between text-xs mb-1">
+                               <span className="font-medium text-slate-600">Pending Approval ({pendingDocs})</span>
                                <span className="text-amber-500 font-bold">{doctors.length > 0 ? Math.round((pendingDocs / doctors.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
-                               <div className="bg-amber-400 h-full rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                               <div className="bg-amber-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                       </div>
@@ -696,12 +666,48 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 </div>
               </div>
               
-              {/* Quick Actions - Horizontal on mobile */}
-              <div className="grid grid-cols-2 gap-2 lg:gap-3">
-                 <ActionButton onClick={() => {setActiveTab('doctors'); setFilter('pending')}} icon={<Users className="w-3 h-3 lg:w-4 lg:h-4"/>} label={`Review ${pendingDocs}`} variant="primary" />
-                 <ActionButton onClick={() => setActiveTab('audit')} icon={<FileSearch className="w-3 h-3 lg:w-4 lg:h-4"/>} label="Audit Log" variant="secondary" />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                 {/* Quick Actions */}
+                 <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 h-full">
+                    <h3 className="font-bold text-base text-slate-800 mb-4">Quick Actions</h3>
+                    <div className="space-y-3">
+                       <ActionButton onClick={() => {setActiveTab('doctors'); setFilter('pending')}} icon={<Users className="w-4 h-4"/>} label={`Review ${pendingDocs} Doctors`} variant="primary" />
+                       <ActionButton onClick={() => setActiveTab('audit')} icon={<FileSearch className="w-4 h-4"/>} label="View Security Audit" variant="secondary" />
+                    </div>
+                 </div>
+                 
+                 {/* Activity Feed */}
+                 <div className="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 className="font-bold text-base text-slate-800 mb-4">Live Activity Feed</h3>
+                    <div className="space-y-0 relative">
+                       {/* Simple vertical line */}
+                       <div className="absolute left-3 top-2 bottom-2 w-px bg-slate-100"></div>
+                       
+                       {transactions.length === 0 && auditLogs.length === 0 ? (
+                           <div className="pl-8 py-4 text-sm text-slate-400 italic">No recent activity</div>
+                       ) : (
+                           <>
+                           {transactions.slice(0, 3).map(tx => (
+                              <div key={tx.id} className="py-3 pl-8 relative flex justify-between items-center text-sm group hover:bg-slate-50 rounded-lg -ml-2 pr-2 transition-colors">
+                                 <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-blue-100 border-2 border-blue-500 rounded-full z-10"></div>
+                                 <div className="flex items-center gap-3">
+                                    <div><p className="font-bold text-slate-800 text-xs">Prescription Issued</p><p className="text-xs text-slate-500">Dr. {tx.doctorName}</p></div>
+                                 </div>
+                                 <span className="text-xs text-slate-400 font-mono">{tx.date}</span>
+                              </div>
+                           ))}
+                           {auditLogs.slice(0, 3).map((log, idx) => (
+                              <div key={idx} className="py-3 pl-8 relative flex justify-between items-center text-sm group hover:bg-slate-50 rounded-lg -ml-2 pr-2 transition-colors">
+                                 <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-amber-100 border-2 border-amber-500 rounded-full z-10"></div>
+                                 <div className="flex items-center gap-3"><div><p className="font-bold text-slate-800 text-xs">{log.action}</p><p className="text-xs text-slate-500">{log.details}</p></div></div>
+                                 <span className="text-xs text-slate-400 font-mono">{log.time}</span>
+                              </div>
+                           ))}
+                           </>
+                       )}
+                    </div>
+                 </div>
               </div>
-
             </div>
           )}
           {activeTab === 'doctors' && <DoctorsView doctors={displayedDoctors} filter={filter} setFilter={setFilter} onRefresh={()=>{}} onUpdateStatus={updateDoctorStatus} loading={loading} />}
@@ -721,30 +727,30 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, lo
   const [viewDoc, setViewDoc] = useState(null);
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-7xl mx-auto">
-      <div className="p-3 md:p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="p-5 border-b border-slate-100 flex justify-between items-center">
         <h3 className="font-bold text-base text-slate-800">Medical Practitioners</h3>
-        <button onClick={onRefresh} className="text-xs font-bold uppercase text-slate-500 flex items-center gap-1 hover:text-emerald-600 transition-colors flex-shrink-0"><RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin':''}`}/> Refresh</button>
+        <button onClick={onRefresh} className="text-xs font-bold uppercase text-slate-500 flex items-center gap-1 hover:text-emerald-600 transition-colors"><RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin':''}`}/> Refresh</button>
       </div>
-      <div className="p-2 md:p-3 bg-slate-50 border-b border-slate-200 flex gap-1 md:gap-2 overflow-x-auto">
+      <div className="p-3 bg-slate-50 border-b border-slate-200 flex gap-2 overflow-x-auto">
         {['pending', 'active', 'rejected', 'all'].map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={`px-2 md:px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide transition-all whitespace-nowrap flex-shrink-0 ${filter === f ? 'bg-emerald-600 text-white shadow' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}>{f}</button>
+          <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${filter === f ? 'bg-emerald-600 text-white shadow' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}>{f}</button>
         ))}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs md:text-sm">
-          <thead className="bg-slate-50 text-[10px] md:text-xs uppercase font-bold text-slate-500"><tr><th className="px-3 md:px-5 py-3">Name</th><th className="px-3 md:px-5 py-3 hidden sm:table-cell">License Info</th><th className="px-3 md:px-5 py-3">Status</th><th className="px-3 md:px-5 py-3 text-right">Actions</th></tr></thead>
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 text-[10px] uppercase font-bold text-slate-500"><tr><th className="px-5 py-3">Name</th><th className="px-5 py-3">License Info</th><th className="px-5 py-3">Status</th><th className="px-5 py-3 text-right">Actions</th></tr></thead>
           <tbody className="divide-y divide-slate-100">
             {doctors.length === 0 ? <tr><td colSpan="4" className="p-4 text-center text-xs text-slate-400">No doctors found.</td></tr> : doctors.map(doc => (
               <tr key={doc.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-3 md:px-5 py-3"><div className="flex items-center gap-2 md:gap-3"><div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-[10px] md:text-xs text-slate-500 flex-shrink-0">{doc.name ? doc.name.charAt(0) : '?'}</div><div className="min-w-0"><div className="font-bold text-xs md:text-sm text-slate-800 truncate">{doc.name}</div><div className="text-[9px] md:text-[10px] text-slate-500 truncate">{doc.email}</div></div></div></td>
-                <td className="px-3 md:px-5 py-3 text-[10px] md:text-xs text-slate-600 hidden sm:table-cell"><span className="font-mono bg-slate-100 px-1 rounded truncate">{doc.license}</span></td>
-                <td className="px-3 md:px-5 py-3"><StatusBadge status={doc.status} /></td>
-                <td className="px-3 md:px-5 py-3 text-right">
-                    <div className="flex justify-end gap-1 md:gap-2">
-                      <button onClick={() => setViewDoc(doc)} className="p-1 md:p-1.5 text-slate-400 hover:text-blue-600 flex-shrink-0" title="Verify Details"><Eye className="w-3.5 h-3.5 md:w-4 md:h-4"/></button>
-                      {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="p-1 md:p-1.5 text-emerald-600 bg-emerald-50 rounded hover:bg-emerald-100 flex-shrink-0"><CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4"/></button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="p-1 md:p-1.5 text-red-600 bg-red-50 rounded hover:bg-red-100 flex-shrink-0"><XCircle className="w-3.5 h-3.5 md:w-4 md:h-4"/></button></>)}
-                      {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="text-[9px] md:text-[10px] font-bold text-red-600 border border-red-200 px-1.5 md:px-2 py-0.5 md:py-1 rounded hover:bg-red-50 whitespace-nowrap flex-shrink-0">Revoke</button>}
-                      {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, 'active')} className="text-[9px] md:text-[10px] font-bold text-emerald-600 border border-emerald-200 px-1.5 md:px-2 py-0.5 md:py-1 rounded hover:bg-emerald-50 whitespace-nowrap flex-shrink-0">Restore</button>}
+                <td className="px-5 py-3"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-xs text-slate-500">{doc.name ? doc.name.charAt(0) : '?'}</div><div><div className="font-bold text-sm text-slate-800">{doc.name}</div><div className="text-[10px] text-slate-500">{doc.email}</div></div></div></td>
+                <td className="px-5 py-3 text-xs text-slate-600"><span className="font-mono bg-slate-100 px-1 rounded">{doc.license}</span></td>
+                <td className="px-5 py-3"><StatusBadge status={doc.status} /></td>
+                <td className="px-5 py-3 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => setViewDoc(doc)} className="p-1.5 text-slate-400 hover:text-blue-600" title="Verify Details"><Eye className="w-4 h-4"/></button>
+                      {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="p-1.5 text-emerald-600 bg-emerald-50 rounded hover:bg-emerald-100"><CheckCircle className="w-4 h-4"/></button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="p-1.5 text-red-600 bg-red-50 rounded hover:bg-red-100"><XCircle className="w-4 h-4"/></button></>)}
+                      {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="text-[10px] font-bold text-red-600 border border-red-200 px-2 py-1 rounded hover:bg-red-50">Revoke</button>}
+                      {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, 'active')} className="text-[10px] font-bold text-emerald-600 border border-emerald-200 px-2 py-1 rounded hover:bg-emerald-50">Restore</button>}
                     </div>
                 </td>
               </tr>
@@ -805,13 +811,11 @@ function MachinesView({ machines, onPing, onReboot, onDelete }) {
 function TransactionsView({ transactions, onClear }) {
    return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-7xl mx-auto">
-         <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+         <div className="p-5 border-b border-slate-100 flex justify-between items-center">
             <h3 className="font-bold text-base text-slate-800">Prescription Registry</h3>
             <button onClick={onClear} className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors"><Trash2 className="w-3.5 h-3.5"/> Safe Cleanup</button>
          </div>
-         
-         {/* Desktop Table View */}
-         <div className="hidden sm:block overflow-x-auto">
+         <div className="overflow-x-auto">
            <table className="w-full text-left">
               <thead className="bg-slate-50 text-[10px] uppercase font-bold text-slate-500">
                  <tr><th className="px-5 py-3">ID</th><th className="px-5 py-3">Prescribing Doctor</th><th className="px-5 py-3">Patient</th><th className="px-5 py-3">Value</th><th className="px-5 py-3">Status</th></tr>
@@ -828,31 +832,6 @@ function TransactionsView({ transactions, onClear }) {
                  ))}
               </tbody>
            </table>
-         </div>
-
-         {/* Mobile Card View */}
-         <div className="sm:hidden">
-            {transactions.length === 0 ? (
-               <div className="p-4 text-center text-xs text-slate-400">No transactions recorded.</div>
-            ) : (
-               <div className="divide-y divide-slate-100">
-                  {transactions.map(tx => (
-                     <div key={tx.id} className="p-3 hover:bg-slate-50 transition-colors">
-                        <div className="flex justify-between items-start mb-2">
-                           <div className="flex-1">
-                              <p className="font-semibold text-sm text-slate-800">{tx.doctorName}</p>
-                              <p className="text-xs text-slate-500">{tx.patient?.name}</p>
-                           </div>
-                           <PrescriptionStatusBadge status={tx.status || 'issued'} />
-                        </div>
-                        <div className="flex justify-between items-center text-xs">
-                           <span className="font-mono text-slate-400 truncate pr-2">{tx.id}</span>
-                           <span className="font-bold text-slate-900 whitespace-nowrap">₱{tx.grandTotal?.toFixed(2)}</span>
-                        </div>
-                     </div>
-                  ))}
-               </div>
-            )}
          </div>
       </div>
    );
@@ -1097,19 +1076,17 @@ function NavButton({ id, label, icon, active, onClick, badge, badgeColor }) {
    );
 }
 
+function NavHeader({ title }) { return <div className="px-4 mt-6 mb-2 text-[10px] uppercase font-bold tracking-wider text-slate-500">{title}</div>; }
+
 function StatCard({ title, value, icon, color, subtext, trend, onClick }) {
    const colors = { amber: "bg-amber-100 text-amber-600", blue: "bg-blue-100 text-blue-600", emerald: "bg-emerald-100 text-emerald-600", indigo: "bg-indigo-100 text-indigo-600", red: "bg-red-100 text-red-600" };
    return (
-      <div onClick={onClick} className="bg-white p-3 lg:p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden">
-         <div className="flex justify-between items-start mb-2 lg:mb-3">
-            <div className={`p-1.5 lg:p-2.5 rounded-lg ${colors[color]}`}>{icon}</div>
+      <div onClick={onClick} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden">
+         <div className="flex justify-between items-start mb-3">
+            <div className={`p-2.5 rounded-lg ${colors[color]}`}>{icon}</div>
             {trend && <span className="text-[10px] font-bold bg-slate-50 text-slate-500 px-2 py-1 rounded-full border border-slate-100">{trend}</span>}
          </div>
-         <div>
-            <h4 className="text-xl lg:text-2xl font-bold text-slate-800">{value}</h4>
-            <p className="text-[10px] lg:text-xs font-bold text-slate-500 uppercase tracking-wide mt-0.5 lg:mt-1 truncate">{title}</p>
-            <p className="text-[9px] lg:text-[10px] text-slate-400 mt-0.5 lg:mt-1 truncate">{subtext}</p>
-         </div>
+         <div><h4 className="text-2xl font-bold text-slate-800">{value}</h4><p className="text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">{title}</p><p className="text-[10px] text-slate-400 mt-1">{subtext}</p></div>
       </div>
    );
 }
@@ -1126,5 +1103,5 @@ function PrescriptionStatusBadge({ status }) {
 
 function ActionButton({ onClick, label, icon, variant }) {
    const v = variant === 'primary' ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50";
-   return <button onClick={onClick} className={`flex items-center justify-center gap-1 px-2 py-2 rounded-lg text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-wide shadow-sm transition-all w-full min-h-10 ${v}`}>{icon}<span className="truncate">{label}</span></button>;
+   return <button onClick={onClick} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide shadow-sm transition-all ${v}`}>{icon}{label}</button>;
 }
