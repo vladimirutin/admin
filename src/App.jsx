@@ -1031,17 +1031,25 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
                       <p className="text-xs text-slate-500">Export logs or clear system caches.</p>
                    </div>
                    
-                   <div className="grid grid-cols-2 gap-2 md:gap-4">
-                      <button className="flex flex-col items-center justify-center p-3 md:p-6 border border-slate-200 rounded-lg md:rounded-xl hover:bg-slate-50 transition-colors group">
-                          <Download className="w-6 h-6 md:w-8 md:h-8 text-slate-400 group-hover:text-emerald-600 mb-2" />
-                          <span className="text-xs md:text-sm font-bold text-slate-700 text-center">Export Logs</span>
+                   <div className="grid grid-cols-4 md:grid-cols-2 gap-1 md:gap-4">
+                      <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-slate-50 transition-colors group">
+                          <Download className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-emerald-600 mb-1 md:mb-2" />
+                          <span className="text-[10px] md:text-sm font-bold text-slate-700 text-center line-clamp-2">Export Logs</span>
                       </button>
-                       <button className="flex flex-col items-center justify-center p-3 md:p-6 border border-slate-200 rounded-lg md:rounded-xl hover:bg-red-50 transition-colors group border-dashed">
-                          <Trash2 className="w-6 h-6 md:w-8 md:h-8 text-slate-400 group-hover:text-red-600 mb-2" />
-                          <span className="text-xs md:text-sm font-bold text-slate-700 group-hover:text-red-700 text-center">Clear Cache</span>
+                       <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-red-50 transition-colors group border-dashed">
+                          <Trash2 className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-red-600 mb-1 md:mb-2" />
+                          <span className="text-[10px] md:text-sm font-bold text-slate-700 group-hover:text-red-700 text-center line-clamp-2">Clear Cache</span>
+                      </button>
+                      <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-blue-50 transition-colors group">
+                          <Database className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-blue-600 mb-1 md:mb-2" />
+                          <span className="text-[10px] md:text-sm font-bold text-slate-700 text-center line-clamp-2">Backup DB</span>
+                      </button>
+                      <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-purple-50 transition-colors group">
+                          <HardDrive className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-purple-600 mb-1 md:mb-2" />
+                          <span className="text-[10px] md:text-sm font-bold text-slate-700 text-center line-clamp-2">Storage</span>
                       </button>
                    </div>
-                   <div className="p-3 md:p-4 bg-amber-50 border border-amber-100 rounded-lg md:rounded-xl flex gap-3">
+                   <div className="p-3 md:p-4 bg-amber-50 border border-amber-100 rounded-lg md:rounded-xl flex gap-2 md:gap-3">
                       <HardDrive className="w-4 h-4 md:w-5 md:h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div className="flex-1 min-w-0">
                          <p className="text-xs md:text-sm font-bold text-amber-800">Storage Usage</p>
