@@ -60,8 +60,7 @@ import {
   deleteDoc,
   getDoc,
   setDoc,
-  onSnapshot,
-  orderBy
+  onSnapshot
 } from "firebase/firestore";
 import { signInAnonymously, getAuth } from "firebase/auth";
 
@@ -308,7 +307,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }, (error) => console.error("Error doctors:", error));
 
     const rxRef = collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions');
-    const unsubscribeRx = onSnapshot(query(rxRef, orderBy('timestamp', 'desc'), limit(30)), (snapshot) => {
+    const unsubscribeRx = onSnapshot(query(rxRef, limit(30)), (snapshot) => {
       setTransactions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       setLoading(false); 
     }, (error) => console.error("Error transactions:", error));
@@ -319,7 +318,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }, (error) => console.error("Error machines:", error));
 
     const auditRef = collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs');
-    const unsubscribeAudit = onSnapshot(query(auditRef, orderBy('timestamp', 'desc'), limit(20)), (snapshot) => {
+    const unsubscribeAudit = onSnapshot(query(auditRef, limit(20)), (snapshot) => {
       const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setAuditLogs(logs); 
       setLoading(false);
