@@ -863,16 +863,28 @@ function AuditView({ logs, onClear }) {
 
 function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, setShowPassword }) {
    const [activeSettingTab, setActiveSettingTab] = useState('profile');
-   const [systemSettings, setSystemSettings] = useState({
-      maintenanceMode: false,
-      emailAlerts: true,
-      smsAlerts: false,
-      darkMode: false
-   });
+     const handleExportLogs = () => {
+        alert('Exporting audit logs... Download will start shortly.');
+        console.log('Export logs triggered');
+     };
 
-   const toggleSetting = (key) => {
-      setSystemSettings(prev => ({ ...prev, [key]: !prev[key] }));
-   };
+     const handleClearCache = () => {
+        const confirmed = window.confirm('Are you sure you want to clear the system cache? This action cannot be undone.');
+        if (confirmed) {
+           alert('System cache cleared successfully!');
+           console.log('Cache cleared');
+        }
+     };
+
+     const handleBackupDB = () => {
+        alert('Database backup started... This may take a few minutes.');
+        console.log('Backup DB triggered');
+     };
+
+     const handleStorageInfo = () => {
+        alert('Storage quota: 45% used (2.25 GB of 5 GB)');
+        console.log('Storage info displayed');
+     };
 
    return (
       <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row">
@@ -882,9 +894,6 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
             <nav className="space-y-1">
                <button onClick={() => setActiveSettingTab('profile')} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${activeSettingTab === 'profile' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
                   <User className="w-4 h-4" /> Profile
-               </button>
-               <button onClick={() => setActiveSettingTab('system')} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${activeSettingTab === 'system' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-                  <Server className="w-4 h-4" /> System
                </button>
                <button onClick={() => setActiveSettingTab('security')} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${activeSettingTab === 'security' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
                   <ShieldCheck className="w-4 h-4" /> Security
@@ -900,9 +909,6 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
             <div className="flex overflow-x-auto">
                <button onClick={() => setActiveSettingTab('profile')} className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeSettingTab === 'profile' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500'}`}>
                   <User className="w-4 h-4 inline mr-1" /> Profile
-               </button>
-               <button onClick={() => setActiveSettingTab('system')} className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeSettingTab === 'system' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500'}`}>
-                  <Server className="w-4 h-4 inline mr-1" /> System
                </button>
                <button onClick={() => setActiveSettingTab('security')} className={`flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wide border-b-2 transition-colors whitespace-nowrap ${activeSettingTab === 'security' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-slate-500'}`}>
                   <ShieldCheck className="w-4 h-4 inline mr-1" /> Security
@@ -991,7 +997,6 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
                   </div>
                </div>
             )}
-
             {activeSettingTab === 'security' && (
                 <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                    <div className="border-b border-slate-100 pb-3 md:pb-4">
@@ -1032,19 +1037,19 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
                    </div>
                    
                    <div className="grid grid-cols-4 md:grid-cols-2 gap-1 md:gap-4">
-                      <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-slate-50 transition-colors group">
+                      <button onClick={handleExportLogs} className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-slate-50 transition-colors group">
                           <Download className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-emerald-600 mb-1 md:mb-2" />
                           <span className="text-[10px] md:text-sm font-bold text-slate-700 text-center line-clamp-2">Export Logs</span>
                       </button>
-                       <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-red-50 transition-colors group border-dashed">
+                                  <button onClick={handleClearCache} className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-red-50 transition-colors group border-dashed">
                           <Trash2 className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-red-600 mb-1 md:mb-2" />
                           <span className="text-[10px] md:text-sm font-bold text-slate-700 group-hover:text-red-700 text-center line-clamp-2">Clear Cache</span>
                       </button>
-                      <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-blue-50 transition-colors group">
+                      <button onClick={handleBackupDB} className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-blue-50 transition-colors group">
                           <Database className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-blue-600 mb-1 md:mb-2" />
                           <span className="text-[10px] md:text-sm font-bold text-slate-700 text-center line-clamp-2">Backup DB</span>
                       </button>
-                      <button className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-purple-50 transition-colors group">
+                      <button onClick={handleStorageInfo} className="flex flex-col items-center justify-center p-2 md:p-6 border border-slate-200 rounded-md md:rounded-xl hover:bg-purple-50 transition-colors group">
                           <HardDrive className="w-4 h-4 md:w-8 md:h-8 text-slate-400 group-hover:text-purple-600 mb-1 md:mb-2" />
                           <span className="text-[10px] md:text-sm font-bold text-slate-700 text-center line-clamp-2">Storage</span>
                       </button>
