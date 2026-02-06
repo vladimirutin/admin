@@ -1,4 +1,4 @@
-# 💊 MediVend: Automated Prescription Medicine Dispensing System
+# 💊 MediVend
 ### *Super Admin Control & Network Oversight Portal*
 
 **MediVend** is an integrated hardware and software solution designed to bridge the gap between digital prescriptions and physical medicine distribution in the Philippines. This repository contains the **Super Admin Portal**, which serves as the central command center for monitoring system health, verifying medical practitioners, and auditing transactions.
