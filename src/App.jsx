@@ -63,6 +63,7 @@ import {
   onSnapshot
 } from "firebase/firestore";
 import { signInAnonymously, getAuth } from "firebase/auth";
+import medivend from './assets/medivend-logo.svg';
 
 // --- FIREBASE CONFIGURATION ---
 const firebaseConfig = {
@@ -563,9 +564,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
             </button>
             {/* MediVend Logo - Home Shortcut */}
             <button onClick={() => { setActiveTab('overview'); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 hover:opacity-75 transition-opacity flex-shrink-0 hidden sm:flex">
-              <div className="bg-emerald-600 p-1.5 rounded-lg shadow-lg shadow-emerald-500/20">
-                <ShieldCheck className="w-4 h-4 text-white" />
-              </div>
+              <img src={medivend} alt="MediVend" className="w-8 h-8" />
               <span className="font-bold text-slate-800 text-sm tracking-wide">MediVend</span>
             </button>
             <h2 className="text-lg font-bold text-slate-800 capitalize tracking-tight flex items-center gap-2 min-w-0 truncate">
