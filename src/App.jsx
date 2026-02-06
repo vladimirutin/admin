@@ -1112,13 +1112,13 @@ function NavHeader({ title }) { return <div className="px-4 mt-6 mb-2 text-[10px
 function StatCard({ title, value, icon, color, subtext, trend, onClick }) {
    const colors = { amber: "bg-amber-100 text-amber-600", blue: "bg-blue-100 text-blue-600", emerald: "bg-emerald-100 text-emerald-600", indigo: "bg-indigo-100 text-indigo-600", red: "bg-red-100 text-red-600" };
    return (
-      <div onClick={onClick} className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden flex flex-col justify-between h-28 sm:h-32 md:h-36 lg:h-40">
-         <div className="flex justify-between items-start mb-3">
-            <div className={`p-2.5 rounded-lg ${colors[color]}`}>{icon}</div>
+      <div onClick={onClick} className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden flex flex-col justify-between h-32 sm:h-36 md:h-40 lg:h-44">
+         <div className="flex justify-between items-start mb-2">
+            <div className={`p-2 rounded-lg ${colors[color]}`}>{icon}</div>
             {trend && <span className="text-[10px] font-bold bg-slate-50 text-slate-500 px-2 py-1 rounded-full border border-slate-100">{trend}</span>}
          </div>
          <div className="min-w-0">
-            <h4 className="text-xl font-bold text-slate-800">{value}</h4>
+            <h4 className="text-lg font-bold text-slate-800">{value}</h4>
             <p className="text-sm font-bold text-slate-700 tracking-tight mt-1 whitespace-normal leading-tight">{title}</p>
             {subtext && <p className="text-[10px] text-slate-400 mt-1 truncate">{subtext}</p>}
          </div>
