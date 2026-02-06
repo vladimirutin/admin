@@ -13,3 +13,8 @@
   background: #334155;
   border-radius: 10px;
 }
+
+/* Prevent horizontal page scrolling on small screens */
+html, body, #root {
+  overflow-x: hidden;
+}
