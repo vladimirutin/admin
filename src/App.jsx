@@ -100,7 +100,6 @@ const saveAdminCreds = (creds) => {
 
 // --- MOCK DATA ---
 const MOCK_MACHINES = []; // Cleared mock data
-// Removed MOCK_AUDIT_LOGS to ensure only real system actions are shown
 
 // --- MAIN SUPER ADMIN COMPONENT ---
 export default function SuperAdminApp() {
@@ -563,13 +562,13 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#f8fafc]">
           {activeTab === 'overview' && (
-            <div className="space-y-6 max-w-7xl mx-auto">
-              {/* Stat Cards - Enhanced */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="space-y-3 lg:space-y-6 max-w-7xl mx-auto">
+              {/* Stat Cards - Mobile Optimized */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-5">
                 <StatCard 
                   title="Pending Approvals" 
                   value={pendingDocs} 
-                  icon={<Users className="w-5 h-5 text-amber-600" />} 
+                  icon={<Users className="w-4 h-4 lg:w-5 lg:h-5 text-amber-600" />} 
                   color="amber" 
                   subtext="Requires attention" 
                   onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} 
@@ -577,16 +576,15 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <StatCard 
                   title="Active Kiosks" 
                   value={`${activeMachines}/${machines.length > 0 ? machines.length : 0}`} 
-                  icon={<Server className="w-5 h-5 text-emerald-600" />} 
+                  icon={<Server className="w-4 h-4 lg:w-5 lg:h-5 text-emerald-600" />} 
                   color="emerald" 
                   subtext="Network Status" 
                   onClick={() => setActiveTab('machines')} 
                 />
-                {/* REPLACED TOTAL REVENUE WITH ACTIVE PHYSICIANS */}
                 <StatCard 
                   title="Active Physicians" 
                   value={activeDocs} 
-                  icon={<Stethoscope className="w-5 h-5 text-blue-600" />} 
+                  icon={<Stethoscope className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600" />} 
                   color="blue" 
                   subtext="Verified prescribers" 
                   onClick={() => { setActiveTab('doctors'); setFilter('active'); }} 
@@ -594,46 +592,46 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <StatCard 
                   title="Security Alerts" 
                   value={auditLogs.length} 
-                  icon={<AlertOctagon className="w-5 h-5 text-red-600" />} 
+                  icon={<AlertOctagon className="w-4 h-4 lg:w-5 lg:h-5 text-red-600" />} 
                   color="red" 
                   subtext="System events" 
                   onClick={() => setActiveTab('audit')} 
                 />
               </div>
 
-              {/* NETWORK HEALTH MONITORING */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <div className="flex justify-between items-center mb-6">
+              {/* NETWORK HEALTH MONITORING - Mobile Optimized */}
+              <div className="bg-white p-3 lg:p-6 rounded-xl shadow-sm border border-slate-200">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 lg:mb-6 gap-2">
                   <div>
-                    <h3 className="font-bold text-lg text-slate-800">Network Health</h3>
-                    <p className="text-xs text-slate-500">Real-time infrastructure status & capacity</p>
+                    <h3 className="font-bold text-sm lg:text-lg text-slate-800">Network Health</h3>
+                    <p className="text-[10px] lg:text-xs text-slate-500">Real-time infrastructure status</p>
                   </div>
                   <div className="flex gap-2">
-                     <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded"><Activity className="w-3 h-3"/> System Normal</span>
+                     <span className="flex items-center gap-1 text-[10px] lg:text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded"><Activity className="w-3 h-3"/> System Normal</span>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
                    {/* Kiosk Status */}
                    <div>
-                      <h4 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2"><Server className="w-4 h-4"/> Kiosk Connectivity</h4>
-                      <div className="space-y-4">
+                      <h4 className="text-xs lg:text-sm font-bold text-slate-700 mb-2 lg:mb-4 flex items-center gap-2"><Server className="w-3 h-3 lg:w-4 lg:h-4"/> Kiosk Connectivity</h4>
+                      <div className="space-y-2 lg:space-y-4">
                          <div>
-                            <div className="flex justify-between text-xs mb-1">
+                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
                                <span className="font-medium text-slate-600">Online ({activeMachines})</span>
                                <span className="text-emerald-600 font-bold">{machines.length > 0 ? Math.round((activeMachines / machines.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                               <div className="bg-emerald-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? (activeMachines / machines.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
+                               <div className="bg-emerald-500 h-full rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? (activeMachines / machines.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                          <div>
-                            <div className="flex justify-between text-xs mb-1">
-                               <span className="font-medium text-slate-600">Offline / Maintenance ({machines.length - activeMachines})</span>
+                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
+                               <span className="font-medium text-slate-600">Offline ({machines.length - activeMachines})</span>
                                <span className="text-slate-400 font-bold">{machines.length > 0 ? Math.round(((machines.length - activeMachines) / machines.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                               <div className="bg-slate-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
+                               <div className="bg-slate-400 h-full rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                       </div>
@@ -641,24 +639,24 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
                    {/* Doctor Status */}
                    <div>
-                      <h4 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2"><Users className="w-4 h-4"/> Provider Status</h4>
-                      <div className="space-y-4">
+                      <h4 className="text-xs lg:text-sm font-bold text-slate-700 mb-2 lg:mb-4 flex items-center gap-2"><Users className="w-3 h-3 lg:w-4 lg:h-4"/> Provider Status</h4>
+                      <div className="space-y-2 lg:space-y-4">
                          <div>
-                            <div className="flex justify-between text-xs mb-1">
-                               <span className="font-medium text-slate-600">Active Physicians ({activeDocs})</span>
+                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
+                               <span className="font-medium text-slate-600">Active ({activeDocs})</span>
                                <span className="text-blue-600 font-bold">{doctors.length > 0 ? Math.round((activeDocs / doctors.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                               <div className="bg-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
+                               <div className="bg-blue-500 h-full rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                          <div>
-                            <div className="flex justify-between text-xs mb-1">
-                               <span className="font-medium text-slate-600">Pending Approval ({pendingDocs})</span>
+                            <div className="flex justify-between text-[10px] lg:text-xs mb-1">
+                               <span className="font-medium text-slate-600">Pending ({pendingDocs})</span>
                                <span className="text-amber-500 font-bold">{doctors.length > 0 ? Math.round((pendingDocs / doctors.length) * 100) : 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                               <div className="bg-amber-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0}%` }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-1.5 lg:h-2 overflow-hidden">
+                               <div className="bg-amber-400 h-full rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0}%` }}></div>
                             </div>
                          </div>
                       </div>
@@ -666,41 +664,41 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                 {/* Quick Actions */}
-                 <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 h-full">
-                    <h3 className="font-bold text-base text-slate-800 mb-4">Quick Actions</h3>
-                    <div className="space-y-3">
-                       <ActionButton onClick={() => {setActiveTab('doctors'); setFilter('pending')}} icon={<Users className="w-4 h-4"/>} label={`Review ${pendingDocs} Doctors`} variant="primary" />
-                       <ActionButton onClick={() => setActiveTab('audit')} icon={<FileSearch className="w-4 h-4"/>} label="View Security Audit" variant="secondary" />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-6">
+                 {/* Quick Actions - Mobile Optimized */}
+                 <div className="bg-white p-3 lg:p-5 rounded-xl shadow-sm border border-slate-200 h-full">
+                    <h3 className="font-bold text-sm lg:text-base text-slate-800 mb-2 lg:mb-4">Quick Actions</h3>
+                    <div className="space-y-2 lg:space-y-3">
+                       <ActionButton onClick={() => {setActiveTab('doctors'); setFilter('pending')}} icon={<Users className="w-3 h-3 lg:w-4 lg:h-4"/>} label={`Review ${pendingDocs} Doctors`} variant="primary" />
+                       <ActionButton onClick={() => setActiveTab('audit')} icon={<FileSearch className="w-3 h-3 lg:w-4 lg:h-4"/>} label="View Security Audit" variant="secondary" />
                     </div>
                  </div>
                  
-                 {/* Activity Feed */}
-                 <div className="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <h3 className="font-bold text-base text-slate-800 mb-4">Live Activity Feed</h3>
+                 {/* Activity Feed - Mobile Optimized */}
+                 <div className="lg:col-span-2 bg-white p-3 lg:p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 className="font-bold text-sm lg:text-base text-slate-800 mb-2 lg:mb-4">Live Activity Feed</h3>
                     <div className="space-y-0 relative">
                        {/* Simple vertical line */}
-                       <div className="absolute left-3 top-2 bottom-2 w-px bg-slate-100"></div>
+                       <div className="absolute left-2 lg:left-3 top-2 bottom-2 w-px bg-slate-100"></div>
                        
                        {transactions.length === 0 && auditLogs.length === 0 ? (
-                           <div className="pl-8 py-4 text-sm text-slate-400 italic">No recent activity</div>
+                           <div className="pl-6 lg:pl-8 py-2 lg:py-4 text-xs lg:text-sm text-slate-400 italic">No recent activity</div>
                        ) : (
                            <>
                            {transactions.slice(0, 3).map(tx => (
-                              <div key={tx.id} className="py-3 pl-8 relative flex justify-between items-center text-sm group hover:bg-slate-50 rounded-lg -ml-2 pr-2 transition-colors">
-                                 <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-blue-100 border-2 border-blue-500 rounded-full z-10"></div>
-                                 <div className="flex items-center gap-3">
-                                    <div><p className="font-bold text-slate-800 text-xs">Prescription Issued</p><p className="text-xs text-slate-500">Dr. {tx.doctorName}</p></div>
+                              <div key={tx.id} className="py-2 lg:py-3 pl-6 lg:pl-8 relative flex justify-between items-center text-sm group hover:bg-slate-50 rounded-lg -ml-2 pr-2 transition-colors">
+                                 <div className="absolute left-1 lg:left-1.5 top-1/2 -translate-y-1/2 w-2 h-2 lg:w-3 lg:h-3 bg-blue-100 border-2 border-blue-500 rounded-full z-10"></div>
+                                 <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-1">
+                                    <div className="min-w-0"><p className="font-bold text-slate-800 text-[10px] lg:text-xs truncate">Prescription Issued</p><p className="text-[10px] lg:text-xs text-slate-500 truncate">Dr. {tx.doctorName}</p></div>
                                  </div>
-                                 <span className="text-xs text-slate-400 font-mono">{tx.date}</span>
+                                 <span className="text-[9px] lg:text-xs text-slate-400 font-mono ml-2 shrink-0">{tx.date}</span>
                               </div>
                            ))}
                            {auditLogs.slice(0, 3).map((log, idx) => (
-                              <div key={idx} className="py-3 pl-8 relative flex justify-between items-center text-sm group hover:bg-slate-50 rounded-lg -ml-2 pr-2 transition-colors">
-                                 <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-amber-100 border-2 border-amber-500 rounded-full z-10"></div>
-                                 <div className="flex items-center gap-3"><div><p className="font-bold text-slate-800 text-xs">{log.action}</p><p className="text-xs text-slate-500">{log.details}</p></div></div>
-                                 <span className="text-xs text-slate-400 font-mono">{log.time}</span>
+                              <div key={idx} className="py-2 lg:py-3 pl-6 lg:pl-8 relative flex justify-between items-center text-sm group hover:bg-slate-50 rounded-lg -ml-2 pr-2 transition-colors">
+                                 <div className="absolute left-1 lg:left-1.5 top-1/2 -translate-y-1/2 w-2 h-2 lg:w-3 lg:h-3 bg-amber-100 border-2 border-amber-500 rounded-full z-10"></div>
+                                 <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-1"><div className="min-w-0"><p className="font-bold text-slate-800 text-[10px] lg:text-xs truncate">{log.action}</p><p className="text-[10px] lg:text-xs text-slate-500 truncate">{log.details}</p></div></div>
+                                 <span className="text-[9px] lg:text-xs text-slate-400 font-mono ml-2 shrink-0">{log.time}</span>
                               </div>
                            ))}
                            </>
@@ -1076,17 +1074,19 @@ function NavButton({ id, label, icon, active, onClick, badge, badgeColor }) {
    );
 }
 
-function NavHeader({ title }) { return <div className="px-4 mt-6 mb-2 text-[10px] uppercase font-bold tracking-wider text-slate-500">{title}</div>; }
-
 function StatCard({ title, value, icon, color, subtext, trend, onClick }) {
    const colors = { amber: "bg-amber-100 text-amber-600", blue: "bg-blue-100 text-blue-600", emerald: "bg-emerald-100 text-emerald-600", indigo: "bg-indigo-100 text-indigo-600", red: "bg-red-100 text-red-600" };
    return (
-      <div onClick={onClick} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden">
-         <div className="flex justify-between items-start mb-3">
-            <div className={`p-2.5 rounded-lg ${colors[color]}`}>{icon}</div>
+      <div onClick={onClick} className="bg-white p-3 lg:p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group relative overflow-hidden">
+         <div className="flex justify-between items-start mb-2 lg:mb-3">
+            <div className={`p-1.5 lg:p-2.5 rounded-lg ${colors[color]}`}>{icon}</div>
             {trend && <span className="text-[10px] font-bold bg-slate-50 text-slate-500 px-2 py-1 rounded-full border border-slate-100">{trend}</span>}
          </div>
-         <div><h4 className="text-2xl font-bold text-slate-800">{value}</h4><p className="text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">{title}</p><p className="text-[10px] text-slate-400 mt-1">{subtext}</p></div>
+         <div>
+            <h4 className="text-xl lg:text-2xl font-bold text-slate-800">{value}</h4>
+            <p className="text-[10px] lg:text-xs font-bold text-slate-500 uppercase tracking-wide mt-0.5 lg:mt-1 truncate">{title}</p>
+            <p className="text-[9px] lg:text-[10px] text-slate-400 mt-0.5 lg:mt-1 truncate">{subtext}</p>
+         </div>
       </div>
    );
 }
@@ -1103,5 +1103,5 @@ function PrescriptionStatusBadge({ status }) {
 
 function ActionButton({ onClick, label, icon, variant }) {
    const v = variant === 'primary' ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50";
-   return <button onClick={onClick} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide shadow-sm transition-all ${v}`}>{icon}{label}</button>;
+   return <button onClick={onClick} className={`flex items-center justify-center gap-1.5 lg:gap-2 px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-xs font-bold uppercase tracking-wide shadow-sm transition-all w-full ${v}`}>{icon}<span className="truncate">{label}</span></button>;
 }
