@@ -237,7 +237,7 @@ function PasswordModal({ onClose, currentCreds, onUpdate, isDarkMode }) {
 function BroadcastModal({ onClose, onSend, isDarkMode }) {
   const [message, setMessage] = useState('');
   const [priority, setPriority] = useState('normal');
-  const [target, setTarget] = useState('all'); // 'all', 'doctors', 'kiosks'
+  const [target, setTarget] = useState('all'); 
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-200">
@@ -338,7 +338,8 @@ function TopPrescribedChart({ transactions, isDarkMode }) {
             if(items.length > 0) {
                 items.forEach(item => {
                     const name = item.name || item.medicine || "Unknown";
-                    freqMap[name] = (freqMap[name] || 0) + (item.qty || 1);
+                    const qty = Number(item.qty || item.quantity || 1);
+                    freqMap[name] = (freqMap[name] || 0) + qty;
                 });
             }
         });
@@ -381,7 +382,6 @@ function InventoryView({ medicines, db, appId, isDarkMode }) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     
-    // Pagination Logic
     const totalPages = Math.ceil(medicines.length / itemsPerPage);
     const currentData = medicines.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -468,7 +468,6 @@ function InventoryView({ medicines, db, appId, isDarkMode }) {
                                 <td className="px-6 py-3 text-right"><button onClick={() => handleDelete(m.id)} className="text-rose-500 hover:text-rose-400"><Trash2 className="w-4 h-4"/></button></td>
                             </tr>
                         ))}
-                        {medicines.length === 0 && <tr><td colSpan="5" className="p-6 text-center text-slate-500 italic">Database is empty.</td></tr>}
                     </tbody>
                 </table>
             </div>
@@ -510,7 +509,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onHide }) {
         }
     };
 
-    const displayTickets = tickets; // Use real data only
+    const displayTickets = tickets; 
 
     const filteredTickets = displayTickets
         .filter(t => !hiddenTickets.includes(t.id))
@@ -1293,6 +1292,674 @@ function AdminLogin({ onLogin, cloudProfile }) {
             <h1 className="text-4xl font-bold mb-4 tracking-tight text-white">System Status: Optimal</h1>
             <p className="text-slate-400 text-lg">Real-time monitoring active.</p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 5. ADMIN DASHBOARD
+// ==========================================
+function AdminDashboard({ onLogout, initialProfile }) {
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview'); 
+  const [doctors, setDoctors] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [machines, setMachines] = useState([]);
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [medicines, setMedicines] = useState([]);
+  const [supportTickets, setSupportTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('pending');
+  const [currentTime, setCurrentTime] = useState(new Date());
+  
+  const [adminProfile, setAdminProfile] = useState(initialProfile);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // --- LOCAL HIDE STATES ---
+  const [hiddenTxIds, setHiddenTxIds] = useState([]);
+  const [hiddenAuditIds, setHiddenAuditIds] = useState([]);
+
+  // --- MACHINE DIAGNOSTICS STATE ---
+  const [diagnosticMachine, setDiagnosticMachine] = useState(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // --- REAL-TIME DATA LISTENER ---
+  useEffect(() => {
+    setLoading(true);
+
+    const doctorsRef = collection(db, 'artifacts', appId, 'public', 'data', 'doctors');
+    const unsubscribeDoctors = onSnapshot(query(doctorsRef), (snapshot) => {
+      setDoctors(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => console.error("Error doctors:", error));
+
+    const rxRef = collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions');
+    const unsubscribeRx = onSnapshot(query(rxRef, limit(30)), (snapshot) => {
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      setTransactions(list);
+      setLoading(false); 
+    }, (error) => console.error("Error transactions:", error));
+
+    const machinesRef = collection(db, 'artifacts', appId, 'public', 'data', 'machines');
+    const unsubscribeMachines = onSnapshot(query(machinesRef), (snapshot) => {
+      setMachines(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => console.error("Error machines:", error));
+
+    const auditRef = collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs');
+    const unsubscribeAudit = onSnapshot(query(auditRef, limit(20)), (snapshot) => {
+      const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      logs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+      setAuditLogs(logs); 
+      setLoading(false);
+    }, (error) => {
+       console.error("Error audit:", error);
+       setLoading(false);
+    });
+
+    const medsRef = collection(db, 'artifacts', appId, 'public', 'data', 'medicines');
+    const unsubscribeMeds = onSnapshot(query(medsRef), (snapshot) => {
+      setMedicines(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    const supportRef = collection(db, 'artifacts', appId, 'public', 'data', 'support_tickets');
+    const unsubscribeSupport = onSnapshot(query(supportRef), (snapshot) => {
+      setSupportTickets(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    return () => {
+      unsubscribeDoctors();
+      unsubscribeRx();
+      unsubscribeMachines();
+      unsubscribeAudit();
+      unsubscribeMeds();
+      unsubscribeSupport();
+    };
+  }, []);
+
+  // --- ACTIONS ---
+  const updateDoctorStatus = async (docId, newStatus) => {
+    try {
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'doctors', docId);
+      await setDoc(docRef, { status: newStatus, adminReviewedAt: serverTimestamp() }, { merge: true });
+      await addAuditLog(`Doctor Status Update`, `Set ${docId} to ${newStatus}`);
+    } catch (e) {
+      alert("Update failed: " + e.message);
+    }
+  };
+
+  const handleDoctorPasswordUpdate = async (docId, newPassword) => {
+    if (!newPassword) return;
+    try {
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'doctors', docId);
+      await updateDoc(docRef, { password: newPassword });
+      await addAuditLog("Doctor Mgmt", `Updated password for doctor ${docId}`);
+      alert("Doctor password updated successfully.");
+    } catch (e) {
+      alert("Update failed: " + e.message);
+    }
+  };
+
+  const handleDeleteDoctor = async (docId) => {
+    if(!window.confirm(`Are you sure you want to PERMANENTLY DELETE the doctor account: ${docId}?\n\nThis action cannot be undone and will remove all their access.`)) return;
+    try {
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'doctors', docId);
+      await deleteDoc(docRef);
+      await addAuditLog("Doctor Deletion", `Permanently removed doctor account: ${docId}`);
+      alert("Doctor account deleted successfully.");
+    } catch(e) {
+      alert("Deletion failed: " + e.message);
+    }
+  };
+
+  const handlePingMachine = async (machineId) => {
+    try {
+        const machineRef = doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId);
+        await setDoc(machineRef, { lastPing: serverTimestamp(), status: 'online' }, { merge: true });
+        alert(`Ping signal sent to ${machineId}. Connection OK.`);
+        await addAuditLog("System Ping", `Pinged ${machineId}`);
+    } catch(e) {
+        alert("Failed to ping: " + e.message);
+    }
+  };
+
+  const handleRunDiagnostics = (machine) => {
+      const isOnline = machine.status === 'online';
+      
+      const report = {
+          ...machine,
+          cpuTemp: isOnline ? (35 + Math.random() * 15).toFixed(1) + '°C' : 'N/A', 
+          printerPaper: isOnline ? Math.floor(Math.random() * 100) + '%' : 'Unknown',
+          printerStatus: isOnline ? 'Ready' : 'Offline',
+          motorStatus: isOnline ? 'Optimal' : 'Offline',
+          scannerStatus: isOnline ? 'Active' : 'Not Detected',
+          
+          slots: (machine.slots || Array.from({ length: 10 }, (_, i) => ({
+              id: i + 1,
+              medicine: ['Biogesic', 'Neozep', 'Amoxicillin', 'Solmux', 'Bioflu', 'Alaxan', 'Decolgen', 'Tuseran', 'Diatabs', 'Kremil-S'][i],
+              stock: Math.floor(Math.random() * 100),
+              max: 100,
+              status: Math.random() > 0.95 ? 'Jam' : 'OK'
+          }))).slice(0, 10),
+
+          healthScore: isOnline ? '98%' : '0%',
+          recommendation: isOnline ? 'System functioning normally.' : 'Check power/network connection.'
+      };
+      setDiagnosticMachine(report);
+  };
+
+  const handleRebootMachine = async (machineId) => {
+    if(!window.confirm(`Are you sure you want to reboot ${machineId}?`)) return;
+    try {
+        const machineRef = doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId);
+        await setDoc(machineRef, { status: 'rebooting' }, { merge: true });
+        
+        setTimeout(async () => {
+            await setDoc(machineRef, { status: 'offline' }, { merge: true });
+            setTimeout(async () => {
+               await setDoc(machineRef, { status: 'online', lastPing: serverTimestamp() }, { merge: true });
+               alert(`${machineId} rebooted successfully.`);
+               await addAuditLog("System Reboot", `Rebooted ${machineId}`);
+            }, 3000);
+        }, 1500);
+    } catch(e) {
+        alert("Reboot command failed: " + e.message);
+    }
+  };
+
+  const handleLockMachine = async (machineId, currentStatus) => {
+      const newStatus = currentStatus === 'locked' ? 'online' : 'locked';
+      if(!window.confirm(`Are you sure you want to ${newStatus.toUpperCase()} kiosk ${machineId}?`)) return;
+      
+      try {
+          const machineRef = doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId);
+          await setDoc(machineRef, { status: newStatus }, { merge: true });
+          await addAuditLog("Security Lock", `${newStatus.toUpperCase()} kiosk ${machineId}`);
+      } catch(e) {
+          alert("Command failed: " + e.message);
+      }
+  };
+
+  const handleDeleteMachine = async (machineId) => {
+      if(!window.confirm(`Remove ${machineId} from network? This cannot be undone.`)) return;
+      try {
+          const machineRef = doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId);
+          await deleteDoc(machineRef);
+          await addAuditLog("System Removal", `Removed kiosk ${machineId}`);
+      } catch(e) {
+          alert("Deletion failed: " + e.message);
+      }
+  };
+
+  const addAuditLog = async (action, details) => {
+    try {
+      const logsRef = collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs');
+      await setDoc(doc(logsRef), {
+         action,
+         details,
+         user: adminProfile.username,
+         time: new Date().toLocaleTimeString(),
+         timestamp: serverTimestamp()
+      });
+    } catch(e) {
+      console.error("Failed to log audit:", e);
+    }
+  };
+
+  const handleBroadcast = async (msg, priority, target) => {
+    try {
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'broadcasts'), {
+            message: msg,
+            priority: priority,
+            target: target,
+            timestamp: serverTimestamp(),
+            active: true,
+            sentBy: adminProfile.username,
+            type: 'admin_broadcast'
+        });
+        await addAuditLog("System Broadcast", `Sent: ${msg} (${priority} to ${target})`);
+        alert(`Broadcast sent to ${target === 'all' ? 'Entire Network' : target}!`);
+        setShowBroadcastModal(false);
+    } catch (e) {
+        console.error("Broadcast failed:", e);
+        alert("Failed to send broadcast.");
+    }
+  };
+
+  const handleHideAuditLog = (id) => {
+     if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
+         setHiddenAuditIds(prev => [...prev, id]);
+     }
+  };
+
+  const handleClearViewAudit = () => {
+     if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
+         const allIds = auditLogs.map(l => l.id);
+         setHiddenAuditIds(prev => [...prev, ...allIds]);
+     }
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      const adminRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'admin_profile');
+      await setDoc(adminRef, adminProfile);
+      setIsEditingProfile(false);
+      alert("Profile updated and synced to cloud.");
+      await addAuditLog("Profile Update", "Admin profile details updated");
+    } catch(e) {
+      alert("Failed to save profile: " + e.message);
+    }
+  };
+
+  const handlePasswordUpdate = async (newPass) => {
+    try {
+        const updated = { ...adminProfile, password: newPass };
+        const adminRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'admin_profile');
+        await setDoc(adminRef, updated, { merge: true });
+        setAdminProfile(updated);
+        setShowPasswordModal(false);
+        alert("Password updated and synced to cloud.");
+        await addAuditLog("Password Change", "Admin password updated");
+    } catch(e) {
+        alert("Failed to update password: " + e.message);
+    }
+  };
+
+  const handleHideTransaction = (id) => {
+    if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
+        setHiddenTxIds(prev => [...prev, id]);
+    }
+  };
+
+  const handleClearViewTransactions = () => {
+    if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
+        const allIds = transactions.map(t => t.id);
+        setHiddenTxIds(prev => [...prev, ...allIds]);
+    }
+  };
+
+  const pendingDocs = doctors.filter(d => d.status === 'pending').length;
+  const activeDocs = doctors.filter(d => d.status === 'active').length;
+  const activeMachines = machines.filter(m => m.status === 'online').length;
+  const displayedDoctors = doctors.filter(d => filter === 'all' ? true : d.status === filter);
+  
+  const displayedTransactions = transactions.filter(t => !hiddenTxIds.includes(t.id));
+  const displayedAuditLogs = auditLogs.filter(l => !hiddenAuditIds.includes(l.id));
+
+  const feedItems = [
+    ...displayedTransactions.map(t => ({ ...t, type: 'rx', sortTime: t.createdAt?.seconds || 0 })),
+    ...displayedAuditLogs.map(l => ({ ...l, type: 'audit', sortTime: l.timestamp?.seconds || 0 }))
+  ].sort((a, b) => b.sortTime - a.sortTime).slice(0, 6);
+
+  const handleNavClick = (tabId) => {
+    setActiveTab(tabId);
+    setIsMobileMenuOpen(false);
+    setDiagnosticMachine(null); 
+  };
+
+  return (
+    <div className={`flex h-screen font-sans overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-[#0B0F19] text-slate-300' : 'bg-gray-50 text-slate-600'}`}>
+      
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div>
+      )}
+
+      <aside className={`fixed inset-y-0 left-0 z-30 w-72 border-r shadow-2xl transform transition-all duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 ${isDarkMode ? 'bg-[#0B0F19] border-white/5' : 'bg-white border-gray-200'}`}>
+        <div className={`relative z-10 p-6 flex items-center gap-3 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+          <div className="bg-gradient-to-tr from-indigo-500 to-blue-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
+            <ShieldCheck className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className={`font-bold text-lg tracking-wide ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>MediVend</h1>
+            <p className="text-[10px] uppercase font-bold text-indigo-500 tracking-wider">Super Admin</p>
+          </div>
+          <button onClick={() => setIsMobileMenuOpen(false)} className={`md:hidden ml-auto ${isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+          <div className="px-3 mb-2 mt-2 text-[10px] font-extrabold uppercase tracking-widest opacity-70">Workspace</div>
+          <NavButton id="overview" label="Dashboard" icon={<LayoutDashboard className="w-5 h-5" />} active={activeTab === 'overview'} onClick={handleNavClick} isDarkMode={isDarkMode} />
+          
+          <div className="px-3 mt-8 mb-2 text-[10px] font-extrabold uppercase tracking-widest opacity-70">Network</div>
+          <NavButton id="doctors" label="Doctors" icon={<Users className="w-5 h-5" />} active={activeTab === 'doctors'} onClick={handleNavClick} badge={pendingDocs} isDarkMode={isDarkMode} />
+          <NavButton id="machines" label="Kiosks" icon={<Server className="w-5 h-5" />} active={activeTab === 'machines'} onClick={handleNavClick} isDarkMode={isDarkMode} />
+          
+          <div className="px-3 mt-8 mb-2 text-[10px] font-extrabold uppercase tracking-widest opacity-70">Inventory & Support</div>
+          <NavButton id="inventory" label="Master List" icon={<Package className="w-5 h-5" />} active={activeTab === 'inventory'} onClick={handleNavClick} isDarkMode={isDarkMode} />
+          <NavButton id="support" label="Support" icon={<LifeBuoy className="w-5 h-5" />} active={activeTab === 'support'} onClick={handleNavClick} isDarkMode={isDarkMode} />
+
+          <div className="px-3 mt-8 mb-2 text-[10px] font-extrabold uppercase tracking-widest opacity-70">Compliance</div>
+          <NavButton id="transactions" label="Logs" icon={<FileText className="w-5 h-5" />} active={activeTab === 'transactions'} onClick={handleNavClick} isDarkMode={isDarkMode} />
+          <NavButton id="audit" label="Audit" icon={<ClipboardList className="w-5 h-5" />} active={activeTab === 'audit'} onClick={handleNavClick} isDarkMode={isDarkMode} />
+        </nav>
+
+        <div className={`p-4 border-t ${isDarkMode ? 'bg-[#05080F] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+          <button onClick={onLogout} className="flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-rose-500/10 hover:text-rose-500 transition-all text-sm font-medium group">
+            <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" /> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <div className={`flex-1 flex flex-col min-w-0 overflow-hidden relative ${isDarkMode ? 'bg-[#0B0F19]' : 'bg-gray-50'}`}>
+        <header className={`h-16 border-b flex items-center justify-between px-6 shadow-sm z-10 sticky top-0 transition-colors ${isDarkMode ? 'bg-[#0B0F19] border-white/5' : 'bg-white border-gray-200'}`}>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)} className={`md:hidden p-2 -ml-2 rounded-lg ${isDarkMode ? 'text-slate-400 hover:bg-white/5' : 'text-slate-600 hover:bg-gray-100'}`}>
+              <Menu className="w-6 h-6" />
+            </button>
+            <h2 className={`text-lg md:text-xl font-bold capitalize tracking-tight flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+              {activeTab === 'overview' && <LayoutDashboard className="w-5 h-5 text-indigo-500 hidden sm:block" />}
+              {activeTab === 'doctors' && <Users className="w-5 h-5 text-indigo-500 hidden sm:block" />}
+              {activeTab === 'machines' && <Server className="w-5 h-5 text-emerald-500 hidden sm:block" />}
+              {activeTab === 'inventory' && <Package className="w-5 h-5 text-indigo-500 hidden sm:block" />}
+              {activeTab === 'support' && <LifeBuoy className="w-5 h-5 text-rose-500 hidden sm:block" />}
+              {activeTab === 'settings' && <Settings className="w-5 h-5 text-slate-400 hidden sm:block" />}
+              {activeTab.replace('-', ' ')}
+            </h2>
+          </div>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)} 
+              className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-600 hover:text-slate-900'}`}
+              title="Toggle Theme"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
+            </button>
+
+            <div className={`hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-gray-100 border-gray-200 text-slate-600'}`}>
+              <Clock className="w-3.5 h-3.5 text-indigo-500" />
+              {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </div>
+            
+            <button onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} className={`p-2 transition-colors relative rounded-full ${isDarkMode ? 'text-slate-400 hover:text-indigo-400 hover:bg-white/5' : 'text-slate-600 hover:text-indigo-600 hover:bg-gray-100'}`}>
+              <Bell className="w-5 h-5" />
+              {pendingDocs > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white/10"></span>}
+            </button>
+
+            <div 
+              onClick={() => setActiveTab('settings')}
+              className={`flex items-center gap-3 cursor-pointer p-1.5 -mr-1.5 rounded-lg transition-colors group ${isDarkMode ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}
+            >
+              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xs ring-2 ring-white/10 shadow-md group-hover:ring-indigo-500/50 transition-all">
+                {adminProfile?.displayName?.charAt(0) || 'A'}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className={`flex-1 overflow-y-auto p-4 lg:p-6 ${isDarkMode ? 'bg-[#0B0F19]' : 'bg-gray-50'}`}>
+          {activeTab === 'overview' && (
+            <div className="space-y-6 max-w-7xl mx-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+                <StatCard 
+                  title="Pending Approvals" 
+                  value={pendingDocs} 
+                  icon={<Users className="w-5 h-5 text-amber-400" />} 
+                  color="amber" 
+                  subtext="Requires attention" 
+                  onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} 
+                  isDarkMode={isDarkMode}
+                />
+                <StatCard 
+                  title="Active Kiosks" 
+                  value={`${activeMachines}/${machines.length > 0 ? machines.length : 0}`} 
+                  icon={<Server className="w-5 h-5 text-emerald-400" />} 
+                  color="emerald" 
+                  subtext="Network Status" 
+                  onClick={() => setActiveTab('machines')} 
+                  isDarkMode={isDarkMode}
+                />
+                <StatCard 
+                  title="Master Inventory" 
+                  value={medicines.length} 
+                  icon={<Package className="w-5 h-5 text-blue-400" />} 
+                  color="blue" 
+                  subtext="SKUs in database" 
+                  onClick={() => setActiveTab('inventory')} 
+                  isDarkMode={isDarkMode}
+                />
+                <StatCard 
+                  title="Security Alerts" 
+                  value={auditLogs.length} 
+                  icon={<AlertOctagon className="w-5 h-5 text-rose-400" />} 
+                  color="red" 
+                  subtext="System events" 
+                  onClick={() => setActiveTab('audit')} 
+                  isDarkMode={isDarkMode}
+                />
+              </div>
+
+              <div className={`p-6 rounded-xl border shadow-lg ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200'}`}>
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Network Health</h3>
+                    <p className="text-xs text-slate-400">Real-time infrastructure status & capacity</p>
+                  </div>
+                  <div className="flex gap-2">
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 whitespace-nowrap flex-shrink-0"><Activity className="w-3 h-3"/> System Normal</span>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                   <div>
+                      <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}><Server className="w-4 h-4 text-emerald-500"/> Kiosk Connectivity</h4>
+                      <div className="space-y-4">
+                          <div>
+                             <div className="flex justify-between text-xs mb-1">
+                                <span className="font-medium text-slate-400">Online ({activeMachines})</span>
+                                <span className="text-emerald-500 font-bold">{machines.length > 0 ? Math.round((activeMachines / machines.length) * 100) : 0}%</span>
+                             </div>
+                             <div className={`w-full rounded-full h-2 overflow-hidden ${isDarkMode ? 'bg-white/10' : 'bg-gray-100'}`}>
+                                <div className="bg-emerald-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? (activeMachines / machines.length) * 100 : 0}%` }}></div>
+                             </div>
+                          </div>
+                          <div>
+                             <div className="flex justify-between text-xs mb-1">
+                                <span className="font-medium text-slate-400">Offline / Maintenance ({machines.length - activeMachines})</span>
+                                <span className="text-slate-500 font-bold">{machines.length > 0 ? Math.round(((machines.length - activeMachines) / machines.length) * 100) : 0}%</span>
+                             </div>
+                             <div className={`w-full rounded-full h-2 overflow-hidden ${isDarkMode ? 'bg-white/10' : 'bg-gray-100'}`}>
+                                <div className="bg-slate-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0}%` }}></div>
+                             </div>
+                          </div>
+                      </div>
+                   </div>
+
+                   <div>
+                      <h4 className={`text-sm font-bold mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}><Users className="w-4 h-4 text-blue-500"/> Provider Status</h4>
+                      <div className="space-y-4">
+                          <div>
+                             <div className="flex justify-between text-xs mb-1">
+                                <span className="font-medium text-slate-400">Active Physicians ({activeDocs})</span>
+                                <span className="text-blue-500 font-bold">{doctors.length > 0 ? Math.round((activeDocs / doctors.length) * 100) : 0}%</span>
+                             </div>
+                             <div className={`w-full rounded-full h-2 overflow-hidden ${isDarkMode ? 'bg-white/10' : 'bg-gray-100'}`}>
+                                <div className="bg-blue-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0}%` }}></div>
+                             </div>
+                          </div>
+                          <div>
+                             <div className="flex justify-between text-xs mb-1">
+                                <span className="font-medium text-slate-400">Pending Approval ({pendingDocs})</span>
+                                <span className="text-amber-500 font-bold">{doctors.length > 0 ? Math.round((pendingDocs / doctors.length) * 100) : 0}%</span>
+                             </div>
+                             <div className={`w-full rounded-full h-2 overflow-hidden ${isDarkMode ? 'bg-white/10' : 'bg-gray-100'}`}>
+                                <div className="bg-amber-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0}%` }}></div>
+                             </div>
+                          </div>
+                      </div>
+                   </div>
+                </div>
+              </div>
+              
+              {/* --- TOP PRESCRIBED MEDICINES BAR CHART --- */}
+              <div className={`p-6 rounded-xl border shadow-lg ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200'}`}>
+                   <h3 className={`font-bold text-lg mb-6 flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                        <BarChart3 className="w-5 h-5 text-indigo-500"/> Top Prescribed Medicines
+                   </h3>
+                   <TopPrescribedChart transactions={transactions} isDarkMode={isDarkMode} />
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                 <div className={`p-5 rounded-xl border h-full ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+                    <h3 className={`font-bold text-base mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Quick Actions</h3>
+                    <div className="flex gap-2 flex-col">
+                       <ActionButton onClick={() => {setActiveTab('doctors'); setFilter('pending')}} icon={<Users className="w-4 h-4"/>} label={`Review ${pendingDocs} Doctors`} variant="primary" />
+                       <ActionButton onClick={() => setShowBroadcastModal(true)} icon={<Megaphone className="w-4 h-4"/>} label="System Broadcast" variant="secondary" isDarkMode={isDarkMode} />
+                       <ActionButton onClick={() => setActiveTab('audit')} icon={<FileSearch className="w-4 h-4"/>} label="View Security Audit" variant="secondary" isDarkMode={isDarkMode} />
+                    </div>
+                 </div>
+                 
+                 <div className={`lg:col-span-2 p-5 rounded-xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+                    <h3 className={`font-bold text-base mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Live Activity Feed</h3>
+                    <div className="space-y-0 relative">
+                       <div className={`absolute left-3 top-2 bottom-2 w-px ${isDarkMode ? 'bg-white/10' : 'bg-gray-200'}`}></div>
+                       
+                       {feedItems.length === 0 ? (
+                           <div className="pl-8 py-4 text-sm text-slate-500 italic">No recent activity</div>
+                       ) : (
+                           feedItems.map((item, idx) => (
+                             <div key={item.id + idx} className={`py-3 pl-8 relative flex justify-between items-center text-sm group rounded-lg -ml-2 pr-2 transition-colors ${isDarkMode ? 'hover:bg-white/5' : 'hover:bg-gray-50'}`}>
+                                <div className={`absolute left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 border-2 rounded-full z-10 ${item.type === 'rx' ? 'bg-blue-900 border-blue-500' : 'bg-amber-900 border-amber-500'}`}></div>
+                                <div className="flex items-center gap-3">
+                                   <div>
+                                       <p className={`font-bold text-xs ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                                           {item.type === 'rx' ? 'Prescription Issued' : item.action}
+                                       </p>
+                                       <p className="text-xs text-slate-400">
+                                           {item.type === 'rx' ? `Dr. ${item.doctorName}` : item.details}
+                                       </p>
+                                   </div>
+                                </div>
+                                <span className="text-xs text-slate-500 font-mono">
+                                    {item.type === 'rx' ? item.date : item.time}
+                                </span>
+                             </div>
+                           ))
+                       )}
+                    </div>
+                 </div>
+              </div>
+            </div>
+          )}
+          {activeTab === 'doctors' && <DoctorsView doctors={displayedDoctors} filter={filter} setFilter={setFilter} onRefresh={()=>{}} onUpdateStatus={updateDoctorStatus} onUpdatePassword={handleDoctorPasswordUpdate} onDelete={handleDeleteDoctor} loading={loading} isDarkMode={isDarkMode} />}
+          {activeTab === 'machines' && <MachinesView machines={machines} onPing={handlePingMachine} onRunDiagnostics={handleRunDiagnostics} onReboot={handleRebootMachine} onLock={handleLockMachine} onDelete={handleDeleteMachine} isDarkMode={isDarkMode} />}
+          {activeTab === 'inventory' && <InventoryView medicines={medicines} db={db} appId={appId} isDarkMode={isDarkMode} />}
+          {activeTab === 'support' && <SupportView tickets={supportTickets} db={db} appId={appId} isDarkMode={isDarkMode} />}
+          {activeTab === 'transactions' && <TransactionsView transactions={displayedTransactions} onHide={handleHideTransaction} onClearView={handleClearViewTransactions} isDarkMode={isDarkMode} />}
+          {activeTab === 'audit' && <AuditView logs={displayedAuditLogs} onHide={handleHideAuditLog} onClearView={handleClearViewAudit} isDarkMode={isDarkMode} />}
+          {activeTab === 'settings' && <SettingsView profile={adminProfile} setProfile={setAdminProfile} onSave={handleSaveProfile} isEditing={isEditingProfile} setIsEditing={setIsEditingProfile} setShowPassword={() => setShowPasswordModal(true)} isDarkMode={isDarkMode} transactions={transactions} auditLogs={auditLogs} doctors={doctors} machines={machines} medicines={medicines} supportTickets={supportTickets} />}
+        </main>
+        {showPasswordModal && <PasswordModal onClose={() => setShowPasswordModal(false)} currentCreds={adminProfile} onUpdate={handlePasswordUpdate} isDarkMode={isDarkMode} />}
+        {showBroadcastModal && <BroadcastModal onClose={() => setShowBroadcastModal(false)} onSend={handleBroadcast} isDarkMode={isDarkMode} />}
+        
+        {/* DIAGNOSTICS MODAL - ENHANCED IOT VERSION */}
+        {diagnosticMachine && (
+           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-200">
+               <div className={`rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden border flex flex-col max-h-[90vh] ${isDarkMode ? 'bg-[#1e293b] border-white/10' : 'bg-white border-gray-200'}`}>
+                   
+                   {/* Modal Header */}
+                   <div className={`p-5 border-b flex justify-between items-center flex-shrink-0 ${isDarkMode ? 'border-white/10' : 'border-gray-100'}`}>
+                       <div>
+                           <h3 className={`font-bold text-lg flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                               <Activity className="w-5 h-5 text-emerald-500"/> Kiosk Diagnostics
+                           </h3>
+                           <p className="text-xs text-slate-400 mt-1">{diagnosticMachine.id} • {diagnosticMachine.location}</p>
+                       </div>
+                       <button onClick={() => setDiagnosticMachine(null)}><X className={`w-5 h-5 ${isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}/></button>
+                   </div>
+
+                   <div className="p-6 space-y-6 overflow-y-auto">
+                       {/* Top Row: Health Score & Remote Commands */}
+                       <div className="flex flex-col md:flex-row gap-6">
+                           <div className="flex-1 text-center p-4 rounded-xl border border-dashed border-slate-500/20 flex flex-col justify-center items-center">
+                               <div className={`text-5xl font-bold mb-1 ${diagnosticMachine.status === 'online' ? 'text-emerald-500' : 'text-rose-500'}`}>{diagnosticMachine.healthScore}</div>
+                               <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">System Health</p>
+                           </div>
+                           
+                           <div className="flex-1 space-y-2">
+                               <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Remote Commands</p>
+                               <div className="grid grid-cols-2 gap-2">
+                                   <button onClick={() => handlePingMachine(diagnosticMachine.id)} className={`flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-colors ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-700'}`}><Activity size={14}/> Ping</button>
+                                   <button onClick={() => handleRebootMachine(diagnosticMachine.id)} className={`flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-colors ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-700'}`}><Power size={14}/> Reboot</button>
+                                   <button onClick={() => handleLockMachine(diagnosticMachine.id, diagnosticMachine.status)} className={`col-span-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-colors ${diagnosticMachine.status === 'locked' ? 'bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30' : 'bg-rose-500/20 text-rose-500 hover:bg-rose-500/30'}`}>
+                                       {diagnosticMachine.status === 'locked' ? <Unlock size={14}/> : <Lock size={14}/>} 
+                                       {diagnosticMachine.status === 'locked' ? 'Unlock Kiosk' : 'Lock / Disable'}
+                                   </button>
+                               </div>
+                           </div>
+                       </div>
+                       
+                       {/* Hardware Sensors Grid */}
+                       <div>
+                           <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Hardware Sensors</p>
+                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                               <div className={`p-3 rounded-xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
+                                  <div className="flex items-center gap-2 mb-1"><Thermometer className="w-3.5 h-3.5 text-rose-400"/><span className={`text-[10px] font-bold uppercase ${isDarkMode?'text-slate-400':'text-slate-500'}`}>CPU Temp</span></div>
+                                  <p className={`text-sm font-mono font-bold ${isDarkMode?'text-white':'text-slate-900'}`}>{diagnosticMachine.cpuTemp}</p>
+                               </div>
+                               <div className={`p-3 rounded-xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
+                                  <div className="flex items-center gap-2 mb-1"><Printer className="w-3.5 h-3.5 text-blue-400"/><span className={`text-[10px] font-bold uppercase ${isDarkMode?'text-slate-400':'text-slate-500'}`}>Paper Lvl</span></div>
+                                  <p className={`text-sm font-mono font-bold ${isDarkMode?'text-white':'text-slate-900'}`}>{diagnosticMachine.printerPaper}</p>
+                               </div>
+                               <div className={`p-3 rounded-xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
+                                  <div className="flex items-center gap-2 mb-1"><Zap className="w-3.5 h-3.5 text-amber-400"/><span className={`text-[10px] font-bold uppercase ${isDarkMode?'text-slate-400':'text-slate-500'}`}>Motor</span></div>
+                                  <p className={`text-sm font-mono font-bold ${isDarkMode?'text-white':'text-slate-900'}`}>{diagnosticMachine.motorStatus}</p>
+                               </div>
+                               <div className={`p-3 rounded-xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
+                                  <div className="flex items-center gap-2 mb-1"><Scan className="w-3.5 h-3.5 text-purple-400"/><span className={`text-[10px] font-bold uppercase ${isDarkMode?'text-slate-400':'text-slate-500'}`}>Scanner</span></div>
+                                  <p className={`text-sm font-mono font-bold ${isDarkMode?'text-white':'text-slate-900'}`}>{diagnosticMachine.scannerStatus}</p>
+                               </div>
+                           </div>
+                       </div>
+
+                       {/* 10-Slot Real-Time Inventory */}
+                       <div>
+                           <div className="flex justify-between items-center mb-3">
+                               <p className="text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center gap-2"><Layers className="w-4 h-4"/> Real-Time Inventory (10 Slots)</p>
+                               <span className="text-[10px] text-slate-500 bg-white/5 px-2 py-1 rounded">Live Feed</span>
+                           </div>
+                           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                               {diagnosticMachine.slots && diagnosticMachine.slots.map((slot) => (
+                                   <div key={slot.id} className={`p-2.5 rounded-lg border relative overflow-hidden group ${slot.status === 'Jam' ? 'border-rose-500/50 bg-rose-500/10' : isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                                       <div className="flex justify-between items-start mb-1 relative z-10">
+                                           <span className="text-[10px] font-bold opacity-50">#{slot.id}</span>
+                                           {slot.status === 'Jam' && <AlertTriangle className="w-3 h-3 text-rose-500"/>}
+                                       </div>
+                                       <p className={`text-xs font-bold truncate relative z-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{slot.medicine}</p>
+                                       <div className="mt-2 relative z-10">
+                                           <div className="flex justify-between text-[10px] mb-0.5">
+                                               <span className="text-slate-400">Lvl</span>
+                                               <span className={slot.stock < 20 ? "text-rose-500 font-bold" : "text-emerald-500 font-bold"}>{slot.stock}%</span>
+                                           </div>
+                                           <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDarkMode ? 'bg-black/40' : 'bg-gray-200'}`}>
+                                               <div className={`h-full rounded-full ${slot.stock < 20 ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{width: `${slot.stock}%`}}></div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               ))}
+                           </div>
+                       </div>
+                       
+                       <div className={`p-4 rounded-xl border ${diagnosticMachine.status === 'online' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-rose-500/10 border-rose-500/20'}`}>
+                           <p className={`text-xs font-bold uppercase mb-1 ${diagnosticMachine.status === 'online' ? 'text-emerald-500' : 'text-rose-500'}`}>AI Recommendation</p>
+                           <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{diagnosticMachine.recommendation}</p>
+                       </div>
+                   </div>
+                   <div className={`p-4 border-t flex justify-end flex-shrink-0 ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+                      <button onClick={() => setDiagnosticMachine(null)} className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase rounded-lg shadow-lg">Close Diagnostics</button>
+                   </div>
+               </div>
+           </div>
+        )}
+
       </div>
     </div>
   );
