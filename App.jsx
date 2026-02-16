@@ -237,7 +237,7 @@ function PasswordModal({ onClose, currentCreds, onUpdate, isDarkMode }) {
 function BroadcastModal({ onClose, onSend, isDarkMode }) {
   const [message, setMessage] = useState('');
   const [priority, setPriority] = useState('normal');
-  const [target, setTarget] = useState('all');
+  const [target, setTarget] = useState('all'); 
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-200">
@@ -253,6 +253,7 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
             </div>
             
             <div className="space-y-4">
+                {/* Message Input */}
                 <div>
                     <label className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-1.5 block">Message Content</label>
                     <textarea 
@@ -265,27 +266,64 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
                     ></textarea>
                 </div>
                 
+                {/* Target Audience Selection */}
                 <div>
                     <label className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-1.5 block">Target Audience</label>
                     <div className="grid grid-cols-3 gap-2">
-                        <button onClick={() => setTarget('all')} className={`flex flex-col items-center justify-center py-3 rounded-lg border transition-all ${target === 'all' ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500/30' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}><Globe className="w-4 h-4 mb-1" /><span className="text-[10px] font-bold uppercase">All Network</span></button>
-                        <button onClick={() => setTarget('doctors')} className={`flex flex-col items-center justify-center py-3 rounded-lg border transition-all ${target === 'doctors' ? 'bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500/30' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}><Users className="w-4 h-4 mb-1" /><span className="text-[10px] font-bold uppercase">Doctors</span></button>
-                        <button onClick={() => setTarget('kiosks')} className={`flex flex-col items-center justify-center py-3 rounded-lg border transition-all ${target === 'kiosks' ? 'bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-500/30' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}><Server className="w-4 h-4 mb-1" /><span className="text-[10px] font-bold uppercase">Kiosks</span></button>
+                        <button 
+                            onClick={() => setTarget('all')}
+                            className={`flex flex-col items-center justify-center py-3 rounded-lg border transition-all ${target === 'all' ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500/30' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}
+                        >
+                            <Globe className="w-4 h-4 mb-1" />
+                            <span className="text-[10px] font-bold uppercase">All Network</span>
+                        </button>
+                        <button 
+                            onClick={() => setTarget('doctors')}
+                            className={`flex flex-col items-center justify-center py-3 rounded-lg border transition-all ${target === 'doctors' ? 'bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500/30' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}
+                        >
+                            <Users className="w-4 h-4 mb-1" />
+                            <span className="text-[10px] font-bold uppercase">Doctors</span>
+                        </button>
+                        <button 
+                            onClick={() => setTarget('kiosks')}
+                            className={`flex flex-col items-center justify-center py-3 rounded-lg border transition-all ${target === 'kiosks' ? 'bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-500/30' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}
+                        >
+                            <Server className="w-4 h-4 mb-1" />
+                            <span className="text-[10px] font-bold uppercase">Kiosks</span>
+                        </button>
                     </div>
                 </div>
 
+                {/* Priority Selection */}
                 <div>
                     <label className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-1.5 block">Priority Level</label>
                     <div className="flex gap-2">
-                        <button onClick={() => setPriority('normal')} className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-colors ${priority === 'normal' ? 'bg-slate-600 text-white border-slate-600' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}>Normal Info</button>
-                        <button onClick={() => setPriority('high')} className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-colors ${priority === 'high' ? 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}>High Priority Alert</button>
+                        <button 
+                            onClick={() => setPriority('normal')}
+                            className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-colors ${priority === 'normal' ? 'bg-slate-600 text-white border-slate-600' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}
+                        >
+                            Normal Info
+                        </button>
+                        <button 
+                            onClick={() => setPriority('high')}
+                            className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-colors ${priority === 'high' ? 'bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20' : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'}`}
+                        >
+                            High Priority Alert
+                        </button>
                     </div>
                 </div>
             </div>
 
             <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-white/5">
                 <button onClick={onClose} className={`px-4 py-2 rounded-lg text-sm font-bold ${isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}>Cancel</button>
-                <button onClick={() => { if(message.trim()) onSend(message, priority, target); }} disabled={!message.trim()} className="flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/20 transition-transform active:scale-95"><Send className="w-3.5 h-3.5" />Send Broadcast</button>
+                <button 
+                    onClick={() => { if(message.trim()) onSend(message, priority, target); }}
+                    disabled={!message.trim()}
+                    className="flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/20 transition-transform active:scale-95"
+                >
+                    <Send className="w-3.5 h-3.5" />
+                    Send Broadcast
+                </button>
             </div>
         </div>
     </div>
@@ -297,21 +335,20 @@ function TopPrescribedChart({ transactions, isDarkMode }) {
     if (transactions && transactions.length > 0) {
         transactions.forEach(tx => {
             const items = tx.items || []; 
-            if(items.length === 0) {
-               const demoMeds = ["Amoxicillin 500mg", "Biogesic 500mg", "Neozep Forte", "Solmux Capsule", "Vitamin C (Ascorbic Acid)"];
-               const charCode = tx.id ? tx.id.charCodeAt(0) : 0;
-               const random = demoMeds[charCode % demoMeds.length];
-               freqMap[random] = (freqMap[random] || 0) + 1;
-            } else {
+            if(items.length > 0) {
                 items.forEach(item => {
                     const name = item.name || item.medicine || "Unknown";
-                    freqMap[name] = (freqMap[name] || 0) + (item.qty || 1);
+                    const qty = Number(item.qty || item.quantity || 1);
+                    freqMap[name] = (freqMap[name] || 0) + qty;
                 });
             }
         });
     }
 
-    const sorted = Object.entries(freqMap).sort((a,b) => b[1] - a[1]).slice(0, 5);
+    const sorted = Object.entries(freqMap)
+        .sort((a,b) => b[1] - a[1])
+        .slice(0, 5);
+
     const maxVal = Math.max(...sorted.map(s => s[1]), 1);
 
     return (
@@ -323,7 +360,10 @@ function TopPrescribedChart({ transactions, isDarkMode }) {
                         <span className="text-indigo-500">{count} dispensed</span>
                     </div>
                     <div className={`w-full h-3 rounded-full overflow-hidden ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
-                        <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000 ease-out" style={{ width: `${(count / maxVal) * 100}%` }}></div>
+                        <div 
+                            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000 ease-out" 
+                            style={{ width: `${(count / maxVal) * 100}%` }}
+                        ></div>
                     </div>
                 </div>
             ))}
@@ -351,7 +391,7 @@ function InventoryView({ medicines, db, appId, isDarkMode }) {
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'medicines'), newItem);
             setIsAdding(false);
             setNewItem({ name: '', generic: '', stock: 0, price: 0 });
-            alert("Medicine added to Master Database.");
+            alert("Medicine added to Master Database. Live on all kiosks.");
         } catch (err) {
             alert(err.message);
         }
@@ -364,11 +404,11 @@ function InventoryView({ medicines, db, appId, isDarkMode }) {
     };
 
     return (
-        <div className={`rounded-xl border overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+        <div className={`rounded-xl border md:overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
             <div className={`p-5 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
                 <div>
                     <h3 className={`font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Master Medicine Database</h3>
-                    <p className="text-xs text-slate-500">Global inventory.</p>
+                    <p className="text-xs text-slate-500">Global inventory. Updates push to all doctors immediately.</p>
                 </div>
                 <button onClick={() => setIsAdding(!isAdding)} className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700">
                     {isAdding ? 'Cancel' : '+ Add New Medicine'}
@@ -381,17 +421,17 @@ function InventoryView({ medicines, db, appId, isDarkMode }) {
                     <input placeholder="Generic Name" required className={`p-2 rounded border text-sm ${isDarkMode?'bg-white/10 border-white/10 text-white':'bg-white'}`} value={newItem.generic} onChange={e=>setNewItem({...newItem, generic: e.target.value})} />
                     <input type="number" placeholder="Stock" required className={`p-2 rounded border text-sm ${isDarkMode?'bg-white/10 border-white/10 text-white':'bg-white'}`} value={newItem.stock} onChange={e=>setNewItem({...newItem, stock: parseInt(e.target.value)})} />
                     <input type="number" placeholder="Price (PHP)" required className={`p-2 rounded border text-sm ${isDarkMode?'bg-white/10 border-white/10 text-white':'bg-white'}`} value={newItem.price} onChange={e=>setNewItem({...newItem, price: parseFloat(e.target.value)})} />
-                    <button type="submit" className="bg-emerald-500 text-white font-bold rounded p-2 text-sm">Save</button>
+                    <button type="submit" className="bg-emerald-500 text-white font-bold rounded p-2 text-sm">Save to DB</button>
                 </form>
             )}
 
             <div className="md:hidden divide-y divide-white/5">
-                {currentData.length === 0 ? <div className="p-8 text-center text-xs text-slate-500 italic">No medicines.</div> : currentData.map(m => (
+                {currentData.length === 0 ? <div className="p-8 text-center text-xs text-slate-500 italic">No medicines in database.</div> : currentData.map(m => (
                     <div key={m.id} className={`p-4 relative flex flex-col gap-2 ${isDarkMode ? 'bg-transparent' : 'bg-white'}`}>
-                        <div className="absolute top-4 right-4">
+                        <div className="absolute top-4 right-4 z-20">
                             <MobileMenu isDarkMode={isDarkMode}>
                                 <button onClick={() => handleDelete(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10`}>
-                                    <Trash2 className="w-3.5 h-3.5"/> Delete
+                                    <Trash2 className="w-3.5 h-3.5"/> Delete Item
                                 </button>
                             </MobileMenu>
                         </div>
@@ -436,44 +476,65 @@ function InventoryView({ medicines, db, appId, isDarkMode }) {
     );
 }
 
-function SupportView({ tickets, db, appId, isDarkMode }) {
+function SupportView({ tickets, db, appId, isDarkMode, onHide }) {
     const [filter, setFilter] = useState('all'); 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [hiddenTickets, setHiddenTickets] = useState([]);
 
     const handleStatusUpdate = async (ticket, newStatus) => {
         try {
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'support_tickets', ticket.id), { ...ticket, status: newStatus }, { merge: true });
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'support_tickets', ticket.id), { 
+                ...ticket, 
+                status: newStatus 
+            }, { merge: true });
         } catch (e) {
             console.error("Ticket update failed:", e);
+            alert("Failed to update status. Check console.");
         }
     };
 
     const handleDeleteTicket = async (id) => {
-        if(!window.confirm("Delete this ticket?")) return;
+        if(!window.confirm("Are you sure you want to delete this ticket?")) return;
+        
+        // Optimistically hide the ticket immediately
+        setHiddenTickets(prev => [...prev, id]);
+
+        // Attempt actual DB delete
         try {
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'support_tickets', id));
         } catch (e) {
-            console.error("Delete failed:", e);
+            console.error("Delete failed (likely mock data):", e);
+            // If it's mock data, the optimistic UI update (setHiddenTickets) is enough for the user session
         }
     };
 
-    const displayTickets = tickets.length > 0 ? tickets : [
-        { id: 'mock1', subject: 'Kiosk Alert', message: 'Sensor detected door access.', sender: 'System', status: 'open', priority: 'high', type: 'kiosk_alert', timestamp: { seconds: Date.now()/1000 } },
-        { id: 'mock2', subject: 'Login Issue', message: 'Cannot reset password.', sender: 'Dr. Santos', status: 'open', priority: 'medium', type: 'doctor_issue', timestamp: { seconds: Date.now()/1000 - 3600 } }
-    ];
+    const displayTickets = tickets; 
 
-    const filteredTickets = displayTickets.filter(t => filter === 'all' ? true : t.status === filter);
+    const filteredTickets = displayTickets
+        .filter(t => !hiddenTickets.includes(t.id))
+        .filter(t => filter === 'all' ? true : t.status === filter);
+    
+    // Pagination Logic
     const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
     const currentData = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
-        <div className={`rounded-xl border overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+        <div className={`rounded-xl border md:overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
             <div className={`p-5 border-b flex flex-col md:flex-row justify-between items-center gap-4 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
-                <h3 className={`font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Support Ticketing System</h3>
+                <div>
+                    <h3 className={`font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Support Ticketing System</h3>
+                    <p className="text-xs text-slate-500">Manage doctor issues and automated kiosk alerts.</p>
+                </div>
                 <div className="flex gap-2 bg-white/5 p-1 rounded-lg">
-                    {['all', 'open', 'resolved'].map(f => (
-                        <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wide transition-all ${filter === f ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>{f}</button>
+                    {['all', 'open', 'in_progress', 'resolved'].map(f => (
+                        <button 
+                            key={f} 
+                            onClick={() => setFilter(f)} 
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wide transition-all ${filter === f ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            {f.replace('_', ' ')}
+                        </button>
                     ))}
                 </div>
             </div>
@@ -482,12 +543,25 @@ function SupportView({ tickets, db, appId, isDarkMode }) {
                 {currentData.length === 0 ? <div className="p-8 text-center text-slate-500 italic">No tickets found.</div> : currentData.map(t => (
                     <div key={t.id} className={`p-4 flex flex-col md:flex-row justify-between items-start gap-4 ${isDarkMode ? 'hover:bg-white/5' : 'hover:bg-gray-50'} ${t.priority === 'high' ? 'bg-rose-900/10 border-l-2 border-rose-500' : ''}`}>
                         <div className="flex gap-4 items-start w-full relative">
-                            <div className="absolute top-0 right-0 md:hidden">
+                             {/* Mobile Menu for Actions */}
+                            <div className="absolute top-0 right-0 md:hidden z-20">
                                 <MobileMenu isDarkMode={isDarkMode}>
-                                     {t.status === 'open' && <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-500 hover:bg-emerald-500/10">Mark Resolved</button>}
-                                     <button onClick={() => handleDeleteTicket(t.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10"><Trash2 className="w-3.5 h-3.5"/> Delete</button>
+                                     {t.status === 'open' && (
+                                        <button onClick={() => handleStatusUpdate(t, 'in_progress')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-indigo-500 hover:bg-indigo-500/10">
+                                            Mark In Progress
+                                        </button>
+                                     )}
+                                     {t.status !== 'resolved' && (
+                                        <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-500 hover:bg-emerald-500/10">
+                                            Mark Resolved
+                                        </button>
+                                     )}
+                                     <button onClick={() => handleDeleteTicket(t.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10">
+                                         <Trash2 className="w-3.5 h-3.5"/> Delete Ticket
+                                     </button>
                                 </MobileMenu>
                             </div>
+
                             <div className={`p-3 rounded-full flex-shrink-0 ${t.priority === 'high' ? 'bg-rose-500/20 text-rose-500' : 'bg-indigo-500/10 text-indigo-500'}`}>
                                 {t.type === 'kiosk_alert' ? <AlertCircle className="w-5 h-5" /> : <MessageSquare className="w-5 h-5" />}
                             </div>
@@ -495,7 +569,7 @@ function SupportView({ tickets, db, appId, isDarkMode }) {
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                                     <h4 className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{t.subject}</h4>
                                     {t.priority === 'high' && <span className="text-[10px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full uppercase">High Priority</span>}
-                                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${t.status === 'open' ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'}`}>{t.status}</span>
+                                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${t.status === 'open' ? 'bg-amber-500/10 text-amber-500' : t.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-blue-500/10 text-blue-500'}`}>{t.status.replace('_', ' ')}</span>
                                 </div>
                                 <p className="text-xs text-slate-400 break-words">{t.message}</p>
                                 <div className="flex gap-3 mt-2 text-[10px] text-slate-500">
@@ -505,9 +579,22 @@ function SupportView({ tickets, db, appId, isDarkMode }) {
                                 </div>
                             </div>
                         </div>
+                        
+                        {/* Desktop Actions */}
                         <div className="hidden md:flex gap-2 self-center">
-                            {t.status === 'open' && <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow transition-colors"><CheckSquare className="w-3.5 h-3.5"/> Resolve</button>}
-                            <button onClick={() => handleDeleteTicket(t.id)} className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors" title="Delete Ticket"><Trash2 className="w-4 h-4"/></button>
+                            {t.status === 'open' && (
+                                <button onClick={() => handleStatusUpdate(t, 'in_progress')} className="px-3 py-1.5 border border-indigo-500/30 text-indigo-500 hover:bg-indigo-500/10 rounded-lg text-xs font-bold transition-colors">
+                                    Mark In Progress
+                                </button>
+                            )}
+                            {t.status !== 'resolved' && (
+                                <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow transition-colors">
+                                    <CheckSquare className="w-3.5 h-3.5"/> Resolve
+                                </button>
+                            )}
+                            <button onClick={() => handleDeleteTicket(t.id)} className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors" title="Delete Ticket">
+                                <Trash2 className="w-4 h-4"/>
+                            </button>
                         </div>
                     </div>
                 ))}
@@ -532,11 +619,12 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
     (doc.license?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
 
+  // Pagination Logic
   const totalPages = Math.ceil(filteredDocs.length / itemsPerPage);
   const currentData = filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className={`rounded-xl border overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+    <div className={`rounded-xl border md:overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
       <div className={`p-5 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
         <h3 className={`font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Medical Practitioners</h3>
         <button onClick={onRefresh} className="text-xs font-bold uppercase text-slate-400 flex items-center gap-1 hover:text-emerald-500 transition-colors"><RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin':''}`}/> Refresh</button>
@@ -563,7 +651,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
       <div className="md:hidden divide-y divide-white/5">
         {currentData.length === 0 ? <div className="p-8 text-center text-xs text-slate-500 italic">No doctors found matching your criteria.</div> : currentData.map(doc => (
           <div key={doc.id} className={`p-4 relative flex flex-col gap-3 ${isDarkMode ? 'bg-transparent' : 'bg-white'}`}>
-             <div className="absolute top-4 right-4">
+             <div className="absolute top-4 right-4 z-20">
                  <MobileMenu isDarkMode={isDarkMode}>
                     <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Eye className="w-3.5 h-3.5"/> View Details</button>
                     {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-500 hover:bg-emerald-500/10"><CheckCircle className="w-3.5 h-3.5"/> Approve</button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10"><XCircle className="w-3.5 h-3.5"/> Reject</button></>)}
@@ -700,13 +788,13 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
    const currentData = machines.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
    return (
-      <div className={`rounded-xl border overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+      <div className={`rounded-xl border md:overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
          <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}><h3 className={`font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Kiosk Network</h3></div>
          
          <div className="md:hidden divide-y divide-white/5">
             {currentData.length === 0 ? <div className="p-8 text-center text-xs text-slate-500 italic">No kiosks connected.</div> : currentData.map(m => (
                <div key={m.id} className="p-4 relative flex flex-col gap-3">
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-4 right-4 z-20">
                      <MobileMenu isDarkMode={isDarkMode}>
                         <button onClick={() => onPing(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Activity className="w-3.5 h-3.5"/> Ping</button>
                         <button onClick={() => onRunDiagnostics(m)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Wrench className="w-3.5 h-3.5"/> Diagnostics</button>
@@ -764,7 +852,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
    const currentData = transactions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
    return (
-      <div className={`rounded-xl border overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+      <div className={`rounded-xl border md:overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
          <div className={`p-5 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
             <h3 className={`font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Prescription Registry</h3>
             <button onClick={onClearView} className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors"><Trash2 className="w-3.5 h-3.5"/> Clear View</button>
@@ -773,7 +861,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
          <div className="md:hidden divide-y divide-white/5">
             {currentData.length === 0 ? <div className="p-8 text-center text-xs text-slate-500 italic">No transactions recorded.</div> : currentData.map(tx => (
                <div key={tx.id} className="p-4 relative flex flex-col gap-3">
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-4 right-4 z-20">
                      <MobileMenu isDarkMode={isDarkMode}>
                         <button onClick={() => onHide(tx.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10"><Trash2 className="w-3.5 h-3.5"/> Hide</button>
                      </MobileMenu>
@@ -831,7 +919,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
    const currentData = logs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
    return (
-      <div className={`rounded-xl border overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
+      <div className={`rounded-xl border md:overflow-hidden max-w-7xl mx-auto ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm'}`}>
          <div className={`p-4 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
              <h3 className={`font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Audit Log</h3>
              <button onClick={onClearView} className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors"><Trash2 className="w-3.5 h-3.5"/> Clear View</button>
@@ -840,7 +928,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
          <div className="md:hidden divide-y divide-white/5">
             {currentData.length === 0 ? <div className="p-8 text-center text-xs text-slate-500 italic">No logs available.</div> : currentData.map((log, i) => (
                <div key={i} className="p-4 relative flex flex-col gap-2">
-                   <div className="absolute top-4 right-4">
+                   <div className="absolute top-4 right-4 z-20">
                         <MobileMenu isDarkMode={isDarkMode}>
                             <button onClick={() => onHide(log.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10"><Trash2 className="w-3.5 h-3.5"/> Hide</button>
                         </MobileMenu>
