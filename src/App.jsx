@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ShieldCheck, 
   Users, 
@@ -1322,9 +1322,26 @@ function AdminDashboard({ onLogout, initialProfile }) {
   // --- REFRESH STATE ---
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // --- LOCAL HIDE STATES WITH PERSISTENCE ---
-  const [hiddenTxIds, setHiddenTxIds] = useState(() => JSON.parse(localStorage.getItem('hiddenTxIds') || '[]'));
-  const [hiddenAuditIds, setHiddenAuditIds] = useState(() => JSON.parse(localStorage.getItem('hiddenAuditIds') || '[]'));
+  // --- LOCAL HIDE STATES WITH PERSISTENCE (Safe Loading) ---
+  const [hiddenTxIds, setHiddenTxIds] = useState(() => {
+      try {
+          const saved = localStorage.getItem('hiddenTxIds');
+          return saved ? JSON.parse(saved) : [];
+      } catch (e) {
+          console.error("Storage error (tx)", e);
+          return [];
+      }
+  });
+  
+  const [hiddenAuditIds, setHiddenAuditIds] = useState(() => {
+      try {
+          const saved = localStorage.getItem('hiddenAuditIds');
+          return saved ? JSON.parse(saved) : [];
+      } catch (e) {
+          console.error("Storage error (audit)", e);
+          return [];
+      }
+  });
 
   // --- MACHINE DIAGNOSTICS STATE ---
   const [diagnosticMachine, setDiagnosticMachine] = useState(null);
@@ -1570,17 +1587,31 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }
   };
 
+  // --- FIXED: Ensure unique IDs and cleaner handling for Hiding Items ---
   const handleHideAuditLog = (id) => {
      if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
-         setHiddenAuditIds(prev => [...prev, id]);
+         setHiddenAuditIds(prev => [...new Set([...prev, id])]);
      }
   };
 
   const handleClearViewAudit = () => {
      if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
          const allIds = auditLogs.map(l => l.id);
-         setHiddenAuditIds(prev => [...prev, ...allIds]);
+         setHiddenAuditIds(prev => [...new Set([...prev, ...allIds])]);
      }
+  };
+
+  const handleHideTransaction = (id) => {
+    if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
+        setHiddenTxIds(prev => [...new Set([...prev, id])]);
+    }
+  };
+
+  const handleClearViewTransactions = () => {
+    if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
+        const allIds = transactions.map(t => t.id);
+        setHiddenTxIds(prev => [...new Set([...prev, ...allIds])]);
+    }
   };
 
   const handleSaveProfile = async () => {
@@ -1609,26 +1640,19 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }
   };
 
-  const handleHideTransaction = (id) => {
-    if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
-        setHiddenTxIds(prev => [...prev, id]);
-    }
-  };
-
-  const handleClearViewTransactions = () => {
-    if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
-        const allIds = transactions.map(t => t.id);
-        setHiddenTxIds(prev => [...prev, ...allIds]);
-    }
-  };
-
   const pendingDocs = doctors.filter(d => d.status === 'pending').length;
   const activeDocs = doctors.filter(d => d.status === 'active').length;
   const activeMachines = machines.filter(m => m.status === 'online').length;
   const displayedDoctors = doctors.filter(d => filter === 'all' ? true : d.status === filter);
   
-  const displayedTransactions = transactions.filter(t => !hiddenTxIds.includes(t.id));
-  const displayedAuditLogs = auditLogs.filter(l => !hiddenAuditIds.includes(l.id));
+  // --- FIXED: Memoize filtered lists to ensure strict updates across Dashboard and Views ---
+  const displayedTransactions = useMemo(() => 
+    transactions.filter(t => !hiddenTxIds.includes(t.id)),
+  [transactions, hiddenTxIds]);
+
+  const displayedAuditLogs = useMemo(() => 
+    auditLogs.filter(l => !hiddenAuditIds.includes(l.id)),
+  [auditLogs, hiddenAuditIds]);
 
   const feedItems = [
     ...displayedTransactions.map(t => ({ ...t, type: 'rx', sortTime: t.createdAt?.seconds || 0 })),
@@ -1772,8 +1796,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   isDarkMode={isDarkMode}
                 />
                 <StatCard 
+                  key={`audit-${displayedAuditLogs.length}`} // Force update if length changes
                   title="Security Alerts" 
-                  value={auditLogs.length} 
+                  value={displayedAuditLogs.length} 
                   icon={<AlertOctagon className="w-5 h-5 text-rose-400" />} 
                   color="red" 
                   subtext="System events" 
