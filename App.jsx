@@ -1773,7 +1773,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 />
                 <StatCard 
                   title="Security Alerts" 
-                  value={auditLogs.length} 
+                  value={displayedAuditLogs.length} 
                   icon={<AlertOctagon className="w-5 h-5 text-rose-400" />} 
                   color="red" 
                   subtext="System events" 
