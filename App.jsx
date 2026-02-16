@@ -11,7 +11,7 @@ import {
   Settings, 
   Bell, 
   Mail, 
-  Lock,
+  Lock, 
   Unlock, 
   Save, 
   Edit2, 
@@ -83,7 +83,8 @@ import {
   setDoc, 
   onSnapshot,
   addDoc,
-  where
+  where,
+  writeBatch
 } from "firebase/firestore";
 import { signInAnonymously, getAuth } from "firebase/auth";
 
@@ -1322,41 +1323,12 @@ function AdminDashboard({ onLogout, initialProfile }) {
   // --- REFRESH STATE ---
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // --- LOCAL HIDE STATES WITH PERSISTENCE (Safe Loading) ---
-  const [hiddenTxIds, setHiddenTxIds] = useState(() => {
-      try {
-          const saved = localStorage.getItem('hiddenTxIds');
-          return saved ? JSON.parse(saved) : [];
-      } catch (e) {
-          console.error("Storage error (tx)", e);
-          return [];
-      }
-  });
-  
-  const [hiddenAuditIds, setHiddenAuditIds] = useState(() => {
-      try {
-          const saved = localStorage.getItem('hiddenAuditIds');
-          return saved ? JSON.parse(saved) : [];
-      } catch (e) {
-          console.error("Storage error (audit)", e);
-          return [];
-      }
-  });
-
   // --- MACHINE DIAGNOSTICS STATE ---
   const [diagnosticMachine, setDiagnosticMachine] = useState(null);
 
   const handleManualRefresh = () => {
     setRefreshKey(prev => prev + 1);
   };
-
-  useEffect(() => {
-    localStorage.setItem('hiddenTxIds', JSON.stringify(hiddenTxIds));
-  }, [hiddenTxIds]);
-
-  useEffect(() => {
-    localStorage.setItem('hiddenAuditIds', JSON.stringify(hiddenAuditIds));
-  }, [hiddenAuditIds]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -1373,9 +1345,12 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }, (error) => console.error("Error doctors:", error));
 
     const rxRef = collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions');
-    // OPTIMIZATION: Increased limit to 100 to allow larger "server-side" batch for pagination
+    // FILTERING HIDDEN ITEMS AT SOURCE
     const unsubscribeRx = onSnapshot(query(rxRef, limit(100)), (snapshot) => {
-      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const list = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(t => !t.isHidden); // Filter out items marked as hidden in DB
+        
       list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       setTransactions(list);
       setLoading(false); 
@@ -1387,9 +1362,12 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }, (error) => console.error("Error machines:", error));
 
     const auditRef = collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs');
-    // OPTIMIZATION: Increased limit to 100
+    // FILTERING HIDDEN ITEMS AT SOURCE
     const unsubscribeAudit = onSnapshot(query(auditRef, limit(100)), (snapshot) => {
-      const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const logs = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(l => !l.isHidden); // Filter out items marked as hidden in DB
+        
       logs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
       setAuditLogs(logs); 
       setLoading(false);
@@ -1467,17 +1445,13 @@ function AdminDashboard({ onLogout, initialProfile }) {
   const handleRunDiagnostics = async (machine) => {
       const isOnline = machine.status === 'online';
       
-      // FIXED: Data Persistence & Mock Data Generation
-      // Check if this machine already has a recent diagnostic report saved in DB
       let report;
       if (machine.diagnosticReport && machine.diagnosticReport.timestamp > Date.now() - 3600000) {
-          // Use existing report if less than 1 hour old (simulating persistent state)
           report = machine.diagnosticReport;
       } else {
-          // Generate new report and SAVE IT TO DB so it persists
           report = {
               ...machine,
-              timestamp: Date.now(), // timestamp for validity check
+              timestamp: Date.now(), 
               cpuTemp: isOnline ? (35 + Math.random() * 15).toFixed(1) + '°C' : 'N/A', 
               printerPaper: isOnline ? Math.floor(Math.random() * 100) + '%' : 'Unknown',
               printerStatus: isOnline ? 'Ready' : 'Offline',
@@ -1496,7 +1470,6 @@ function AdminDashboard({ onLogout, initialProfile }) {
               recommendation: isOnline ? 'System functioning normally.' : 'Check power/network connection.'
           };
 
-          // Save to Firestore
           try {
              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machine.id), {
                  diagnosticReport: report
@@ -1587,30 +1560,42 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }
   };
 
-  // --- FIXED: Ensure unique IDs and cleaner handling for Hiding Items ---
-  const handleHideAuditLog = (id) => {
-     if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
-         setHiddenAuditIds(prev => [...new Set([...prev, id])]);
+  // --- NEW: Soft Delete / Hide Logic using Firestore ---
+  const handleHideAuditLog = async (id) => {
+     if(window.confirm("Are you sure you want to remove this record from your view?\n\nThis will hide it from the dashboard but keep the record in the database.")) {
+         try {
+             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'audit_logs', id), { isHidden: true });
+         } catch(e) { console.error("Failed to hide audit log:", e); }
      }
   };
 
-  const handleClearViewAudit = () => {
-     if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
-         const allIds = auditLogs.map(l => l.id);
-         setHiddenAuditIds(prev => [...new Set([...prev, ...allIds])]);
+  const handleClearViewAudit = async () => {
+     if(window.confirm("Are you sure you want to clear ALL visible records from this view?\n\nThis will hide them from the dashboard but keep records in the database.")) {
+         // Batch update is safer for multiple writes, but for simplicity here iterating
+         // Note: Firestore has limits on batch size (500), but limit(100) protects us here
+         for (const log of auditLogs) {
+             try {
+                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'audit_logs', log.id), { isHidden: true });
+             } catch(e) { console.error("Failed to hide:", e); }
+         }
      }
   };
 
-  const handleHideTransaction = (id) => {
-    if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
-        setHiddenTxIds(prev => [...new Set([...prev, id])]);
+  const handleHideTransaction = async (id) => {
+    if(window.confirm("Are you sure you want to remove this record from your view?\n\nThis will hide it from the dashboard but keep the record in the database.")) {
+        try {
+             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'prescriptions', id), { isHidden: true });
+         } catch(e) { console.error("Failed to hide transaction:", e); }
     }
   };
 
-  const handleClearViewTransactions = () => {
-    if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
-        const allIds = transactions.map(t => t.id);
-        setHiddenTxIds(prev => [...new Set([...prev, ...allIds])]);
+  const handleClearViewTransactions = async () => {
+    if(window.confirm("Are you sure you want to clear ALL visible records from this view?\n\nThis will hide them from the dashboard but keep records in the database.")) {
+        for (const tx of transactions) {
+             try {
+                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'prescriptions', tx.id), { isHidden: true });
+             } catch(e) { console.error("Failed to hide:", e); }
+         }
     }
   };
 
@@ -1645,14 +1630,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
   const activeMachines = machines.filter(m => m.status === 'online').length;
   const displayedDoctors = doctors.filter(d => filter === 'all' ? true : d.status === filter);
   
-  // --- FIXED: Memoize filtered lists to ensure strict updates across Dashboard and Views ---
-  const displayedTransactions = useMemo(() => 
-    transactions.filter(t => !hiddenTxIds.includes(t.id)),
-  [transactions, hiddenTxIds]);
-
-  const displayedAuditLogs = useMemo(() => 
-    auditLogs.filter(l => !hiddenAuditIds.includes(l.id)),
-  [auditLogs, hiddenAuditIds]);
+  // Since filtering happens at Fetch level now, we use state directly
+  const displayedTransactions = transactions;
+  const displayedAuditLogs = auditLogs;
 
   const feedItems = [
     ...displayedTransactions.map(t => ({ ...t, type: 'rx', sortTime: t.createdAt?.seconds || 0 })),
@@ -2038,7 +2018,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
 // ==========================================
 // 5. MAIN ENTRY POINT (MUST BE LAST)
 // ==========================================
-export default function SuperAdminApp() {
+export default function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [adminProfile, setAdminProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
