@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Users, 
@@ -11,7 +11,7 @@ import {
   Settings, 
   Bell, 
   Mail, 
-  Lock, 
+  Lock,
   Unlock, 
   Save, 
   Edit2, 
@@ -60,7 +60,7 @@ import {
   BarChart3,    
   Send,         
   MessageSquare,
-  Layers,        
+  Layers,       
   Zap,
   Megaphone,    
   AlertCircle,  
@@ -83,8 +83,7 @@ import {
   setDoc, 
   onSnapshot,
   addDoc,
-  where,
-  writeBatch
+  where
 } from "firebase/firestore";
 import { signInAnonymously, getAuth } from "firebase/auth";
 
@@ -515,7 +514,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onHide }) {
     const filteredTickets = displayTickets
         .filter(t => !hiddenTickets.includes(t.id))
         .filter(t => filter === 'all' ? true : t.status === filter);
-     
+    
     // Pagination Logic
     const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
     const currentData = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -547,19 +546,19 @@ function SupportView({ tickets, db, appId, isDarkMode, onHide }) {
                              {/* Mobile Menu for Actions */}
                             <div className="absolute top-0 right-0 md:hidden z-20">
                                 <MobileMenu isDarkMode={isDarkMode}>
-                                      {t.status === 'open' && (
-                                         <button onClick={() => handleStatusUpdate(t, 'in_progress')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-indigo-500 hover:bg-indigo-500/10">
-                                             Mark In Progress
-                                         </button>
-                                      )}
-                                      {t.status !== 'resolved' && (
-                                         <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-500 hover:bg-emerald-500/10">
-                                             Mark Resolved
-                                         </button>
-                                      )}
-                                      <button onClick={() => handleDeleteTicket(t.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10">
-                                          <Trash2 className="w-3.5 h-3.5"/> Delete Ticket
-                                      </button>
+                                     {t.status === 'open' && (
+                                        <button onClick={() => handleStatusUpdate(t, 'in_progress')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-indigo-500 hover:bg-indigo-500/10">
+                                            Mark In Progress
+                                        </button>
+                                     )}
+                                     {t.status !== 'resolved' && (
+                                        <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-500 hover:bg-emerald-500/10">
+                                            Mark Resolved
+                                        </button>
+                                     )}
+                                     <button onClick={() => handleDeleteTicket(t.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-500 hover:bg-rose-500/10">
+                                         <Trash2 className="w-3.5 h-3.5"/> Delete Ticket
+                                     </button>
                                 </MobileMenu>
                             </div>
 
@@ -888,20 +887,20 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
               <tbody className={`divide-y ${isDarkMode ? 'divide-white/5' : 'divide-gray-100'}`}>
                  {currentData.length === 0 ? <tr><td colSpan="6" className="p-4 text-center text-xs text-slate-500">No transactions recorded.</td></tr> : currentData.map(tx => (
                   <tr key={tx.id} className={`transition-colors ${isDarkMode ? 'hover:bg-white/5' : 'hover:bg-gray-50'}`}>
-                      <td className="px-5 py-3 font-mono text-xs text-slate-500">{tx.id}</td>
-                      <td className={`px-5 py-3 text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</td>
-                      <td className="px-5 py-3 text-sm text-slate-400">{tx.patient?.name}</td>
-                      <td className="px-5 py-3 text-sm font-bold text-emerald-500">₱{tx.grandTotal?.toFixed(2)}</td>
-                      <td className="px-5 py-3"><PrescriptionStatusBadge status={tx.status || 'issued'}/></td>
-                      <td className="px-5 py-3 text-center">
-                          <button 
-                              onClick={() => onHide(tx.id)} 
-                              className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'text-slate-500 hover:text-rose-400 hover:bg-rose-900/20' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}`} 
-                              title="Hide from list"
-                          >
-                              <Trash2 className="w-4 h-4" />
-                          </button>
-                      </td>
+                     <td className="px-5 py-3 font-mono text-xs text-slate-500">{tx.id}</td>
+                     <td className={`px-5 py-3 text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</td>
+                     <td className="px-5 py-3 text-sm text-slate-400">{tx.patient?.name}</td>
+                     <td className="px-5 py-3 text-sm font-bold text-emerald-500">₱{tx.grandTotal?.toFixed(2)}</td>
+                     <td className="px-5 py-3"><PrescriptionStatusBadge status={tx.status || 'issued'}/></td>
+                     <td className="px-5 py-3 text-center">
+                         <button 
+                             onClick={() => onHide(tx.id)} 
+                             className={`p-2 rounded-lg transition-colors ${isDarkMode ? 'text-slate-500 hover:text-rose-400 hover:bg-rose-900/20' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}`} 
+                             title="Hide from list"
+                         >
+                             <Trash2 className="w-4 h-4" />
+                         </button>
+                     </td>
                   </tr>
                  ))}
               </tbody>
@@ -1313,22 +1312,20 @@ function AdminDashboard({ onLogout, initialProfile }) {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending');
   const [currentTime, setCurrentTime] = useState(new Date());
-   
+  
   const [adminProfile, setAdminProfile] = useState(initialProfile);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
-  // --- REFRESH STATE ---
-  const [refreshKey, setRefreshKey] = useState(0);
+  // --- LOCAL HIDE STATES ---
+  const [hiddenTxIds, setHiddenTxIds] = useState([]);
+  const [hiddenAuditIds, setHiddenAuditIds] = useState([]);
 
   // --- MACHINE DIAGNOSTICS STATE ---
   const [diagnosticMachine, setDiagnosticMachine] = useState(null);
-
-  const handleManualRefresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -1345,12 +1342,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }, (error) => console.error("Error doctors:", error));
 
     const rxRef = collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions');
-    // FILTERING HIDDEN ITEMS AT SOURCE
-    const unsubscribeRx = onSnapshot(query(rxRef, limit(100)), (snapshot) => {
-      const list = snapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(t => !t.isHidden); // Filter out items marked as hidden in DB
-        
+    const unsubscribeRx = onSnapshot(query(rxRef, limit(30)), (snapshot) => {
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       setTransactions(list);
       setLoading(false); 
@@ -1362,12 +1355,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }, (error) => console.error("Error machines:", error));
 
     const auditRef = collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs');
-    // FILTERING HIDDEN ITEMS AT SOURCE
-    const unsubscribeAudit = onSnapshot(query(auditRef, limit(100)), (snapshot) => {
-      const logs = snapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(l => !l.isHidden); // Filter out items marked as hidden in DB
-        
+    const unsubscribeAudit = onSnapshot(query(auditRef, limit(20)), (snapshot) => {
+      const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       logs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
       setAuditLogs(logs); 
       setLoading(false);
@@ -1394,7 +1383,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
       unsubscribeMeds();
       unsubscribeSupport();
     };
-  }, [refreshKey]);
+  }, []);
 
   // --- ACTIONS ---
   const updateDoctorStatus = async (docId, newStatus) => {
@@ -1442,43 +1431,28 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }
   };
 
-  const handleRunDiagnostics = async (machine) => {
+  const handleRunDiagnostics = (machine) => {
       const isOnline = machine.status === 'online';
       
-      let report;
-      if (machine.diagnosticReport && machine.diagnosticReport.timestamp > Date.now() - 3600000) {
-          report = machine.diagnosticReport;
-      } else {
-          report = {
-              ...machine,
-              timestamp: Date.now(), 
-              cpuTemp: isOnline ? (35 + Math.random() * 15).toFixed(1) + '°C' : 'N/A', 
-              printerPaper: isOnline ? Math.floor(Math.random() * 100) + '%' : 'Unknown',
-              printerStatus: isOnline ? 'Ready' : 'Offline',
-              motorStatus: isOnline ? 'Optimal' : 'Offline',
-              scannerStatus: isOnline ? 'Active' : 'Not Detected',
-              
-              slots: (machine.slots || Array.from({ length: 10 }, (_, i) => ({
-                  id: i + 1,
-                  medicine: ['Biogesic', 'Neozep', 'Amoxicillin', 'Solmux', 'Bioflu', 'Alaxan', 'Decolgen', 'Tuseran', 'Diatabs', 'Kremil-S'][i],
-                  stock: Math.floor(Math.random() * 100),
-                  max: 100,
-                  status: Math.random() > 0.95 ? 'Jam' : 'OK'
-              }))).slice(0, 10),
-    
-              healthScore: isOnline ? '98%' : '0%',
-              recommendation: isOnline ? 'System functioning normally.' : 'Check power/network connection.'
-          };
+      const report = {
+          ...machine,
+          cpuTemp: isOnline ? (35 + Math.random() * 15).toFixed(1) + '°C' : 'N/A', 
+          printerPaper: isOnline ? Math.floor(Math.random() * 100) + '%' : 'Unknown',
+          printerStatus: isOnline ? 'Ready' : 'Offline',
+          motorStatus: isOnline ? 'Optimal' : 'Offline',
+          scannerStatus: isOnline ? 'Active' : 'Not Detected',
+          
+          slots: (machine.slots || Array.from({ length: 10 }, (_, i) => ({
+              id: i + 1,
+              medicine: ['Biogesic', 'Neozep', 'Amoxicillin', 'Solmux', 'Bioflu', 'Alaxan', 'Decolgen', 'Tuseran', 'Diatabs', 'Kremil-S'][i],
+              stock: Math.floor(Math.random() * 100),
+              max: 100,
+              status: Math.random() > 0.95 ? 'Jam' : 'OK'
+          }))).slice(0, 10),
 
-          try {
-             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machine.id), {
-                 diagnosticReport: report
-             }, { merge: true });
-          } catch (e) {
-             console.error("Failed to save diagnostic report:", e);
-          }
-      }
-
+          healthScore: isOnline ? '98%' : '0%',
+          recommendation: isOnline ? 'System functioning normally.' : 'Check power/network connection.'
+      };
       setDiagnosticMachine(report);
   };
 
@@ -1560,43 +1534,17 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }
   };
 
-  // --- NEW: Soft Delete / Hide Logic using Firestore ---
-  const handleHideAuditLog = async (id) => {
-     if(window.confirm("Are you sure you want to remove this record from your view?\n\nThis will hide it from the dashboard but keep the record in the database.")) {
-         try {
-             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'audit_logs', id), { isHidden: true });
-         } catch(e) { console.error("Failed to hide audit log:", e); }
+  const handleHideAuditLog = (id) => {
+     if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
+         setHiddenAuditIds(prev => [...prev, id]);
      }
   };
 
-  const handleClearViewAudit = async () => {
-     if(window.confirm("Are you sure you want to clear ALL visible records from this view?\n\nThis will hide them from the dashboard but keep records in the database.")) {
-         // Batch update is safer for multiple writes, but for simplicity here iterating
-         // Note: Firestore has limits on batch size (500), but limit(100) protects us here
-         for (const log of auditLogs) {
-             try {
-                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'audit_logs', log.id), { isHidden: true });
-             } catch(e) { console.error("Failed to hide:", e); }
-         }
+  const handleClearViewAudit = () => {
+     if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
+         const allIds = auditLogs.map(l => l.id);
+         setHiddenAuditIds(prev => [...prev, ...allIds]);
      }
-  };
-
-  const handleHideTransaction = async (id) => {
-    if(window.confirm("Are you sure you want to remove this record from your view?\n\nThis will hide it from the dashboard but keep the record in the database.")) {
-        try {
-             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'prescriptions', id), { isHidden: true });
-         } catch(e) { console.error("Failed to hide transaction:", e); }
-    }
-  };
-
-  const handleClearViewTransactions = async () => {
-    if(window.confirm("Are you sure you want to clear ALL visible records from this view?\n\nThis will hide them from the dashboard but keep records in the database.")) {
-        for (const tx of transactions) {
-             try {
-                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'prescriptions', tx.id), { isHidden: true });
-             } catch(e) { console.error("Failed to hide:", e); }
-         }
-    }
   };
 
   const handleSaveProfile = async () => {
@@ -1625,14 +1573,28 @@ function AdminDashboard({ onLogout, initialProfile }) {
     }
   };
 
+  const handleHideTransaction = (id) => {
+    if(window.confirm("Are you sure you want to remove this record from your view?\n\n⚠️ NOTE: This ONLY hides it from this list to reduce clutter. The record stays saved in the database.")) {
+        setHiddenTxIds(prev => [...prev, id]);
+    }
+  };
+
+  const handleClearViewTransactions = () => {
+    if(window.confirm("Are you sure you want to clear ALL records from this view?\n\n⚠️ NOTE: This acts as a 'Clear History' for your screen only. All records remain safe in the database.")) {
+        const allIds = transactions.map(t => t.id);
+        setHiddenTxIds(prev => [...prev, ...allIds]);
+    }
+  };
+
   const pendingDocs = doctors.filter(d => d.status === 'pending').length;
   const activeDocs = doctors.filter(d => d.status === 'active').length;
   const activeMachines = machines.filter(m => m.status === 'online').length;
+  const openTickets = supportTickets.filter(t => t.status === 'open').length;
+  const totalNotifications = pendingDocs + openTickets;
   const displayedDoctors = doctors.filter(d => filter === 'all' ? true : d.status === filter);
   
-  // Since filtering happens at Fetch level now, we use state directly
-  const displayedTransactions = transactions;
-  const displayedAuditLogs = auditLogs;
+  const displayedTransactions = transactions.filter(t => !hiddenTxIds.includes(t.id));
+  const displayedAuditLogs = auditLogs.filter(l => !hiddenAuditIds.includes(l.id));
 
   const feedItems = [
     ...displayedTransactions.map(t => ({ ...t, type: 'rx', sortTime: t.createdAt?.seconds || 0 })),
@@ -1676,7 +1638,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           
           <div className="px-3 mt-8 mb-2 text-[10px] font-extrabold uppercase tracking-widest opacity-70">Inventory & Support</div>
           <NavButton id="inventory" label="Master List" icon={<Package className="w-5 h-5" />} active={activeTab === 'inventory'} onClick={handleNavClick} isDarkMode={isDarkMode} />
-          <NavButton id="support" label="Support" icon={<LifeBuoy className="w-5 h-5" />} active={activeTab === 'support'} onClick={handleNavClick} isDarkMode={isDarkMode} />
+          <NavButton id="support" label="Support" icon={<LifeBuoy className="w-5 h-5" />} active={activeTab === 'support'} onClick={handleNavClick} badge={openTickets > 0 ? openTickets : null} isDarkMode={isDarkMode} />
 
           <div className="px-3 mt-8 mb-2 text-[10px] font-extrabold uppercase tracking-widest opacity-70">Compliance</div>
           <NavButton id="transactions" label="Logs" icon={<FileText className="w-5 h-5" />} active={activeTab === 'transactions'} onClick={handleNavClick} isDarkMode={isDarkMode} />
@@ -1708,14 +1670,6 @@ function AdminDashboard({ onLogout, initialProfile }) {
           </div>
           <div className="flex items-center gap-4">
             <button 
-              onClick={handleManualRefresh} 
-              className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-600 hover:text-slate-900'}`}
-              title="Refresh Data"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </button>
-
-            <button 
               onClick={() => setIsDarkMode(!isDarkMode)} 
               className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-600 hover:text-slate-900'}`}
               title="Toggle Theme"
@@ -1728,10 +1682,35 @@ function AdminDashboard({ onLogout, initialProfile }) {
               {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </div>
             
-            <button onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} className={`p-2 transition-colors relative rounded-full ${isDarkMode ? 'text-slate-400 hover:text-indigo-400 hover:bg-white/5' : 'text-slate-600 hover:text-indigo-600 hover:bg-gray-100'}`}>
-              <Bell className="w-5 h-5" />
-              {pendingDocs > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white/10"></span>}
-            </button>
+            <div className="relative">
+                <button onClick={() => setIsNotifOpen(!isNotifOpen)} className={`p-2 transition-colors relative rounded-full ${isDarkMode ? 'text-slate-400 hover:text-indigo-400 hover:bg-white/5' : 'text-slate-600 hover:text-indigo-600 hover:bg-gray-100'}`}>
+                  <Bell className="w-5 h-5" />
+                  {totalNotifications > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border border-white/10"></span>}
+                </button>
+                {isNotifOpen && (
+                    <>
+                       <div className="fixed inset-0 z-10" onClick={() => setIsNotifOpen(false)}></div>
+                       <div className={`absolute right-0 top-12 w-64 rounded-xl shadow-xl border z-20 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-100 ${isDarkMode ? 'bg-[#1e293b] border-white/10' : 'bg-white border-gray-200'}`}>
+                           <div className={`p-3 border-b font-bold text-sm ${isDarkMode ? 'border-white/10 text-white' : 'border-gray-100 text-slate-900'}`}>Notifications</div>
+                           {pendingDocs > 0 && (
+                               <button onClick={() => { setActiveTab('doctors'); setFilter('pending'); setIsNotifOpen(false); }} className={`p-3 text-left text-sm flex items-center justify-between transition-colors ${isDarkMode ? 'hover:bg-white/5 text-slate-300' : 'hover:bg-gray-50 text-slate-700'}`}>
+                                   <div className="flex items-center gap-2"><Users className="w-4 h-4 text-amber-500"/> Pending Doctors</div>
+                                   <span className="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">{pendingDocs}</span>
+                               </button>
+                           )}
+                           {openTickets > 0 && (
+                               <button onClick={() => { setActiveTab('support'); setIsNotifOpen(false); }} className={`p-3 text-left text-sm flex items-center justify-between transition-colors ${isDarkMode ? 'hover:bg-white/5 text-slate-300' : 'hover:bg-gray-50 text-slate-700'} ${pendingDocs > 0 ? (isDarkMode ? 'border-t border-white/5' : 'border-t border-gray-100') : ''}`}>
+                                   <div className="flex items-center gap-2"><LifeBuoy className="w-4 h-4 text-rose-500"/> Open Tickets</div>
+                                   <span className="bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full">{openTickets}</span>
+                               </button>
+                           )}
+                           {totalNotifications === 0 && (
+                               <div className={`p-4 text-center text-sm italic ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>No new notifications</div>
+                           )}
+                       </div>
+                    </>
+                )}
+            </div>
 
             <div 
               onClick={() => setActiveTab('settings')}
@@ -1776,9 +1755,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   isDarkMode={isDarkMode}
                 />
                 <StatCard 
-                  key={`audit-${displayedAuditLogs.length}`} // Force update if length changes
                   title="Security Alerts" 
-                  value={displayedAuditLogs.length} 
+                  value={auditLogs.length} 
                   icon={<AlertOctagon className="w-5 h-5 text-rose-400" />} 
                   color="red" 
                   subtext="System events" 
@@ -1881,10 +1859,10 @@ function AdminDashboard({ onLogout, initialProfile }) {
                                 <div className="flex items-center gap-3">
                                    <div>
                                        <p className={`font-bold text-xs ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-                                            {item.type === 'rx' ? 'Prescription Issued' : item.action}
+                                           {item.type === 'rx' ? 'Prescription Issued' : item.action}
                                        </p>
                                        <p className="text-xs text-slate-400">
-                                            {item.type === 'rx' ? `Dr. ${item.doctorName}` : item.details}
+                                           {item.type === 'rx' ? `Dr. ${item.doctorName}` : item.details}
                                        </p>
                                    </div>
                                 </div>
@@ -1899,7 +1877,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
               </div>
             </div>
           )}
-          {activeTab === 'doctors' && <DoctorsView doctors={displayedDoctors} filter={filter} setFilter={setFilter} onRefresh={handleManualRefresh} onUpdateStatus={updateDoctorStatus} onUpdatePassword={handleDoctorPasswordUpdate} onDelete={handleDeleteDoctor} loading={loading} isDarkMode={isDarkMode} />}
+          {activeTab === 'doctors' && <DoctorsView doctors={displayedDoctors} filter={filter} setFilter={setFilter} onRefresh={()=>{}} onUpdateStatus={updateDoctorStatus} onUpdatePassword={handleDoctorPasswordUpdate} onDelete={handleDeleteDoctor} loading={loading} isDarkMode={isDarkMode} />}
           {activeTab === 'machines' && <MachinesView machines={machines} onPing={handlePingMachine} onRunDiagnostics={handleRunDiagnostics} onReboot={handleRebootMachine} onLock={handleLockMachine} onDelete={handleDeleteMachine} isDarkMode={isDarkMode} />}
           {activeTab === 'inventory' && <InventoryView medicines={medicines} db={db} appId={appId} isDarkMode={isDarkMode} />}
           {activeTab === 'support' && <SupportView tickets={supportTickets} db={db} appId={appId} isDarkMode={isDarkMode} />}
@@ -1940,8 +1918,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
                                    <button onClick={() => handlePingMachine(diagnosticMachine.id)} className={`flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-colors ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-700'}`}><Activity size={14}/> Ping</button>
                                    <button onClick={() => handleRebootMachine(diagnosticMachine.id)} className={`flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-colors ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-700'}`}><Power size={14}/> Reboot</button>
                                    <button onClick={() => handleLockMachine(diagnosticMachine.id, diagnosticMachine.status)} className={`col-span-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold transition-colors ${diagnosticMachine.status === 'locked' ? 'bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30' : 'bg-rose-500/20 text-rose-500 hover:bg-rose-500/30'}`}>
-                                        {diagnosticMachine.status === 'locked' ? <Unlock size={14}/> : <Lock size={14}/>} 
-                                        {diagnosticMachine.status === 'locked' ? 'Unlock Kiosk' : 'Lock / Disable'}
+                                       {diagnosticMachine.status === 'locked' ? <Unlock size={14}/> : <Lock size={14}/>} 
+                                       {diagnosticMachine.status === 'locked' ? 'Unlock Kiosk' : 'Lock / Disable'}
                                    </button>
                                </div>
                            </div>
@@ -1969,7 +1947,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                                </div>
                            </div>
                        </div>
-                       
+
                        {/* 10-Slot Real-Time Inventory */}
                        <div>
                            <div className="flex justify-between items-center mb-3">
@@ -1986,11 +1964,11 @@ function AdminDashboard({ onLogout, initialProfile }) {
                                        <p className={`text-xs font-bold truncate relative z-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{slot.medicine}</p>
                                        <div className="mt-2 relative z-10">
                                            <div className="flex justify-between text-[10px] mb-0.5">
-                                                <span className="text-slate-400">Lvl</span>
-                                                <span className={slot.stock < 20 ? "text-rose-500 font-bold" : "text-emerald-500 font-bold"}>{slot.stock}%</span>
+                                               <span className="text-slate-400">Lvl</span>
+                                               <span className={slot.stock < 20 ? "text-rose-500 font-bold" : "text-emerald-500 font-bold"}>{slot.stock}%</span>
                                            </div>
                                            <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDarkMode ? 'bg-black/40' : 'bg-gray-200'}`}>
-                                                <div className={`h-full rounded-full ${slot.stock < 20 ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{width: `${slot.stock}%`}}></div>
+                                               <div className={`h-full rounded-full ${slot.stock < 20 ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{width: `${slot.stock}%`}}></div>
                                            </div>
                                        </div>
                                    </div>
@@ -2018,7 +1996,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
 // ==========================================
 // 5. MAIN ENTRY POINT (MUST BE LAST)
 // ==========================================
-export default function App() {
+export default function SuperAdminApp() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [adminProfile, setAdminProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
