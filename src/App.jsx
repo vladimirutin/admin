@@ -1471,7 +1471,7 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
 
   return (
     <div className={`w-full max-w-4xl mx-auto rounded-2xl border overflow-hidden flex flex-col md:flex-row animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
-      <div className={`md:w-56 border-r p-4 flex-shrink-0 ${isDarkMode ? 'bg-black/20 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
+      <div className={`hidden md:block md:w-56 border-r p-4 flex-shrink-0 ${isDarkMode ? 'bg-black/20 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
         <p className={`font-display font-bold text-xs uppercase tracking-widest mb-4 px-3 ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>Settings</p>
         <nav className="space-y-1">
           {settingTabs.map(tab => (
@@ -1487,8 +1487,6 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
           ))}
         </nav>
       </div>
-
-      <div className="hidden md:block"></div>
 
       {/* Mobile tabs */}
       <div className={`md:hidden w-full border-b ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
@@ -2469,7 +2467,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
               </div>
 
               <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <div className={`flex-1 text-center p-5 rounded-2xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
                     <div className={`text-5xl font-display font-black mb-1 ${diagnosticMachine.status === 'online' ? 'text-emerald-400' : 'text-rose-400'}`}>{diagnosticMachine.healthScore}</div>
                     <p className="text-[11px] text-slate-500 uppercase tracking-widest font-bold">Health Score</p>
