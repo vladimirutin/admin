@@ -491,8 +491,22 @@ function PaginationFooter({ currentPage, totalPages, onPageChange, isDarkMode })
 
 function MobileMenu({ children, isDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       <button 
         onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} 
         className={`p-2 rounded-lg transition-all duration-200 ${isDarkMode ? 'text-slate-500 hover:bg-white/10 hover:text-slate-200' : 'text-slate-400 hover:bg-gray-100 hover:text-slate-600'}`}
@@ -500,12 +514,9 @@ function MobileMenu({ children, isDarkMode }) {
         <MoreHorizontal className="w-4 h-4"/>
       </button>
       {isOpen && (
-        <>
-          <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}></div>
-          <div className={`absolute right-0 top-10 w-52 rounded-2xl shadow-2xl border z-20 flex flex-col p-2 gap-0.5 animate-scale-in glass ${isDarkMode ? 'bg-[#1a2234] border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}>
-            {children}
-          </div>
-        </>
+        <div className={`absolute right-0 top-10 w-48 rounded-2xl shadow-2xl border z-[100] flex flex-col p-2 gap-0.5 animate-scale-in glass ${isDarkMode ? 'bg-[#1a2234] border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}>
+          {children}
+        </div>
       )}
     </div>
   );
@@ -757,8 +768,9 @@ function TopPrescribedChart({ transactions, isDarkMode }) {
 // ==========================================
 
 function TableContainer({ children, isDarkMode, className = '' }) {
+  // Removed overflow-hidden from this wrapper to prevent mobile dropdown clipping!
   return (
-    <div className={`rounded-2xl border overflow-hidden animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'} ${className}`}>
+    <div className={`rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'} ${className}`}>
       {children}
     </div>
   );
@@ -867,7 +879,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
                 </MobileMenu>
               </div>
               <div>
-                <p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.name}</p>
+                <p className={`font-bold text-sm pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.name}</p>
                 <p className="text-xs text-slate-500 italic">{m.generic}</p>
               </div>
               <div className="flex gap-4">
@@ -879,7 +891,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
         </div>
 
         {/* Desktop */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto rounded-b-2xl">
           <table className="w-full text-left text-sm">
             <TableHeader isDarkMode={isDarkMode}>
               <tr><th className="px-6 py-3.5">Medicine</th><th className="px-6 py-3.5">Generic</th><th className="px-6 py-3.5">Stock</th><th className="px-6 py-3.5">Price</th><th className="px-6 py-3.5 text-right">Action</th></tr>
@@ -944,7 +956,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Support Ticketing</h3>
-              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Manage doctor issues and kiosk alerts</p>
+              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Manage doctor issues and alerts</p>
             </div>
             <div className={`flex p-1 rounded-xl gap-1 ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
               {filterTabs.map(f => (
@@ -1093,7 +1105,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-sm ${isDarkMode ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{doc.name?.charAt(0) || '?'}</div>
                 <div>
-                  <p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{doc.name}</p>
+                  <p className={`font-bold text-sm pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{doc.name}</p>
                   <p className="text-xs text-slate-500">{doc.email}</p>
                 </div>
               </div>
@@ -1106,7 +1118,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
         </div>
 
         {/* Desktop */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto rounded-b-2xl">
           <table className="w-full text-left">
             <TableHeader isDarkMode={isDarkMode}>
               <tr><th className="px-6 py-4">Physician</th><th className="px-6 py-4">License</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Actions</th></tr>
@@ -1260,7 +1272,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
                 </MobileMenu>
               </div>
               <div>
-                <p className={`font-bold text-sm font-mono ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.id}</p>
+                <p className={`font-bold text-sm font-mono pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.id}</p>
                 <p className="text-xs text-slate-500 mt-0.5">{m.location}</p>
               </div>
               <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border w-fit ${sc.cls}`}>
@@ -1272,7 +1284,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
       </div>
 
       {/* Desktop */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto rounded-b-2xl">
         <table className="w-full text-left text-sm">
           <TableHeader isDarkMode={isDarkMode}>
             <tr><th className="px-6 py-4">Kiosk ID</th><th className="px-6 py-4">Location</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Controls</th></tr>
@@ -1344,13 +1356,13 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
             <div className="absolute top-4 right-4 z-20">
               <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(tx.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
             </div>
-            <div><p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</p><p className="text-xs text-slate-500">{tx.patient?.name}</p><p className="text-[10px] font-mono text-slate-600 mt-1">{tx.id}</p></div>
+            <div><p className={`font-bold text-sm pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</p><p className="text-xs text-slate-500">{tx.patient?.name}</p><p className="text-[10px] font-mono text-slate-600 mt-1">{tx.id}</p></div>
             <div className="flex gap-3 items-center"><span className="font-bold text-emerald-400 font-mono">₱{tx.grandTotal?.toFixed(2)}</span><PrescriptionStatusBadge status={tx.status || 'issued'}/></div>
           </div>
         ))}
       </div>
 
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto rounded-b-2xl">
         <table className="w-full text-left">
           <TableHeader isDarkMode={isDarkMode}>
             <tr><th className="px-6 py-4">Rx ID</th><th className="px-6 py-4">Doctor</th><th className="px-6 py-4">Patient</th><th className="px-6 py-4">Value</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-center">Action</th></tr>
@@ -1402,14 +1414,14 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
             <div className="absolute top-4 right-4 z-20">
               <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(log.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
             </div>
-            <p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{log.action}</p>
+            <p className={`font-bold text-sm pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{log.action}</p>
             <p className="text-xs text-slate-400">{log.details}</p>
             <p className="text-[10px] font-mono text-slate-600">{log.time} · {log.user}</p>
           </div>
         ))}
       </div>
 
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto rounded-b-2xl">
         <table className="w-full text-left text-sm">
           <TableHeader isDarkMode={isDarkMode}>
             <tr><th className="px-6 py-4">Action</th><th className="px-6 py-4">Details</th><th className="px-6 py-4">User</th><th className="px-6 py-4 text-right">Timestamp</th><th className="px-6 py-4 text-center">Action</th></tr>
@@ -1617,7 +1629,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutTimer, setLockoutTimer] = useState(0);
-  const [step, setStep] = useState(0); // animation step
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     setTimeout(() => setStep(1), 100);
@@ -2299,11 +2311,11 @@ function AdminDashboard({ onLogout, initialProfile }) {
             <div className="space-y-6 max-w-7xl mx-auto">
               
               {/* Stat cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { title: 'Pending Approvals', value: pendingDocs, icon: <Users className="w-5 h-5" />, color: 'amber', subtext: 'Needs attention', onClick: () => { setActiveTab('doctors'); setFilter('pending'); } },
-                  { title: 'Active Kiosks', value: `${activeMachines}/${machines.length}`, icon: <Server className="w-5 h-5" />, color: 'emerald', subtext: 'Network status', onClick: () => setActiveTab('machines') },
-                  { title: 'Master Inventory', value: medicines.length, icon: <Package className="w-5 h-5" />, color: 'blue', subtext: 'Medicine SKUs', onClick: () => setActiveTab('inventory') },
+                  { title: 'All Doctors', value: doctors.length, icon: <Stethoscope className="w-5 h-5" />, color: 'blue', subtext: 'Registered network', onClick: () => setActiveTab('doctors') },
+                  { title: 'Master Inventory', value: medicines.length, icon: <Package className="w-5 h-5" />, color: 'emerald', subtext: 'Medicine SKUs', onClick: () => setActiveTab('inventory') },
                   { title: 'Security Events', value: displayedAuditLogs.length, icon: <AlertOctagon className="w-5 h-5" />, color: 'red', subtext: 'System events', onClick: () => setActiveTab('audit') },
                 ].map((card, i) => (
                   <div key={i} className="animate-slide-up" style={{ animationDelay: `${i * 0.07}s`, animationFillMode: 'both', opacity: 0 }}>
@@ -2317,23 +2329,24 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <h3 className={`font-display font-bold text-lg ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Network Health</h3>
-                    <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{transactions.length} total prescriptions</p>
+                    <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{transactions.length} total prescriptions processed</p>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                     <PulseDot color="emerald" />
-                    <span className="text-xs font-bold text-emerald-400">All Systems Operational</span>
+                    <span className="text-xs font-bold text-emerald-400 hidden sm:block">Systems Operational</span>
+                    <span className="text-xs font-bold text-emerald-400 sm:hidden">OK</span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <p className={`text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                      <Server className="w-3.5 h-3.5 text-emerald-400"/> Kiosk Connectivity
+                      <Users className="w-3.5 h-3.5 text-blue-400"/> Provider Status
                     </p>
                     <div className="space-y-4">
                       {[
-                        { label: `Online (${activeMachines})`, pct: machines.length > 0 ? (activeMachines / machines.length) * 100 : 0, color: 'from-emerald-500 to-teal-400', textColor: 'text-emerald-400' },
-                        { label: `Offline (${machines.length - activeMachines})`, pct: machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0, color: 'from-slate-500 to-slate-600', textColor: 'text-slate-400' },
+                        { label: `Active Physicians (${activeDocs})`, pct: doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0, color: 'from-blue-500 to-cyan-400', textColor: 'text-blue-400' },
+                        { label: `Pending Review (${pendingDocs})`, pct: doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0, color: 'from-amber-500 to-orange-400', textColor: 'text-amber-400' },
                       ].map((bar, i) => (
                         <div key={i}>
                           <div className="flex justify-between text-xs mb-2">
@@ -2349,12 +2362,12 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   </div>
                   <div>
                     <p className={`text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                      <Users className="w-3.5 h-3.5 text-blue-400"/> Provider Status
+                      <Server className="w-3.5 h-3.5 text-emerald-400"/> Kiosk Connectivity
                     </p>
                     <div className="space-y-4">
                       {[
-                        { label: `Active Physicians (${activeDocs})`, pct: doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0, color: 'from-blue-500 to-cyan-400', textColor: 'text-blue-400' },
-                        { label: `Pending Review (${pendingDocs})`, pct: doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0, color: 'from-amber-500 to-orange-400', textColor: 'text-amber-400' },
+                        { label: `Online (${activeMachines})`, pct: machines.length > 0 ? (activeMachines / machines.length) * 100 : 0, color: 'from-emerald-500 to-teal-400', textColor: 'text-emerald-400' },
+                        { label: `Offline (${machines.length - activeMachines})`, pct: machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0, color: 'from-slate-500 to-slate-600', textColor: 'text-slate-400' },
                       ].map((bar, i) => (
                         <div key={i}>
                           <div className="flex justify-between text-xs mb-2">
@@ -2410,15 +2423,15 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   ) : feedItems.map((item, idx) => (
                     <div key={item.id + idx} className={`py-3 pl-10 pr-3 relative flex justify-between items-center rounded-xl transition-colors cursor-default ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                       <div className={`absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 border-2 rounded-full z-10 ${item._type === 'rx' ? 'bg-[#060b18] border-blue-500' : 'bg-[#060b18] border-amber-500'}`}></div>
-                      <div>
-                        <p className={`font-semibold text-xs ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                      <div className="min-w-0 pr-4">
+                        <p className={`font-semibold text-xs truncate ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                           {item._type === 'rx' ? 'Prescription Issued' : item.action}
                         </p>
-                        <p className={`text-[11px] mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                        <p className={`text-[11px] mt-0.5 truncate ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
                           {item._type === 'rx' ? `Dr. ${item.doctorName} · ${item.patient?.name}` : item.details}
                         </p>
                       </div>
-                      <span className={`text-[10px] font-mono ml-4 flex-shrink-0 ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                      <span className={`text-[10px] font-mono flex-shrink-0 ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
                         {item._type === 'rx' ? item.date : item.time}
                       </span>
                     </div>
@@ -2476,52 +2489,6 @@ function AdminDashboard({ onLogout, initialProfile }) {
                         {diagnosticMachine.status === 'locked' ? <><Unlock size={14}/> Unlock</> : <><Lock size={14}/> Lock Kiosk</>}
                       </button>
                     </div>
-                  </div>
-                </div>
-
-                {/* Hardware sensors */}
-                <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Hardware Sensors</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[
-                      { icon: <Thermometer className="w-4 h-4 text-rose-400"/>, label: 'CPU Temp', value: diagnosticMachine.cpuTemp },
-                      { icon: <Printer className="w-4 h-4 text-blue-400"/>, label: 'Paper Level', value: diagnosticMachine.printerPaper },
-                      { icon: <Zap className="w-4 h-4 text-amber-400"/>, label: 'Motor', value: diagnosticMachine.motorStatus },
-                      { icon: <Scan className="w-4 h-4 text-purple-400"/>, label: 'Scanner', value: diagnosticMachine.scannerStatus },
-                    ].map((sensor, i) => (
-                      <div key={i} className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
-                        <div className="flex items-center gap-2 mb-2">{sensor.icon}<span className={`text-[10px] font-bold uppercase tracking-wide ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{sensor.label}</span></div>
-                        <p className={`text-sm font-mono font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{sensor.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Slot inventory */}
-                <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2"><Layers className="w-3.5 h-3.5"/> Dispensing Slots</p>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                    {diagnosticMachine.slots?.map(slot => (
-                      <div key={slot.id} className={`p-2.5 rounded-xl border relative overflow-hidden ${slot.status === 'Jam' ? 'border-rose-500/40 bg-rose-500/8' : isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className={`text-[9px] font-bold ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>#{slot.id}</span>
-                          {slot.status === 'Jam' && <AlertTriangle className="w-3 h-3 text-rose-400"/>}
-                        </div>
-                        <p className={`text-[10px] font-bold truncate mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{slot.medicine}</p>
-                        <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDarkMode ? 'bg-black/40' : 'bg-gray-200'}`}>
-                          <div className={`h-full rounded-full progress-bar ${slot.stock < 20 ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{ width: `${slot.stock}%` }}></div>
-                        </div>
-                        <p className={`text-[9px] font-mono mt-1 ${slot.stock < 20 ? 'text-rose-400' : 'text-emerald-400'}`}>{slot.stock}%</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={`p-4 rounded-2xl border flex items-start gap-3 ${diagnosticMachine.status === 'online' ? 'bg-emerald-500/8 border-emerald-500/20' : 'bg-rose-500/8 border-rose-500/20'}`}>
-                  <BrainCircuit className={`w-4 h-4 mt-0.5 flex-shrink-0 ${diagnosticMachine.status === 'online' ? 'text-emerald-400' : 'text-rose-400'}`} />
-                  <div>
-                    <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${diagnosticMachine.status === 'online' ? 'text-emerald-400' : 'text-rose-400'}`}>AI Recommendation</p>
-                    <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{diagnosticMachine.recommendation}</p>
                   </div>
                 </div>
               </div>
