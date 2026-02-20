@@ -2309,7 +2309,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
             <div className="space-y-6 max-w-7xl mx-auto">
               
               {/* Stat cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { title: 'Pending Approvals', value: pendingDocs, icon: <Users className="w-5 h-5" />, color: 'amber', subtext: 'Needs attention', onClick: () => { setActiveTab('doctors'); setFilter('pending'); } },
                   { title: 'All Doctors', value: doctors.length, icon: <Stethoscope className="w-5 h-5" />, color: 'blue', subtext: 'Registered network', onClick: () => setActiveTab('doctors') },
@@ -2327,24 +2327,23 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <h3 className={`font-display font-bold text-lg ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Network Health</h3>
-                    <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{transactions.length} total prescriptions processed</p>
+                    <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{transactions.length} total prescriptions</p>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                     <PulseDot color="emerald" />
-                    <span className="text-xs font-bold text-emerald-400 hidden sm:block">Systems Operational</span>
-                    <span className="text-xs font-bold text-emerald-400 sm:hidden">OK</span>
+                    <span className="text-xs font-bold text-emerald-400">All Systems Operational</span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <p className={`text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                      <Users className="w-3.5 h-3.5 text-blue-400"/> Provider Status
+                      <Server className="w-3.5 h-3.5 text-emerald-400"/> System Connectivity
                     </p>
                     <div className="space-y-4">
                       {[
-                        { label: `Active Physicians (${activeDocs})`, pct: doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0, color: 'from-blue-500 to-cyan-400', textColor: 'text-blue-400' },
-                        { label: `Pending Review (${pendingDocs})`, pct: doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0, color: 'from-amber-500 to-orange-400', textColor: 'text-amber-400' },
+                        { label: `Online (${activeMachines})`, pct: machines.length > 0 ? (activeMachines / machines.length) * 100 : 0, color: 'from-emerald-500 to-teal-400', textColor: 'text-emerald-400' },
+                        { label: `Offline (${machines.length - activeMachines})`, pct: machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0, color: 'from-slate-500 to-slate-600', textColor: 'text-slate-400' },
                       ].map((bar, i) => (
                         <div key={i}>
                           <div className="flex justify-between text-xs mb-2">
@@ -2360,12 +2359,12 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   </div>
                   <div>
                     <p className={`text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                      <Server className="w-3.5 h-3.5 text-emerald-400"/> Kiosk Connectivity
+                      <Users className="w-3.5 h-3.5 text-blue-400"/> Provider Status
                     </p>
                     <div className="space-y-4">
                       {[
-                        { label: `Online (${activeMachines})`, pct: machines.length > 0 ? (activeMachines / machines.length) * 100 : 0, color: 'from-emerald-500 to-teal-400', textColor: 'text-emerald-400' },
-                        { label: `Offline (${machines.length - activeMachines})`, pct: machines.length > 0 ? ((machines.length - activeMachines) / machines.length) * 100 : 0, color: 'from-slate-500 to-slate-600', textColor: 'text-slate-400' },
+                        { label: `Active Physicians (${activeDocs})`, pct: doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0, color: 'from-blue-500 to-cyan-400', textColor: 'text-blue-400' },
+                        { label: `Pending Review (${pendingDocs})`, pct: doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0, color: 'from-amber-500 to-orange-400', textColor: 'text-amber-400' },
                       ].map((bar, i) => (
                         <div key={i}>
                           <div className="flex justify-between text-xs mb-2">
@@ -2421,15 +2420,15 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   ) : feedItems.map((item, idx) => (
                     <div key={item.id + idx} className={`py-3 pl-10 pr-3 relative flex justify-between items-center rounded-xl transition-colors cursor-default ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                       <div className={`absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 border-2 rounded-full z-10 ${item._type === 'rx' ? 'bg-[#060b18] border-blue-500' : 'bg-[#060b18] border-amber-500'}`}></div>
-                      <div className="min-w-0 pr-4">
-                        <p className={`font-semibold text-xs truncate ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                      <div>
+                        <p className={`font-semibold text-xs ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                           {item._type === 'rx' ? 'Prescription Issued' : item.action}
                         </p>
-                        <p className={`text-[11px] mt-0.5 truncate ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                        <p className={`text-[11px] mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
                           {item._type === 'rx' ? `Dr. ${item.doctorName} · ${item.patient?.name}` : item.details}
                         </p>
                       </div>
-                      <span className={`text-[10px] font-mono flex-shrink-0 ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                      <span className={`text-[10px] font-mono ml-4 flex-shrink-0 ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
                         {item._type === 'rx' ? item.date : item.time}
                       </span>
                     </div>
