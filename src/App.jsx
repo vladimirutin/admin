@@ -489,6 +489,9 @@ function PaginationFooter({ currentPage, totalPages, onPageChange, isDarkMode })
   );
 }
 
+// ==========================================
+// FIXED MOBILE MENU (BOTTOM SHEET)
+// ==========================================
 function MobileMenu({ children, isDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -501,8 +504,19 @@ function MobileMenu({ children, isDarkMode }) {
       </button>
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}></div>
-          <div className={`absolute right-0 top-10 w-52 rounded-2xl shadow-2xl border z-20 flex flex-col p-2 gap-0.5 animate-scale-in glass ${isDarkMode ? 'bg-[#1a2234] border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}>
+          {/* Fixed overlay to catch outside clicks and add background dimming */}
+          <div 
+            className="fixed inset-0 z-[100] bg-black/30 backdrop-blur-sm transition-opacity" 
+            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+          ></div>
+          {/* Bottom Sheet positioning to completely avoid overflow clipping issues */}
+          <div 
+            className={`fixed bottom-0 left-0 right-0 z-[110] rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] border-t p-5 pb-8 flex flex-col gap-1.5 animate-slide-up glass ${isDarkMode ? 'bg-[#0f1829] border-white/10' : 'bg-white border-gray-100'}`}
+            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+          >
+            {/* Drag Handle Indicator */}
+            <div className={`w-12 h-1.5 rounded-full mx-auto mb-4 ${isDarkMode ? 'bg-white/20' : 'bg-slate-300'}`}></div>
+            {/* Actions */}
             {children}
           </div>
         </>
