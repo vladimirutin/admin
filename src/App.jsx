@@ -461,7 +461,7 @@ function ActionButton({ onClick, label, icon, variant, isDarkMode }) {
 function PaginationFooter({ currentPage, totalPages, onPageChange, isDarkMode }) {
   if (totalPages <= 1) return null;
   return (
-    <div className={`flex justify-between items-center px-6 py-4 border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+    <div className={`flex justify-between items-center px-6 py-4 border-t rounded-b-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
       <span className={`font-mono text-[11px] ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
         PAGE <span className="text-indigo-400">{currentPage}</span> / {totalPages}
       </span>
@@ -490,33 +490,40 @@ function PaginationFooter({ currentPage, totalPages, onPageChange, isDarkMode })
 }
 
 // ==========================================
-// FIXED MOBILE MENU (BOTTOM SHEET)
+// DYNAMIC POPUP MOBILE MENU (NO CLIPPING)
 // ==========================================
 function MobileMenu({ children, isDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState('top-10 mt-1');
+  const btnRef = useRef(null);
+
+  const toggleMenu = (e) => {
+    e.stopPropagation();
+    if (!isOpen && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      // If the button is close to the bottom of the viewport, flip the menu upwards
+      if (window.innerHeight - rect.bottom < 220) {
+        setMenuPos('bottom-10 mb-1');
+      } else {
+        setMenuPos('top-10 mt-1');
+      }
+    }
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div className="relative">
       <button 
-        onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} 
+        ref={btnRef}
+        onClick={toggleMenu} 
         className={`p-2 rounded-lg transition-all duration-200 ${isDarkMode ? 'text-slate-500 hover:bg-white/10 hover:text-slate-200' : 'text-slate-400 hover:bg-gray-100 hover:text-slate-600'}`}
       >
         <MoreHorizontal className="w-4 h-4"/>
       </button>
       {isOpen && (
         <>
-          {/* Fixed overlay to catch outside clicks and add background dimming */}
-          <div 
-            className="fixed inset-0 z-[100] bg-black/30 backdrop-blur-sm transition-opacity" 
-            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
-          ></div>
-          {/* Bottom Sheet positioning to completely avoid overflow clipping issues */}
-          <div 
-            className={`fixed bottom-0 left-0 right-0 z-[110] rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] border-t p-5 pb-8 flex flex-col gap-1.5 animate-slide-up glass ${isDarkMode ? 'bg-[#0f1829] border-white/10' : 'bg-white border-gray-100'}`}
-            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
-          >
-            {/* Drag Handle Indicator */}
-            <div className={`w-12 h-1.5 rounded-full mx-auto mb-4 ${isDarkMode ? 'bg-white/20' : 'bg-slate-300'}`}></div>
-            {/* Actions */}
+          <div className="fixed inset-0 z-[100]" onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}></div>
+          <div className={`absolute right-0 ${menuPos} w-52 rounded-2xl shadow-2xl border z-[110] flex flex-col p-2 gap-0.5 animate-scale-in glass ${isDarkMode ? 'bg-[#1a2234]/95 border-white/10' : 'bg-white/95 border-gray-100 shadow-xl'}`}>
             {children}
           </div>
         </>
@@ -771,8 +778,9 @@ function TopPrescribedChart({ transactions, isDarkMode }) {
 // ==========================================
 
 function TableContainer({ children, isDarkMode, className = '' }) {
+  // Removed overflow-hidden so dropdowns never get clipped, added pure border rounding
   return (
-    <div className={`rounded-2xl border overflow-hidden animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'} ${className}`}>
+    <div className={`rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'} ${className}`}>
       {children}
     </div>
   );
@@ -826,7 +834,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
       <ConfirmationModal isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={confirmDelete} title="Remove Medicine?" message="This medicine will be removed from the Master Database across all doctors." confirmText="Remove" type="danger" isDarkMode={isDarkMode} />
       
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-        <div className={`p-5 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+        <div className={`p-5 border-b rounded-t-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div>
             <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Master Medicine Database</h3>
             <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{medicines.length} medicines · Updates push to all doctors</p>
@@ -872,7 +880,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
               <p className="text-xs text-slate-500 italic">No medicines found</p>
             </div>
           ) : currentData.map(m => (
-            <div key={m.id} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+            <div key={m.id} className={`p-4 relative flex flex-col gap-2 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
                   <button onClick={() => setDeleteId(m.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl">
@@ -954,7 +962,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
       <ConfirmationModal isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={confirmDelete} title="Delete Ticket?" message="This support ticket will be permanently deleted." confirmText="Delete" type="danger" isDarkMode={isDarkMode} />
       
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-        <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+        <div className={`p-5 border-b rounded-t-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Support Ticketing</h3>
@@ -982,7 +990,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
               <p className="text-xs text-slate-500 italic">No tickets found</p>
             </div>
           ) : currentData.map(t => (
-            <div key={t.id} className={`p-4 md:p-5 flex flex-col md:flex-row justify-between items-start gap-4 transition-colors ${
+            <div key={t.id} className={`p-4 md:p-5 relative flex flex-col md:flex-row justify-between items-start gap-4 transition-colors last:rounded-b-2xl ${
               isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'
             } ${t.priority === 'high' ? (isDarkMode ? 'border-l-2 border-rose-500' : 'border-l-2 border-rose-400 bg-rose-50/50') : ''}`}>
               <div className="flex gap-4 items-start w-full relative">
@@ -1060,7 +1068,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
   return (
     <>
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-        <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+        <div className={`p-5 border-b rounded-t-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Medical Practitioners</h3>
@@ -1094,7 +1102,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
           {currentData.length === 0 ? (
             <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No doctors found</p></div>
           ) : currentData.map(doc => (
-            <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+            <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
                   <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Eye className="w-3.5 h-3.5"/> View</button>
@@ -1129,7 +1137,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
               {currentData.length === 0 ? (
                 <tr><td colSpan="4" className="p-10 text-center text-xs text-slate-500 italic">No doctors found</td></tr>
               ) : currentData.map(doc => (
-                <tr key={doc.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+                <tr key={doc.id} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-display font-bold text-xs ${isDarkMode ? 'bg-indigo-500/15 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{doc.name?.charAt(0) || '?'}</div>
@@ -1251,7 +1259,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
 
   return (
     <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-      <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+      <div className={`p-5 border-b rounded-t-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
         <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Kiosk Network</h3>
         <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{machines.length} machines registered · {machines.filter(m => m.status === 'online').length} online</p>
       </div>
@@ -1263,7 +1271,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
         ) : currentData.map(m => {
           const sc = statusConfig[m.status] || statusConfig.offline;
           return (
-            <div key={m.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+            <div key={m.id} className={`p-4 relative flex flex-col gap-3 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
                   <button onClick={() => onPing(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Activity className="w-3.5 h-3.5"/> Ping</button>
@@ -1297,7 +1305,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
             ) : currentData.map(m => {
               const sc = statusConfig[m.status] || statusConfig.offline;
               return (
-                <tr key={m.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+                <tr key={m.id} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                   <td className={`px-6 py-4 font-bold font-mono text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.id}</td>
                   <td className={`px-6 py-4 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{m.location}</td>
                   <td className="px-6 py-4">
@@ -1340,7 +1348,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
 
   return (
     <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-      <div className={`p-5 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+      <div className={`p-5 border-b rounded-t-2xl flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
         <div>
           <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Prescription Registry</h3>
           <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{transactions.length} records in view</p>
@@ -1354,7 +1362,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
         {currentData.length === 0 ? (
           <div className="p-10 text-center"><FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No transactions</p></div>
         ) : currentData.map(tx => (
-          <div key={tx.id} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+          <div key={tx.id} className={`p-4 relative flex flex-col gap-2 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
             <div className="absolute top-4 right-4 z-20">
               <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(tx.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
             </div>
@@ -1373,7 +1381,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
             {currentData.length === 0 ? (
               <tr><td colSpan="6" className="p-10 text-center text-xs text-slate-500 italic">No transactions</td></tr>
             ) : currentData.map(tx => (
-              <tr key={tx.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+              <tr key={tx.id} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                 <td className={`px-6 py-4 font-mono text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{tx.id?.slice(0, 8)}...</td>
                 <td className={`px-6 py-4 font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</td>
                 <td className={`px-6 py-4 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{tx.patient?.name}</td>
@@ -1398,7 +1406,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
 
   return (
     <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-      <div className={`p-5 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+      <div className={`p-5 border-b rounded-t-2xl flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
         <div>
           <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Security Audit Log</h3>
           <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{logs.length} system events</p>
@@ -1412,7 +1420,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
         {currentData.length === 0 ? (
           <div className="p-10 text-center"><ClipboardList className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No audit logs</p></div>
         ) : currentData.map((log, i) => (
-          <div key={i} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+          <div key={i} className={`p-4 relative flex flex-col gap-2 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
             <div className="absolute top-4 right-4 z-20">
               <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(log.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
             </div>
@@ -1432,7 +1440,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
             {currentData.length === 0 ? (
               <tr><td colSpan="5" className="p-10 text-center text-xs text-slate-500 italic">No audit logs</td></tr>
             ) : currentData.map((log, i) => (
-              <tr key={i} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+              <tr key={i} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                 <td className={`px-6 py-4 font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{log.action}</td>
                 <td className={`px-6 py-4 text-xs max-w-xs truncate ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{log.details}</td>
                 <td className={`px-6 py-4 font-mono text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{log.user}</td>
@@ -2306,7 +2314,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
         </header>
 
         {/* Main scrollable area */}
-        <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
+        <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 pb-24 lg:pb-6 ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
           
           {/* DASHBOARD OVERVIEW */}
           {activeTab === 'overview' && (
