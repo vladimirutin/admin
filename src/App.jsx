@@ -17,7 +17,7 @@ import {
   getFirestore, collection, query, getDocs, doc, updateDoc, limit, 
   serverTimestamp, deleteDoc, getDoc, setDoc, onSnapshot, addDoc, where
 } from "firebase/firestore";
-import { signInAnonymously, getAuth, onAuthStateChanged } from "firebase/auth";
+import { signInAnonymously, getAuth } from "firebase/auth";
 
 // --- FIREBASE CONFIGURATION ---
 const firebaseConfig = {
@@ -307,7 +307,7 @@ function PulseDot({ color = 'emerald', size = 'sm' }) {
 }
 
 // ==========================================
-// HELPER COMPONENTS
+// 1. HELPER COMPONENTS (ENHANCED)
 // ==========================================
 
 function NavButton({ id, label, icon, active, onClick, badge, isDarkMode }) {
@@ -377,7 +377,10 @@ function StatCard({ title, value, icon, color, subtext, onClick, isDarkMode, tre
           : `bg-white border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-200`
       }`}
     >
+      {/* Background gradient accent */}
       <div className={`absolute inset-0 bg-gradient-to-br ${c.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+      
+      {/* Corner decoration */}
       <div className={`absolute top-0 right-0 w-24 h-24 ${c.bg} rounded-full -translate-y-12 translate-x-12 group-hover:scale-110 transition-transform duration-500`}></div>
       
       <div className="relative z-10">
@@ -458,7 +461,7 @@ function ActionButton({ onClick, label, icon, variant, isDarkMode }) {
 function PaginationFooter({ currentPage, totalPages, onPageChange, isDarkMode }) {
   if (totalPages <= 1) return null;
   return (
-    <div className={`flex justify-between items-center px-6 py-4 border-t rounded-b-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+    <div className={`flex justify-between items-center px-6 py-4 border-t ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
       <span className={`font-mono text-[11px] ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
         PAGE <span className="text-indigo-400">{currentPage}</span> / {totalPages}
       </span>
@@ -486,63 +489,30 @@ function PaginationFooter({ currentPage, totalPages, onPageChange, isDarkMode })
   );
 }
 
-// DYNAMIC POPUP MOBILE MENU (FIXED STACKING & CLIPPING)
 function MobileMenu({ children, isDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    
-    const handleCloseOthers = (e) => {
-      if (e.detail.id !== menuRef.current) setIsOpen(false);
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("closeOtherMenus", handleCloseOthers);
-    
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("closeOtherMenus", handleCloseOthers);
-    };
-  }, []);
-
-  const toggleMenu = (e) => {
-    e.stopPropagation();
-    if (!isOpen) {
-      window.dispatchEvent(new CustomEvent("closeOtherMenus", { detail: { id: menuRef.current } }));
-    }
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative">
       <button 
-        onClick={toggleMenu} 
+        onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} 
         className={`p-2 rounded-lg transition-all duration-200 ${isDarkMode ? 'text-slate-500 hover:bg-white/10 hover:text-slate-200' : 'text-slate-400 hover:bg-gray-100 hover:text-slate-600'}`}
       >
         <MoreHorizontal className="w-4 h-4"/>
       </button>
-      
       {isOpen && (
-        <div className={`absolute right-0 top-10 w-48 rounded-2xl shadow-2xl border z-[150] flex flex-col p-2 gap-0.5 animate-scale-in glass ${
-          isDarkMode ? 'bg-[#1a2234]/95 border-white/10' : 'bg-white/95 border-gray-100 shadow-xl'
-        }`}>
-          <div onClick={() => setIsOpen(false)}>
+        <>
+          <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}></div>
+          <div className={`absolute right-0 top-10 w-52 rounded-2xl shadow-2xl border z-20 flex flex-col p-2 gap-0.5 animate-scale-in glass ${isDarkMode ? 'bg-[#1a2234] border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}>
             {children}
           </div>
-        </div>
+        </>
       )}
     </div>
   );
 }
 
 // ==========================================
-// MODALS & CHARTS
+// 2. MODALS & CHARTS (ENHANCED)
 // ==========================================
 
 function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, type = 'info', confirmText = "Confirm", isLoading = false, isDarkMode }) {
@@ -597,7 +567,7 @@ function PasswordModal({ onClose, currentCreds, onUpdate, isDarkMode, onNotify }
           <h3 className={`font-display font-bold text-lg ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Change Password</h3>
         </div>
         <div className="space-y-3">
-          {['cur', 'new', 'conf'].map((field) => (
+          {['cur', 'new', 'conf'].map((field, i) => (
             <div key={field} className="relative">
               <label className={`text-[10px] font-bold uppercase tracking-widest mb-1.5 block ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
                 {field === 'cur' ? 'Current Password' : field === 'new' ? 'New Password' : 'Confirm Password'}
@@ -783,12 +753,12 @@ function TopPrescribedChart({ transactions, isDarkMode }) {
 }
 
 // ==========================================
-// SUB-VIEW COMPONENTS
+// 3. SUB-VIEW COMPONENTS (ENHANCED)
 // ==========================================
 
 function TableContainer({ children, isDarkMode, className = '' }) {
   return (
-    <div className={`rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'} ${className}`}>
+    <div className={`rounded-2xl border overflow-hidden animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'} ${className}`}>
       {children}
     </div>
   );
@@ -842,7 +812,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
       <ConfirmationModal isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={confirmDelete} title="Remove Medicine?" message="This medicine will be removed from the Master Database across all doctors." confirmText="Remove" type="danger" isDarkMode={isDarkMode} />
       
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-        <div className={`p-5 border-b rounded-t-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+        <div className={`p-5 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div>
             <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Master Medicine Database</h3>
             <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{medicines.length} medicines · Updates push to all doctors</p>
@@ -880,6 +850,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
           </form>
         )}
 
+        {/* Mobile */}
         <div className="md:hidden divide-y divide-white/5">
           {currentData.length === 0 ? (
             <div className="p-10 text-center">
@@ -887,7 +858,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
               <p className="text-xs text-slate-500 italic">No medicines found</p>
             </div>
           ) : currentData.map(m => (
-            <div key={m.id} className={`p-4 relative flex flex-col gap-2 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+            <div key={m.id} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
                   <button onClick={() => setDeleteId(m.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl">
@@ -907,6 +878,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
           ))}
         </div>
 
+        {/* Desktop */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-sm">
             <TableHeader isDarkMode={isDarkMode}>
@@ -968,7 +940,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
       <ConfirmationModal isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={confirmDelete} title="Delete Ticket?" message="This support ticket will be permanently deleted." confirmText="Delete" type="danger" isDarkMode={isDarkMode} />
       
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-        <div className={`p-5 border-b rounded-t-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+        <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Support Ticketing</h3>
@@ -996,7 +968,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
               <p className="text-xs text-slate-500 italic">No tickets found</p>
             </div>
           ) : currentData.map(t => (
-            <div key={t.id} className={`p-4 md:p-5 relative flex flex-col md:flex-row justify-between items-start gap-4 transition-colors last:rounded-b-2xl ${
+            <div key={t.id} className={`p-4 md:p-5 flex flex-col md:flex-row justify-between items-start gap-4 transition-colors ${
               isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'
             } ${t.priority === 'high' ? (isDarkMode ? 'border-l-2 border-rose-500' : 'border-l-2 border-rose-400 bg-rose-50/50') : ''}`}>
               <div className="flex gap-4 items-start w-full relative">
@@ -1074,7 +1046,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
   return (
     <>
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-        <div className={`p-5 border-b rounded-t-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+        <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Medical Practitioners</h3>
@@ -1103,11 +1075,12 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
           </div>
         </div>
 
+        {/* Mobile */}
         <div className="md:hidden divide-y divide-white/5">
           {currentData.length === 0 ? (
             <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No doctors found</p></div>
           ) : currentData.map(doc => (
-            <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+            <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
                   <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Eye className="w-3.5 h-3.5"/> View</button>
@@ -1132,6 +1105,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
           ))}
         </div>
 
+        {/* Desktop */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left">
             <TableHeader isDarkMode={isDarkMode}>
@@ -1141,7 +1115,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
               {currentData.length === 0 ? (
                 <tr><td colSpan="4" className="p-10 text-center text-xs text-slate-500 italic">No doctors found</td></tr>
               ) : currentData.map(doc => (
-                <tr key={doc.id} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+                <tr key={doc.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-display font-bold text-xs ${isDarkMode ? 'bg-indigo-500/15 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{doc.name?.charAt(0) || '?'}</div>
@@ -1263,18 +1237,19 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
 
   return (
     <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-      <div className={`p-5 border-b rounded-t-2xl ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+      <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
         <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Kiosk Network</h3>
         <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{machines.length} machines registered · {machines.filter(m => m.status === 'online').length} online</p>
       </div>
       
+      {/* Mobile */}
       <div className="md:hidden divide-y divide-white/5">
         {currentData.length === 0 ? (
           <div className="p-10 text-center"><Server className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No kiosks connected</p></div>
         ) : currentData.map(m => {
           const sc = statusConfig[m.status] || statusConfig.offline;
           return (
-            <div key={m.id} className={`p-4 relative flex flex-col gap-3 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+            <div key={m.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
                   <button onClick={() => onPing(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Activity className="w-3.5 h-3.5"/> Ping</button>
@@ -1296,6 +1271,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
         })}
       </div>
 
+      {/* Desktop */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-sm">
           <TableHeader isDarkMode={isDarkMode}>
@@ -1307,7 +1283,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
             ) : currentData.map(m => {
               const sc = statusConfig[m.status] || statusConfig.offline;
               return (
-                <tr key={m.id} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+                <tr key={m.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                   <td className={`px-6 py-4 font-bold font-mono text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.id}</td>
                   <td className={`px-6 py-4 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{m.location}</td>
                   <td className="px-6 py-4">
@@ -1350,7 +1326,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
 
   return (
     <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-      <div className={`p-5 border-b rounded-t-2xl flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+      <div className={`p-5 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
         <div>
           <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Prescription Registry</h3>
           <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{transactions.length} records in view</p>
@@ -1364,7 +1340,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
         {currentData.length === 0 ? (
           <div className="p-10 text-center"><FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No transactions</p></div>
         ) : currentData.map(tx => (
-          <div key={tx.id} className={`p-4 relative flex flex-col gap-2 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+          <div key={tx.id} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
             <div className="absolute top-4 right-4 z-20">
               <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(tx.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
             </div>
@@ -1383,7 +1359,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
             {currentData.length === 0 ? (
               <tr><td colSpan="6" className="p-10 text-center text-xs text-slate-500 italic">No transactions</td></tr>
             ) : currentData.map(tx => (
-              <tr key={tx.id} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+              <tr key={tx.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                 <td className={`px-6 py-4 font-mono text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{tx.id?.slice(0, 8)}...</td>
                 <td className={`px-6 py-4 font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</td>
                 <td className={`px-6 py-4 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{tx.patient?.name}</td>
@@ -1408,7 +1384,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
 
   return (
     <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
-      <div className={`p-5 border-b rounded-t-2xl flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+      <div className={`p-5 border-b flex justify-between items-center ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
         <div>
           <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Security Audit Log</h3>
           <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{logs.length} system events</p>
@@ -1422,7 +1398,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
         {currentData.length === 0 ? (
           <div className="p-10 text-center"><ClipboardList className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No audit logs</p></div>
         ) : currentData.map((log, i) => (
-          <div key={i} className={`p-4 relative flex flex-col gap-2 transition-colors last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+          <div key={i} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
             <div className="absolute top-4 right-4 z-20">
               <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(log.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
             </div>
@@ -1442,7 +1418,7 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
             {currentData.length === 0 ? (
               <tr><td colSpan="5" className="p-10 text-center text-xs text-slate-500 italic">No audit logs</td></tr>
             ) : currentData.map((log, i) => (
-              <tr key={i} className={`table-row-hover last:rounded-b-2xl ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+              <tr key={i} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                 <td className={`px-6 py-4 font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{log.action}</td>
                 <td className={`px-6 py-4 text-xs max-w-xs truncate ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{log.details}</td>
                 <td className={`px-6 py-4 font-mono text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{log.user}</td>
@@ -1500,6 +1476,9 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
         </nav>
       </div>
 
+      <div className="hidden md:block"></div>
+
+      {/* Mobile tabs */}
       <div className={`md:hidden w-full border-b ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}>
         <div className="flex">
           {settingTabs.map(tab => (
@@ -1541,7 +1520,7 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
                   <label className={`block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2`}>{field.label}</label>
                   <input 
                     type={field.type} disabled={!isEditing}
-                    className={`w-full px-4 py-3 border rounded-xl outline-none text-sm transition-all ${isEditing ? 'focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50' : 'border-transparent cursor-default'} ${isDarkMode ? 'bg-white/5 text-slate-200 border-white/10' : 'bg-gray-50 text-slate-700 border-gray-200'}`}
+                    className={`w-full px-4 py-3 border rounded-xl outline-none text-sm transition-all ${isEditing ? 'focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50' : 'border-transparent cursor-default'} ${isDarkMode ? 'bg-white/5 text-slate-200 border-white/10' : 'bg-gray-50 text-slate-700 border-gray-200'} ${!isEditing ? (isDarkMode ? 'bg-transparent' : 'bg-transparent') : ''}`}
                     value={profile?.[field.key] || ''}
                     onChange={e => setProfile({...profile, [field.key]: e.target.value})}
                   />
@@ -1602,10 +1581,10 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
                 <button key={i} onClick={item.action}
                   className={`flex flex-col items-center justify-center p-5 border rounded-2xl transition-all group btn-hover-lift ${
                     item.dashed ? 'border-dashed' : ''
-                  } ${isDarkMode ? `border-white/10 hover:bg-white/5 hover:border-indigo-500/20` : `border-gray-200 hover:bg-gray-50 hover:border-indigo-200`}`}
+                  } ${isDarkMode ? `border-white/10 hover:bg-${item.color}-500/5 hover:border-${item.color}-500/20` : `border-gray-200 hover:bg-${item.color}-50 hover:border-${item.color}-200`}`}
                 >
-                  <div className={`text-slate-500 group-hover:text-indigo-500 transition-colors mb-2`}>{item.icon}</div>
-                  <span className={`text-xs font-bold text-slate-400 group-hover:text-indigo-500 transition-colors text-center`}>{item.label}</span>
+                  <div className={`text-slate-500 group-hover:text-${item.color}-500 transition-colors mb-2`}>{item.icon}</div>
+                  <span className={`text-xs font-bold text-slate-400 group-hover:text-${item.color}-500 transition-colors text-center`}>{item.label}</span>
                 </button>
               ))}
             </div>
@@ -1627,7 +1606,7 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
 }
 
 // ==========================================
-// ADMIN LOGIN
+// 4. ADMIN LOGIN (PREMIUM REDESIGN)
 // ==========================================
 function AdminLogin({ onLogin, cloudProfile }) {
   const [username, setUsername] = useState('');
@@ -1638,7 +1617,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutTimer, setLockoutTimer] = useState(0);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // animation step
 
   useEffect(() => {
     setTimeout(() => setStep(1), 100);
@@ -1684,10 +1663,15 @@ function AdminLogin({ onLogin, cloudProfile }) {
   return (
     <div className="flex h-screen w-full bg-[#060b18] font-sans overflow-hidden relative">
       <GlobalStyles />
+      
+      {/* Animated grid background */}
       <div className="absolute inset-0 grid-bg opacity-50"></div>
+      
+      {/* Glow orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay:'1s'}}></div>
       
+      {/* Left panel */}
       <div className="w-full lg:w-1/2 h-full flex flex-col justify-center items-center p-6 relative z-10">
         <div 
           className="w-full max-w-md"
@@ -1697,6 +1681,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
             transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
+          {/* Logo */}
           <div className="text-center mb-10">
             <div className="relative inline-block mb-6">
               <div className="absolute inset-0 rounded-3xl bg-indigo-500/20 blur-xl scale-150 animate-pulse"></div>
@@ -1708,6 +1693,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
             <p className="text-slate-500 text-sm font-medium tracking-widest uppercase">Super Admin Portal</p>
           </div>
 
+          {/* Form card */}
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
             <div className="mb-6">
               <h2 className="text-white font-display font-bold text-xl mb-1">Sign In</h2>
@@ -1770,6 +1756,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
         </div>
       </div>
 
+      {/* Right panel */}
       <div className="hidden lg:flex w-1/2 bg-black/20 relative overflow-hidden items-center justify-center border-l border-white/5">
         <div className="absolute inset-0 hexagon-bg opacity-40"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-transparent to-blue-900/20"></div>
@@ -1782,6 +1769,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
             transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s'
           }}
         >
+          {/* Radar animation */}
           <div className="relative w-40 h-40 mx-auto mb-8">
             <div className="absolute inset-0 rounded-full border border-indigo-500/20"></div>
             <div className="absolute inset-4 rounded-full border border-indigo-500/30"></div>
@@ -1810,7 +1798,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
               { label: 'Security', value: 'Active', color: 'indigo' },
             ].map((stat, i) => (
               <div key={i} className={`p-3 rounded-xl bg-${stat.color}-500/10 border border-${stat.color}-500/20`}>
-                <p className={`text-lg font-display font-bold text-indigo-400`}>{stat.value}</p>
+                <p className={`text-lg font-display font-bold text-${stat.color}-400`}>{stat.value}</p>
                 <p className="text-[10px] text-slate-500 uppercase tracking-wide font-bold">{stat.label}</p>
               </div>
             ))}
@@ -1822,7 +1810,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
 }
 
 // ==========================================
-// ADMIN DASHBOARD
+// 5. ADMIN DASHBOARD (PREMIUM REDESIGN)
 // ==========================================
 function AdminDashboard({ onLogout, initialProfile }) {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -1856,18 +1844,10 @@ function AdminDashboard({ onLogout, initialProfile }) {
   useEffect(() => {
     setLoading(true);
     const subs = [
-      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'doctors')), snap => setDoctors(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
-      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions')), snap => { 
-        const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); 
-        setTransactions(list); 
-        setLoading(false); 
-      }),
-      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'machines')), snap => setMachines(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
-      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), limit(20)), snap => { 
-        const logs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.timestamp?.seconds||0)-(a.timestamp?.seconds||0)); 
-        setAuditLogs(logs); 
-        setLoading(false); 
-      }),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'doctors')), snap => setDoctors(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions')), snap => { const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); setTransactions(list); setLoading(false); }, err => console.error(err)),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'machines')), snap => setMachines(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), limit(20)), snap => { const logs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.timestamp?.seconds||0)-(a.timestamp?.seconds||0)); setAuditLogs(logs); setLoading(false); }, err => { console.error(err); setLoading(false); }),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'medicines')), snap => setMedicines(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'support_tickets')), snap => setSupportTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
     ];
@@ -2132,9 +2112,13 @@ function AdminDashboard({ onLogout, initialProfile }) {
   return (
     <div className={`flex h-screen font-sans overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-[#060b18] text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
       <GlobalStyles />
+      
+      {/* Notification */}
       {notification && (
         <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold animate-slide-up glass border ${
-          notification.type === 'error' ? 'bg-rose-600/90 text-white border-rose-500/30' : 'bg-emerald-600/90 text-white border-emerald-500/30'
+          notification.type === 'error' 
+            ? 'bg-rose-600/90 text-white border-rose-500/30 shadow-rose-500/20' 
+            : 'bg-emerald-600/90 text-white border-emerald-500/30 shadow-emerald-500/20'
         }`}>
           {notification.type === 'error' ? <AlertTriangle className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
           {notification.message}
@@ -2143,14 +2127,17 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
       <ConfirmationModal isOpen={!!confirmConfig} {...confirmConfig} onClose={() => setConfirmConfig(null)} isDarkMode={isDarkMode} />
 
+      {/* Mobile overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm md:hidden" onClick={() => setIsMobileMenuOpen(false)}></div>
       )}
 
+      {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-30 w-64 border-r flex flex-col transform transition-all duration-300 ease-out ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       } md:relative md:translate-x-0 ${isDarkMode ? 'bg-[#090e1d] border-white/5' : 'bg-white border-gray-100 shadow-xl'}`}>
         
+        {/* Logo area */}
         <div className={`relative p-5 border-b overflow-hidden ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 to-transparent"></div>
           <div className="relative flex items-center gap-3">
@@ -2173,6 +2160,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           </div>
         </div>
         
+        {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto custom-scrollbar">
           {navSections.map(section => (
             <div key={section.label}>
@@ -2186,6 +2174,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           ))}
         </nav>
 
+        {/* Admin profile in sidebar */}
         <div className={`p-4 border-t ${isDarkMode ? 'border-white/5 bg-black/20' : 'border-gray-100 bg-gray-50'}`}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white font-display font-bold text-sm shadow-lg shadow-indigo-500/20">
@@ -2199,7 +2188,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           <button 
             onClick={onLogout} 
             className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${
-              isDarkMode ? 'text-slate-500 border-white/5 hover:bg-rose-500/10 hover:text-rose-400' : 'text-slate-400 border-gray-200 hover:bg-rose-50 hover:text-rose-600'
+              isDarkMode ? 'text-slate-500 border-white/5 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/20' : 'text-slate-400 border-gray-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200'
             }`}
           >
             <LogOut className="w-3.5 h-3.5" /> Sign Out
@@ -2207,7 +2196,10 @@ function AdminDashboard({ onLogout, initialProfile }) {
         </div>
       </aside>
 
+      {/* Main content */}
       <div className={`flex-1 flex flex-col min-w-0 overflow-hidden relative ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
+        
+        {/* Header */}
         <header className={`h-16 border-b flex items-center justify-between px-4 md:px-6 z-10 sticky top-0 transition-all glass ${isDarkMode ? 'bg-[#060b18]/90 border-white/5' : 'bg-white/90 border-gray-100 shadow-sm'}`}>
           <div className="flex items-center gap-3">
             <button onClick={() => setIsMobileMenuOpen(true)} className={`md:hidden p-2 rounded-xl transition-all ${isDarkMode ? 'text-slate-400 hover:bg-white/5' : 'text-slate-600 hover:bg-gray-100'}`}>
@@ -2225,21 +2217,24 @@ function AdminDashboard({ onLogout, initialProfile }) {
           
           <div className="flex items-center gap-2">
             <div className={`hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-mono font-semibold ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-gray-100 border-gray-200 text-slate-600'}`}>
-              <Clock className="w-3.5 h-3.5 text-indigo-400" />
+              <div className="relative">
+                <Clock className="w-3.5 h-3.5 text-indigo-400" />
+              </div>
               {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </div>
             
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)} 
-              className={`p-2 rounded-xl transition-all btn-hover-lift border ${isDarkMode ? 'bg-white/5 border-white/10 text-amber-400' : 'bg-gray-100 border-gray-200 text-indigo-500'}`}
+              className={`p-2 rounded-xl transition-all btn-hover-lift border ${isDarkMode ? 'bg-white/5 border-white/10 text-amber-400 hover:bg-white/10' : 'bg-gray-100 border-gray-200 text-indigo-500 hover:bg-gray-200'}`}
             >
               {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
+            {/* Notifications */}
             <div className="relative">
               <button 
                 onClick={() => setIsNotifOpen(!isNotifOpen)} 
-                className={`p-2 rounded-xl transition-all btn-hover-lift border relative ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-400' : 'bg-gray-100 border-gray-200 text-slate-500'}`}
+                className={`p-2 rounded-xl transition-all btn-hover-lift border relative ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-400 hover:text-indigo-400' : 'bg-gray-100 border-gray-200 text-slate-500 hover:text-indigo-600'}`}
               >
                 <Bell className="w-4 h-4" />
                 {totalNotifications > 0 && (
@@ -2286,18 +2281,24 @@ function AdminDashboard({ onLogout, initialProfile }) {
               )}
             </div>
 
+            {/* Avatar */}
             <button 
               onClick={() => setActiveTab('settings')}
-              className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white font-display font-bold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all btn-hover-lift"
+              className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white font-display font-bold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all btn-hover-lift ring-2 ring-indigo-500/20 hover:ring-indigo-500/40"
             >
               {adminProfile?.displayName?.charAt(0) || 'A'}
             </button>
           </div>
         </header>
 
-        <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 pb-24 lg:pb-6 ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
+        {/* Main scrollable area */}
+        <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
+          
+          {/* DASHBOARD OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-6 max-w-7xl mx-auto">
+              
+              {/* Stat cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { title: 'Pending Approvals', value: pendingDocs, icon: <Users className="w-5 h-5" />, color: 'amber', subtext: 'Needs attention', onClick: () => { setActiveTab('doctors'); setFilter('pending'); } },
@@ -2311,6 +2312,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 ))}
               </div>
 
+              {/* Network Health */}
               <div className={`p-6 rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`} style={{ animationDelay: '0.2s', animationFillMode: 'both', opacity: 0 }}>
                 <div className="flex justify-between items-center mb-6">
                   <div>
@@ -2369,7 +2371,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 </div>
               </div>
 
+              {/* Charts + Quick Actions */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                {/* Top Prescribed */}
                 <div className={`lg:col-span-2 p-6 rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`} style={{ animationDelay: '0.3s', animationFillMode: 'both', opacity: 0 }}>
                   <div className="flex items-center gap-2 mb-6">
                     <BarChart3 className="w-5 h-5 text-indigo-400" />
@@ -2378,6 +2382,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   <TopPrescribedChart transactions={transactions} isDarkMode={isDarkMode} />
                 </div>
 
+                {/* Quick Actions */}
                 <div className={`p-6 rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`} style={{ animationDelay: '0.35s', animationFillMode: 'both', opacity: 0 }}>
                   <h3 className={`font-display font-bold text-base mb-5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Quick Actions</h3>
                   <div className="space-y-2.5">
@@ -2389,6 +2394,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 </div>
               </div>
               
+              {/* Activity Feed */}
               <div className={`p-6 rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`} style={{ animationDelay: '0.4s', animationFillMode: 'both', opacity: 0 }}>
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
@@ -2431,9 +2437,11 @@ function AdminDashboard({ onLogout, initialProfile }) {
           {activeTab === 'settings' && <SettingsView profile={adminProfile} setProfile={setAdminProfile} onSave={handleSaveProfile} isEditing={isEditingProfile} setIsEditing={setIsEditingProfile} setShowPassword={() => setShowPasswordModal(true)} isDarkMode={isDarkMode} transactions={transactions} auditLogs={auditLogs} doctors={doctors} machines={machines} medicines={medicines} supportTickets={supportTickets} onNotify={showNotification} />}
         </main>
 
+        {/* Modals */}
         {showPasswordModal && <PasswordModal onClose={() => setShowPasswordModal(false)} currentCreds={adminProfile} onUpdate={handlePasswordUpdate} isDarkMode={isDarkMode} onNotify={showNotification} />}
         {showBroadcastModal && <BroadcastModal onClose={() => setShowBroadcastModal(false)} onSend={handleBroadcast} isDarkMode={isDarkMode} />}
 
+        {/* Diagnostics Modal */}
         {diagnosticMachine && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-scale-in">
             <div className={`rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border flex flex-col max-h-[90vh] ${isDarkMode ? 'bg-[#0d1424] border-white/10' : 'bg-white border-gray-200'}`}>
@@ -2456,15 +2464,22 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   <div className="flex-1 space-y-2">
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Remote Commands</p>
                     <div className="grid grid-cols-2 gap-2">
-                      <button onClick={() => { handlePingMachine(diagnosticMachine.id); setDiagnosticMachine(null); }} className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift ${isDarkMode ? 'bg-white/5 border-white/10 text-white' : 'bg-gray-100 border-gray-200 text-slate-700'}`}><Activity size={14}/> Ping</button>
-                      <button onClick={() => { handleRebootMachine(diagnosticMachine.id); setDiagnosticMachine(null); }} className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift ${isDarkMode ? 'bg-white/5 border-white/10 text-white' : 'bg-gray-100 border-gray-200 text-slate-700'}`}><Power size={14}/> Reboot</button>
-                      <button onClick={() => { handleLockMachine(diagnosticMachine.id, diagnosticMachine.status); setDiagnosticMachine(null); }} className={`col-span-2 flex items-center justify-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${diagnosticMachine.status === 'locked' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/15 text-rose-400 border-rose-500/20'}`}>
+                      {[
+                        { label: 'Ping', icon: <Activity size={14}/>, action: () => { handlePingMachine(diagnosticMachine.id); setDiagnosticMachine(null); } },
+                        { label: 'Reboot', icon: <Power size={14}/>, action: () => { handleRebootMachine(diagnosticMachine.id); setDiagnosticMachine(null); } },
+                      ].map((btn, i) => (
+                        <button key={i} onClick={btn.action} className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white border border-white/10' : 'bg-gray-100 hover:bg-gray-200 text-slate-700 border border-gray-200'}`}>
+                          {btn.icon} {btn.label}
+                        </button>
+                      ))}
+                      <button onClick={() => { handleLockMachine(diagnosticMachine.id, diagnosticMachine.status); setDiagnosticMachine(null); }} className={`col-span-2 flex items-center justify-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${diagnosticMachine.status === 'locked' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/25' : 'bg-rose-500/15 text-rose-400 border-rose-500/20 hover:bg-rose-500/25'}`}>
                         {diagnosticMachine.status === 'locked' ? <><Unlock size={14}/> Unlock</> : <><Lock size={14}/> Lock Kiosk</>}
                       </button>
                     </div>
                   </div>
                 </div>
 
+                {/* Hardware sensors */}
                 <div>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Hardware Sensors</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -2482,6 +2497,26 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   </div>
                 </div>
 
+                {/* Slot inventory */}
+                <div>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2"><Layers className="w-3.5 h-3.5"/> Dispensing Slots</p>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                    {diagnosticMachine.slots?.map(slot => (
+                      <div key={slot.id} className={`p-2.5 rounded-xl border relative overflow-hidden ${slot.status === 'Jam' ? 'border-rose-500/40 bg-rose-500/8' : isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className={`text-[9px] font-bold ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>#{slot.id}</span>
+                          {slot.status === 'Jam' && <AlertTriangle className="w-3 h-3 text-rose-400"/>}
+                        </div>
+                        <p className={`text-[10px] font-bold truncate mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{slot.medicine}</p>
+                        <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDarkMode ? 'bg-black/40' : 'bg-gray-200'}`}>
+                          <div className={`h-full rounded-full progress-bar ${slot.stock < 20 ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{ width: `${slot.stock}%` }}></div>
+                        </div>
+                        <p className={`text-[9px] font-mono mt-1 ${slot.stock < 20 ? 'text-rose-400' : 'text-emerald-400'}`}>{slot.stock}%</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className={`p-4 rounded-2xl border flex items-start gap-3 ${diagnosticMachine.status === 'online' ? 'bg-emerald-500/8 border-emerald-500/20' : 'bg-rose-500/8 border-rose-500/20'}`}>
                   <BrainCircuit className={`w-4 h-4 mt-0.5 flex-shrink-0 ${diagnosticMachine.status === 'online' ? 'text-emerald-400' : 'text-rose-400'}`} />
                   <div>
@@ -2492,7 +2527,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
               </div>
               
               <div className={`p-4 border-t flex justify-end flex-shrink-0 ${isDarkMode ? 'bg-white/3 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
-                <button onClick={() => setDiagnosticMachine(null)} className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 btn-hover-lift">Close</button>
+                <button onClick={() => setDiagnosticMachine(null)} className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 to-indigo-400 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 btn-hover-lift">Close</button>
               </div>
             </div>
           </div>
@@ -2502,6 +2537,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
   );
 }
 
+// ==========================================
+// 6. MAIN ENTRY POINT
+// ==========================================
 export default function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [adminProfile, setAdminProfile] = useState(null);
@@ -2527,9 +2565,24 @@ export default function App() {
 
   if (loadingProfile) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#060b18]">
+      <div className="flex h-screen items-center justify-center bg-[#060b18] font-sans">
         <GlobalStyles />
-        <RefreshCw className="w-12 h-12 text-indigo-500 animate-spin" />
+        <div className="flex flex-col items-center gap-5 text-center">
+          <div className="relative w-20 h-20">
+            <div className="absolute inset-0 rounded-3xl bg-indigo-500/20 blur-xl animate-pulse"></div>
+            <div className="relative w-full h-full bg-gradient-to-br from-indigo-600 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-500/30">
+              <ShieldCheck className="w-9 h-9 text-white" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-bold text-slate-300 font-display">Connecting to Secure Server</p>
+            <div className="flex items-center justify-center gap-1.5">
+              {[0, 1, 2].map(i => (
+                <div key={i} className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }}></div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
