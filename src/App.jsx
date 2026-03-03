@@ -315,12 +315,12 @@ function NavButton({ id, label, icon, active, onClick, badge, isDarkMode }) {
     <button
       onClick={() => onClick(id)}
       className={`relative flex w-full items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group ripple overflow-hidden ${active
-          ? isDarkMode
-            ? 'bg-gradient-to-r from-indigo-600/20 to-indigo-500/5 text-indigo-400 shadow-lg'
-            : 'bg-gradient-to-r from-indigo-50 to-indigo-50/50 text-indigo-600'
-          : isDarkMode
-            ? 'text-slate-500 hover:bg-white/5 hover:text-slate-200'
-            : 'text-slate-400 hover:bg-slate-100 hover:text-slate-700'
+        ? isDarkMode
+          ? 'bg-gradient-to-r from-indigo-600/20 to-indigo-500/5 text-indigo-400 shadow-lg'
+          : 'bg-gradient-to-r from-indigo-50 to-indigo-50/50 text-indigo-600'
+        : isDarkMode
+          ? 'text-slate-500 hover:bg-white/5 hover:text-slate-200'
+          : 'text-slate-400 hover:bg-slate-100 hover:text-slate-700'
         }`}
     >
       {active && <span className="nav-active-indicator"></span>}
@@ -371,8 +371,8 @@ function StatCard({ title, value, icon, color, subtext, onClick, isDarkMode, tre
     <div
       onClick={onClick}
       className={`relative p-5 rounded-2xl border cursor-pointer group card-hover overflow-hidden ${isDarkMode
-          ? `bg-[#0d1424] border-white/5 hover:border-indigo-500/30`
-          : `bg-white border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-200`
+        ? `bg-[#0d1424] border-white/5 hover:border-indigo-500/30`
+        : `bg-white border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-200`
         }`}
     >
       {/* Background gradient accent */}
@@ -446,8 +446,8 @@ function ActionButton({ onClick, label, icon, variant, isDarkMode }) {
     <button
       onClick={onClick}
       className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider btn-hover-lift ripple transition-all duration-200 border ${isDarkMode
-          ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
-          : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50 hover:border-gray-300 shadow-sm'
+        ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
+        : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50 hover:border-gray-300 shadow-sm'
         }`}
     >
       {icon}{label}
@@ -526,15 +526,15 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, type = 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
       <div className={`w-full max-w-sm rounded-3xl border overflow-hidden shadow-2xl animate-scale-in ${type === 'danger'
-          ? isDarkMode ? 'bg-[#1a1020] border-rose-500/20' : 'bg-white border-rose-100'
-          : isDarkMode ? 'bg-[#0f1829] border-indigo-500/20' : 'bg-white border-indigo-100'
+        ? isDarkMode ? 'bg-[#1a1020] border-rose-500/20' : 'bg-white border-rose-100'
+        : isDarkMode ? 'bg-[#0f1829] border-indigo-500/20' : 'bg-white border-indigo-100'
         }`}>
         <div className="p-8 text-center">
           <div className={`relative w-20 h-20 mx-auto mb-6`}>
             <div className={`absolute inset-0 rounded-2xl opacity-30 animate-pulse ${type === 'danger' ? 'bg-rose-500' : 'bg-indigo-500'}`}></div>
             <div className={`relative w-full h-full rounded-2xl flex items-center justify-center ${type === 'danger'
-                ? 'bg-gradient-to-br from-rose-500 to-pink-600 shadow-lg shadow-rose-500/30'
-                : 'bg-gradient-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-500/30'
+              ? 'bg-gradient-to-br from-rose-500 to-pink-600 shadow-lg shadow-rose-500/30'
+              : 'bg-gradient-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-500/30'
               }`}>
               {type === 'danger' ? <AlertTriangle className="w-8 h-8 text-white" /> : <CheckCircle2 className="w-8 h-8 text-white" />}
             </div>
@@ -667,10 +667,10 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
                 <button
                   key={t.id} onClick={() => setTarget(t.id)}
                   className={`flex flex-col items-center justify-center py-3 rounded-xl border transition-all btn-hover-lift ${target === t.id
-                      ? t.color === 'indigo' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20'
-                        : t.color === 'blue' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
-                          : 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20'
-                      : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'
+                    ? t.color === 'indigo' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20'
+                      : t.color === 'blue' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
+                        : 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20'
+                    : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'
                     }`}
                 >
                   {t.icon}
@@ -988,8 +988,8 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
                     <h4 className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{t.subject}</h4>
                     {t.priority === 'high' && <span className="text-[9px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full">HIGH</span>}
                     <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${t.status === 'open' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                        : t.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                          : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      : t.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                       }`}>{t.status.replace('_', ' ')}</span>
                   </div>
                   <p className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{t.message}</p>
@@ -1227,9 +1227,29 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
 
 function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, onDelete, isDarkMode }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingMachineId, setEditingMachineId] = useState(null);
+  const [editingLocationStr, setEditingLocationStr] = useState('');
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(machines.length / itemsPerPage);
+  const handleEditLocation = (machine) => { \n    setEditingMachineId(machine.id); \n    setEditingLocationStr(machine.location || ''); \n }; \n\n  const saveLocationEditor = async (machineId) => { \n    try { \n      if (!editingLocationStr.trim()) { \n        setEditingMachineId(null); \n        return; \n } \n      await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId), { location: editingLocationStr }); \n      setEditingMachineId(null); \n } catch (err) { \n      console.error('Failed to update: ', err); \n } \n }; \n\n  const totalPages = Math.ceil(machines.length / itemsPerPage);
   const currentData = machines.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleEditLocation = (machine) => {
+    setEditingMachineId(machine.id);
+    setEditingLocationStr(machine.location || '');
+  };
+
+  const saveLocationEditor = async (machineId) => {
+    try {
+      if (!editingLocationStr.trim()) {
+        setEditingMachineId(null);
+        return;
+      }
+      await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId), { location: editingLocationStr });
+      setEditingMachineId(null);
+    } catch (err) {
+      console.error('Failed to update: ', err);
+    }
+  };
 
   const statusConfig = {
     online: { cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', icon: <Wifi className="w-3 h-3" />, dot: 'emerald' },
@@ -1264,7 +1284,28 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
               </div>
               <div>
                 <p className={`font-bold text-sm font-mono pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.id}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{m.location}</p>
+                {editingMachineId === m.id ? (
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <input
+                      type="text"
+                      value={editingLocationStr}
+                      onChange={e => setEditingLocationStr(e.target.value)}
+                      autoFocus
+                      className={`w-full px-2 py-1 rounded text-xs outline-none transition-all ${isDarkMode ? 'bg-black/20 text-white border-white/10 border' : 'bg-gray-50 text-slate-900 border-gray-200 border'}`}
+                    />
+                    <button onClick={() => saveLocationEditor(m.id)} className="text-emerald-400 p-1 hover:bg-emerald-400/10 rounded">
+                      <CheckSquare size={14} />
+                    </button>
+                    <button onClick={() => setEditingMachineId(null)} className="text-rose-400 p-1 hover:bg-rose-400/10 rounded">
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-500 mt-0.5 flex gap-2 items-center">
+                    {m.location}
+                    <button onClick={() => handleEditLocation(m)} className="text-slate-400 hover:text-indigo-400"><Edit2 size={12} /></button>
+                  </p>
+                )}
               </div>
               <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border w-fit ${sc.cls}`}>
                 {sc.icon} {m.status}
@@ -1288,7 +1329,25 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
               return (
                 <tr key={m.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                   <td className={`px-6 py-4 font-bold font-mono text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{m.id}</td>
-                  <td className={`px-6 py-4 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{m.location}</td>
+                  <td className={`px-6 py-4 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {editingMachineId === m.id ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={editingLocationStr}
+                          onChange={e => setEditingLocationStr(e.target.value)}
+                          autoFocus
+                          className={`px-2 py-1 rounded text-xs outline-none transition-all ${isDarkMode ? 'bg-black/20 text-white border-white/10 border' : 'bg-gray-50 text-slate-900 border-gray-200 border'}`}
+                        />
+                        <button onClick={() => saveLocationEditor(m.id)} className="text-emerald-400 p-1 hover:bg-emerald-400/10 rounded">
+                          <CheckSquare size={14} />
+                        </button>
+                        <button onClick={() => setEditingMachineId(null)} className="text-rose-400 p-1 hover:bg-rose-400/10 rounded">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ) : m.location}
+                  </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${sc.cls}`}>
                       {sc.icon} {m.status}
@@ -1297,6 +1356,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1.5">
                       {[
+                        { action: () => handleEditLocation(m), icon: <Edit2 size={14} />, title: 'Edit Location' },
                         { action: () => onPing(m.id), icon: <Activity size={14} />, title: 'Ping' },
                         { action: () => onRunDiagnostics(m), icon: <Wrench size={14} />, title: 'Diagnostics' },
                         { action: () => onReboot(m.id), icon: <Power size={14} />, title: 'Reboot' },
@@ -1468,8 +1528,8 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
           {settingTabs.map(tab => (
             <button key={tab.id} onClick={() => setActiveSettingTab(tab.id)}
               className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2.5 transition-all btn-hover-lift ${activeSettingTab === tab.id
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                  : isDarkMode ? 'text-slate-400 hover:text-white hover:bg-white/5' : 'text-slate-500 hover:text-slate-900 hover:bg-gray-100'
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                : isDarkMode ? 'text-slate-400 hover:text-white hover:bg-white/5' : 'text-slate-500 hover:text-slate-900 hover:bg-gray-100'
                 }`}
             >
               {tab.icon} {tab.label}
@@ -1811,7 +1871,17 @@ function AdminLogin({ onLogin, cloudProfile }) {
 // 5. ADMIN DASHBOARD (PREMIUM REDESIGN)
 // ==========================================
 function AdminDashboard({ onLogout, initialProfile }) {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage !== null) {
+        const saved = localStorage.getItem('theme_dark');
+        if (saved !== null) return saved === 'true';
+      }
+    } catch (e) {
+      console.warn('Storage disabled', e);
+    }
+    return true;
+  });
   const [activeTab, setActiveTab] = useState('overview');
   const [doctors, setDoctors] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -1851,6 +1921,16 @@ function AdminDashboard({ onLogout, initialProfile }) {
     ];
     return () => subs.forEach(u => u());
   }, []);
+
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage !== null) {
+        localStorage.setItem('theme_dark', isDarkMode);
+      }
+    } catch (e) {
+      console.warn('Storage set failed', e);
+    }
+  }, [isDarkMode]);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -2120,8 +2200,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
       {/* Notification */}
       {notification && (
         <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold animate-slide-up glass border ${notification.type === 'error'
-            ? 'bg-rose-600/90 text-white border-rose-500/30 shadow-rose-500/20'
-            : 'bg-emerald-600/90 text-white border-emerald-500/30 shadow-emerald-500/20'
+          ? 'bg-rose-600/90 text-white border-rose-500/30 shadow-rose-500/20'
+          : 'bg-emerald-600/90 text-white border-emerald-500/30 shadow-emerald-500/20'
           }`}>
           {notification.type === 'error' ? <AlertTriangle className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
           {notification.message}
