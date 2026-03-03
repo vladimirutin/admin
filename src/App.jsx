@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  ShieldCheck, Users, CheckCircle, XCircle, LogOut, Activity, RefreshCw, 
-  LayoutDashboard, Settings, Bell, Mail, Lock, Unlock, Save, Edit2, X, 
-  Server, FileText, Clock, Trash2, Grid, DollarSign, AlertTriangle, MapPin, 
-  Wifi, WifiOff, ShoppingBag, User, ChevronRight, Power, Eye, ClipboardList, 
-  AlertOctagon, Search, ArrowRight, TrendingUp, MoreHorizontal, FileSearch, 
-  Stethoscope, Menu, FileBadge, ToggleLeft, ToggleRight, Database, Download, 
-  HardDrive, Globe, Sun, Moon, EyeOff, Wrench, Cpu, Thermometer, Printer, 
+import {
+  ShieldCheck, Users, CheckCircle, XCircle, LogOut, Activity, RefreshCw,
+  LayoutDashboard, Settings, Bell, Mail, Lock, Unlock, Save, Edit2, X,
+  Server, FileText, Clock, Trash2, Grid, DollarSign, AlertTriangle, MapPin,
+  Wifi, WifiOff, ShoppingBag, User, ChevronRight, Power, Eye, ClipboardList,
+  AlertOctagon, Search, ArrowRight, TrendingUp, MoreHorizontal, FileSearch,
+  Stethoscope, Menu, FileBadge, ToggleLeft, ToggleRight, Database, Download,
+  HardDrive, Globe, Sun, Moon, EyeOff, Wrench, Cpu, Thermometer, Printer,
   Scan, Package, LifeBuoy, BarChart3, Send, MessageSquare, Layers, Zap,
   Megaphone, AlertCircle, CheckSquare, CheckCircle2, Monitor, ChevronLeft,
   Sparkles, TrendingDown, Shield, Radio, Waves, ChevronDown, Star, Target,
   Gauge, Network, FlaskConical, BrainCircuit
 } from 'lucide-react';
 import { initializeApp } from "firebase/app";
-import { 
-  getFirestore, collection, query, getDocs, doc, updateDoc, limit, 
+import {
+  getFirestore, collection, query, getDocs, doc, updateDoc, limit,
   serverTimestamp, deleteDoc, getDoc, setDoc, onSnapshot, addDoc, where
 } from "firebase/firestore";
 import { signInAnonymously, getAuth } from "firebase/auth";
@@ -265,12 +265,12 @@ const GlobalStyles = () => {
 function AnimatedCounter({ value, duration = 1000 }) {
   const [display, setDisplay] = useState(0);
   const prev = useRef(0);
-  
+
   useEffect(() => {
     const start = prev.current;
     const end = Number(value) || 0;
     const startTime = Date.now();
-    
+
     const tick = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -279,10 +279,10 @@ function AnimatedCounter({ value, duration = 1000 }) {
       if (progress < 1) requestAnimationFrame(tick);
       else prev.current = end;
     };
-    
+
     requestAnimationFrame(tick);
   }, [value]);
-  
+
   return <span>{display}</span>;
 }
 
@@ -312,23 +312,22 @@ function PulseDot({ color = 'emerald', size = 'sm' }) {
 
 function NavButton({ id, label, icon, active, onClick, badge, isDarkMode }) {
   return (
-    <button 
-      onClick={() => onClick(id)} 
-      className={`relative flex w-full items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group ripple overflow-hidden ${
-        active 
-          ? isDarkMode 
-            ? 'bg-gradient-to-r from-indigo-600/20 to-indigo-500/5 text-indigo-400 shadow-lg' 
+    <button
+      onClick={() => onClick(id)}
+      className={`relative flex w-full items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 group ripple overflow-hidden ${active
+          ? isDarkMode
+            ? 'bg-gradient-to-r from-indigo-600/20 to-indigo-500/5 text-indigo-400 shadow-lg'
             : 'bg-gradient-to-r from-indigo-50 to-indigo-50/50 text-indigo-600'
-          : isDarkMode 
-            ? 'text-slate-500 hover:bg-white/5 hover:text-slate-200' 
+          : isDarkMode
+            ? 'text-slate-500 hover:bg-white/5 hover:text-slate-200'
             : 'text-slate-400 hover:bg-slate-100 hover:text-slate-700'
-      }`}
+        }`}
     >
       {active && <span className="nav-active-indicator"></span>}
       <div className="flex items-center gap-3 relative z-10">
         <div className={`transition-all duration-300 ${active ? 'scale-110' : 'group-hover:scale-105'}`}>
-          {React.cloneElement(icon, { 
-            className: `w-4.5 h-4.5 transition-colors ${active ? 'text-indigo-400' : isDarkMode ? 'text-slate-500 group-hover:text-slate-200' : 'text-slate-400 group-hover:text-slate-700'}` 
+          {React.cloneElement(icon, {
+            className: `w-4.5 h-4.5 transition-colors ${active ? 'text-indigo-400' : isDarkMode ? 'text-slate-500 group-hover:text-slate-200' : 'text-slate-400 group-hover:text-slate-700'}`
           })}
         </div>
         <span className="font-display font-semibold text-xs uppercase tracking-widest">{label}</span>
@@ -344,59 +343,58 @@ function NavButton({ id, label, icon, active, onClick, badge, isDarkMode }) {
 }
 
 function StatCard({ title, value, icon, color, subtext, onClick, isDarkMode, trend }) {
-  const configs = { 
-    amber: { 
-      bg: "bg-amber-500/10", text: "text-amber-400", 
+  const configs = {
+    amber: {
+      bg: "bg-amber-500/10", text: "text-amber-400",
       border: "border-amber-500/20", glow: "hover:glow-amber",
       gradient: "from-amber-500/20 to-transparent"
-    }, 
-    blue: { 
-      bg: "bg-blue-500/10", text: "text-blue-400", 
+    },
+    blue: {
+      bg: "bg-blue-500/10", text: "text-blue-400",
       border: "border-blue-500/20", glow: "hover:glow-indigo",
       gradient: "from-blue-500/20 to-transparent"
-    }, 
-    emerald: { 
-      bg: "bg-emerald-500/10", text: "text-emerald-400", 
+    },
+    emerald: {
+      bg: "bg-emerald-500/10", text: "text-emerald-400",
       border: "border-emerald-500/20", glow: "hover:glow-emerald",
       gradient: "from-emerald-500/20 to-transparent"
-    }, 
-    red: { 
-      bg: "bg-rose-500/10", text: "text-rose-400", 
+    },
+    red: {
+      bg: "bg-rose-500/10", text: "text-rose-400",
       border: "border-rose-500/20", glow: "hover:glow-rose",
       gradient: "from-rose-500/20 to-transparent"
-    } 
+    }
   };
   const c = configs[color];
-  
+
   return (
-    <div 
-      onClick={onClick} 
-      className={`relative p-5 rounded-2xl border cursor-pointer group card-hover overflow-hidden ${
-        isDarkMode 
-          ? `bg-[#0d1424] border-white/5 hover:border-indigo-500/30` 
+    <div
+      onClick={onClick}
+      className={`relative p-5 rounded-2xl border cursor-pointer group card-hover overflow-hidden ${isDarkMode
+          ? `bg-[#0d1424] border-white/5 hover:border-indigo-500/30`
           : `bg-white border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-200`
-      }`}
+        }`}
     >
       {/* Background gradient accent */}
       <div className={`absolute inset-0 bg-gradient-to-br ${c.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
-      
+
       {/* Corner decoration */}
       <div className={`absolute top-0 right-0 w-24 h-24 ${c.bg} rounded-full -translate-y-12 translate-x-12 group-hover:scale-110 transition-transform duration-500`}></div>
-      
+
       <div className="relative z-10">
         <div className={`inline-flex p-2.5 rounded-xl ${c.bg} ${c.border} border mb-4 transition-transform duration-300 group-hover:scale-110`}>
           {React.cloneElement(icon, { className: `w-5 h-5 ${c.text}` })}
         </div>
-        
+
         <div className={`font-display text-3xl font-bold mb-1 stat-number ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
           <AnimatedCounter value={typeof value === 'string' ? value.split('/')[0] : value} />
           {typeof value === 'string' && value.includes('/') && (
             <span className={`text-lg ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>/{value.split('/')[1]}</span>
           )}
         </div>
-        
+
         <p className={`font-semibold text-xs uppercase tracking-wider leading-tight ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{title}</p>
-        
+
         {subtext && (
           <p className={`text-[10px] mt-2 flex items-center gap-1 ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
             <span className="w-1 h-1 rounded-full bg-current"></span>{subtext}
@@ -408,10 +406,10 @@ function StatCard({ title, value, icon, color, subtext, onClick, isDarkMode, tre
 }
 
 function StatusBadge({ status }) {
-  const configs = { 
-    active: { cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "emerald" }, 
-    pending: { cls: "bg-amber-500/10 text-amber-400 border-amber-500/20", dot: "amber" }, 
-    rejected: { cls: "bg-rose-500/10 text-rose-400 border-rose-500/20", dot: "rose" } 
+  const configs = {
+    active: { cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "emerald" },
+    pending: { cls: "bg-amber-500/10 text-amber-400 border-amber-500/20", dot: "amber" },
+    rejected: { cls: "bg-rose-500/10 text-rose-400 border-rose-500/20", dot: "rose" }
   };
   const c = configs[status] || configs.pending;
   return (
@@ -423,10 +421,10 @@ function StatusBadge({ status }) {
 }
 
 function PrescriptionStatusBadge({ status }) {
-  const configs = { 
-    issued: { cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" }, 
-    partial: { cls: "bg-amber-500/10 text-amber-400 border-amber-500/20" }, 
-    completed: { cls: "bg-slate-500/10 text-slate-400 border-slate-500/20" } 
+  const configs = {
+    issued: { cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
+    partial: { cls: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+    completed: { cls: "bg-slate-500/10 text-slate-400 border-slate-500/20" }
   };
   const c = configs[status] || { cls: "bg-slate-500/10 text-slate-400 border-slate-500/20" };
   return <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${c.cls}`}>{status}</span>;
@@ -435,8 +433,8 @@ function PrescriptionStatusBadge({ status }) {
 function ActionButton({ onClick, label, icon, variant, isDarkMode }) {
   if (variant === 'primary') {
     return (
-      <button 
-        onClick={onClick} 
+      <button
+        onClick={onClick}
         className="w-full relative overflow-hidden flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-indigo-600 to-indigo-500 btn-hover-lift glow-indigo ripple transition-all duration-200"
       >
         <div className="animate-shimmer absolute inset-0 opacity-30"></div>
@@ -445,13 +443,12 @@ function ActionButton({ onClick, label, icon, variant, isDarkMode }) {
     );
   }
   return (
-    <button 
-      onClick={onClick} 
-      className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider btn-hover-lift ripple transition-all duration-200 border ${
-        isDarkMode 
-          ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20' 
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider btn-hover-lift ripple transition-all duration-200 border ${isDarkMode
+          ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
           : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50 hover:border-gray-300 shadow-sm'
-      }`}
+        }`}
     >
       {icon}{label}
     </button>
@@ -466,21 +463,19 @@ function PaginationFooter({ currentPage, totalPages, onPageChange, isDarkMode })
         PAGE <span className="text-indigo-400">{currentPage}</span> / {totalPages}
       </span>
       <div className="flex gap-2">
-        <button 
+        <button
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-all btn-hover-lift disabled:opacity-30 disabled:cursor-not-allowed ${
-            isDarkMode ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10' : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50'
-          }`}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-all btn-hover-lift disabled:opacity-30 disabled:cursor-not-allowed ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10' : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50'
+            }`}
         >
           <ChevronLeft className="w-3 h-3" /> PREV
         </button>
-        <button 
+        <button
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-all btn-hover-lift disabled:opacity-30 disabled:cursor-not-allowed ${
-            isDarkMode ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10' : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50'
-          }`}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-all btn-hover-lift disabled:opacity-30 disabled:cursor-not-allowed ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10' : 'bg-white border-gray-200 text-slate-600 hover:bg-gray-50'
+            }`}
         >
           NEXT <ChevronRight className="w-3 h-3" />
         </button>
@@ -507,11 +502,11 @@ function MobileMenu({ children, isDarkMode }) {
 
   return (
     <div className="relative" ref={menuRef}>
-      <button 
-        onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} 
+      <button
+        onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
         className={`p-2 rounded-lg transition-all duration-200 ${isDarkMode ? 'text-slate-500 hover:bg-white/10 hover:text-slate-200' : 'text-slate-400 hover:bg-gray-100 hover:text-slate-600'}`}
       >
-        <MoreHorizontal className="w-4 h-4"/>
+        <MoreHorizontal className="w-4 h-4" />
       </button>
       {isOpen && (
         <div className={`absolute right-0 top-10 w-48 rounded-2xl shadow-2xl border z-[100] flex flex-col p-2 gap-0.5 animate-scale-in glass ${isDarkMode ? 'bg-[#1a2234] border-white/10' : 'bg-white border-gray-100 shadow-xl'}`}>
@@ -530,19 +525,17 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, type = 
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-      <div className={`w-full max-w-sm rounded-3xl border overflow-hidden shadow-2xl animate-scale-in ${
-        type === 'danger' 
-          ? isDarkMode ? 'bg-[#1a1020] border-rose-500/20' : 'bg-white border-rose-100' 
+      <div className={`w-full max-w-sm rounded-3xl border overflow-hidden shadow-2xl animate-scale-in ${type === 'danger'
+          ? isDarkMode ? 'bg-[#1a1020] border-rose-500/20' : 'bg-white border-rose-100'
           : isDarkMode ? 'bg-[#0f1829] border-indigo-500/20' : 'bg-white border-indigo-100'
-      }`}>
+        }`}>
         <div className="p-8 text-center">
           <div className={`relative w-20 h-20 mx-auto mb-6`}>
             <div className={`absolute inset-0 rounded-2xl opacity-30 animate-pulse ${type === 'danger' ? 'bg-rose-500' : 'bg-indigo-500'}`}></div>
-            <div className={`relative w-full h-full rounded-2xl flex items-center justify-center ${
-              type === 'danger' 
-                ? 'bg-gradient-to-br from-rose-500 to-pink-600 shadow-lg shadow-rose-500/30' 
+            <div className={`relative w-full h-full rounded-2xl flex items-center justify-center ${type === 'danger'
+                ? 'bg-gradient-to-br from-rose-500 to-pink-600 shadow-lg shadow-rose-500/30'
                 : 'bg-gradient-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-500/30'
-            }`}>
+              }`}>
               {type === 'danger' ? <AlertTriangle className="w-8 h-8 text-white" /> : <CheckCircle2 className="w-8 h-8 text-white" />}
             </div>
           </div>
@@ -553,9 +546,8 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, type = 
           <button onClick={onClose} disabled={isLoading} className={`flex-1 py-3 text-sm font-bold rounded-xl border transition-all btn-hover-lift disabled:opacity-50 ${isDarkMode ? 'text-slate-300 border-white/10 hover:bg-white/5' : 'text-slate-600 border-gray-200 hover:bg-white'}`}>
             Cancel
           </button>
-          <button onClick={onConfirm} disabled={isLoading} className={`flex-1 flex justify-center items-center py-3 text-sm font-bold text-white rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50 btn-hover-lift ${
-            type === 'danger' ? 'bg-gradient-to-r from-rose-500 to-pink-600 shadow-rose-500/30' : 'bg-gradient-to-r from-indigo-600 to-blue-600 shadow-indigo-500/30'
-          }`}>
+          <button onClick={onConfirm} disabled={isLoading} className={`flex-1 flex justify-center items-center py-3 text-sm font-bold text-white rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50 btn-hover-lift ${type === 'danger' ? 'bg-gradient-to-r from-rose-500 to-pink-600 shadow-rose-500/30' : 'bg-gradient-to-r from-indigo-600 to-blue-600 shadow-indigo-500/30'
+            }`}>
             {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : confirmText}
           </button>
         </div>
@@ -567,7 +559,7 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, type = 
 function PasswordModal({ onClose, currentCreds, onUpdate, isDarkMode, onNotify }) {
   const [p, setP] = useState({ cur: '', new: '', conf: '' });
   const [show, setShow] = useState({ cur: false, new: false, conf: false });
-  
+
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
       <div className={`p-8 rounded-3xl w-full max-w-sm shadow-2xl border animate-scale-in ${isDarkMode ? 'bg-[#0f1829] border-white/10' : 'bg-white border-gray-200'}`}>
@@ -584,14 +576,14 @@ function PasswordModal({ onClose, currentCreds, onUpdate, isDarkMode, onNotify }
                 {field === 'cur' ? 'Current Password' : field === 'new' ? 'New Password' : 'Confirm Password'}
               </label>
               <div className="relative">
-                <input 
-                  type={show[field] ? "text" : "password"} 
-                  placeholder="••••••••" 
-                  className={`w-full border pr-10 p-3 rounded-xl text-sm font-mono transition-all outline-none focus:ring-2 focus:ring-indigo-500/30 ${isDarkMode ? 'border-white/10 bg-black/20 text-white focus:border-indigo-500/50' : 'border-gray-200 bg-gray-50 text-slate-900 focus:border-indigo-400'}`} 
-                  value={p[field]} 
-                  onChange={e => setP({...p, [field]: e.target.value})} 
+                <input
+                  type={show[field] ? "text" : "password"}
+                  placeholder="••••••••"
+                  className={`w-full border pr-10 p-3 rounded-xl text-sm font-mono transition-all outline-none focus:ring-2 focus:ring-indigo-500/30 ${isDarkMode ? 'border-white/10 bg-black/20 text-white focus:border-indigo-500/50' : 'border-gray-200 bg-gray-50 text-slate-900 focus:border-indigo-400'}`}
+                  value={p[field]}
+                  onChange={e => setP({ ...p, [field]: e.target.value })}
                 />
-                <button type="button" onClick={() => setShow(s => ({...s, [field]: !s[field]}))} className={`absolute right-3 top-3 ${isDarkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'}`}>
+                <button type="button" onClick={() => setShow(s => ({ ...s, [field]: !s[field] }))} className={`absolute right-3 top-3 ${isDarkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'}`}>
                   {show[field] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -600,13 +592,13 @@ function PasswordModal({ onClose, currentCreds, onUpdate, isDarkMode, onNotify }
         </div>
         <div className="flex justify-end gap-3 mt-6">
           <button onClick={onClose} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${isDarkMode ? 'text-slate-300 border-white/10 hover:bg-white/5' : 'text-slate-600 border-gray-200 hover:bg-gray-50'}`}>Cancel</button>
-          <button 
-            onClick={() => { 
-              if(p.cur !== currentCreds.password) return onNotify('Wrong current password', 'error'); 
-              if(p.new !== p.conf) return onNotify('Passwords do not match', 'error'); 
-              if(p.new.length < 6) return onNotify('Password too short', 'error');
-              onUpdate(p.new); 
-            }} 
+          <button
+            onClick={() => {
+              if (p.cur !== currentCreds.password) return onNotify('Wrong current password', 'error');
+              if (p.new !== p.conf) return onNotify('Passwords do not match', 'error');
+              if (p.new.length < 6) return onNotify('Password too short', 'error');
+              onUpdate(p.new);
+            }}
             className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/20 btn-hover-lift transition-all"
           >
             Update Password
@@ -650,11 +642,11 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
             </button>
           </div>
         </div>
-        
+
         <div className="p-6 space-y-5">
           <div>
             <label className={`text-[10px] font-bold uppercase tracking-widest mb-2 block ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Message</label>
-            <textarea 
+            <textarea
               autoFocus rows="3"
               className={`w-full p-4 rounded-xl border text-sm outline-none resize-none transition-all focus:ring-2 focus:ring-indigo-500/30 ${isDarkMode ? 'bg-black/20 border-white/10 text-white focus:border-indigo-500/50 placeholder-slate-600' : 'bg-gray-50 border-gray-200 text-slate-900 focus:border-indigo-400'}`}
               placeholder="e.g., Scheduled maintenance Sunday at 12 PM..."
@@ -663,7 +655,7 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
             ></textarea>
             <p className={`text-[10px] mt-1 text-right ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>{message.length}/500</p>
           </div>
-          
+
           <div>
             <label className={`text-[10px] font-bold uppercase tracking-widest mb-2 block ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Target</label>
             <div className="grid grid-cols-3 gap-2">
@@ -672,15 +664,14 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
                 { id: 'doctors', label: 'Doctors Only', icon: <Users className="w-4 h-4" />, color: 'blue' },
                 { id: 'kiosks', label: 'Kiosks Only', icon: <Server className="w-4 h-4" />, color: 'emerald' },
               ].map(t => (
-                <button 
+                <button
                   key={t.id} onClick={() => setTarget(t.id)}
-                  className={`flex flex-col items-center justify-center py-3 rounded-xl border transition-all btn-hover-lift ${
-                    target === t.id 
+                  className={`flex flex-col items-center justify-center py-3 rounded-xl border transition-all btn-hover-lift ${target === t.id
                       ? t.color === 'indigo' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20'
-                      : t.color === 'blue' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
-                      : 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20'
+                        : t.color === 'blue' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
+                          : 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20'
                       : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'
-                  }`}
+                    }`}
                 >
                   {t.icon}
                   <span className="text-[10px] font-bold uppercase tracking-wide mt-1">{t.label}</span>
@@ -704,7 +695,7 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
 
         <div className={`px-6 pb-6 flex justify-end gap-3`}>
           <button onClick={onClose} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${isDarkMode ? 'text-slate-300 border-white/10 hover:bg-white/5' : 'text-slate-600 border-gray-200 hover:bg-gray-50'}`}>Cancel</button>
-          <button 
+          <button
             onClick={handleSend}
             disabled={!message.trim() || isSending}
             className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/20 btn-hover-lift transition-all"
@@ -746,7 +737,7 @@ function TopPrescribedChart({ transactions, isDarkMode }) {
             <span className="font-mono font-bold text-indigo-400">{count}</span>
           </div>
           <div className={`w-full h-2.5 rounded-full overflow-hidden ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
-            <div 
+            <div
               className={`h-full bg-gradient-to-r ${colors[i]} rounded-full progress-bar shadow-sm`}
               style={{ width: `${(count / maxVal) * 100}%` }}
             ></div>
@@ -791,8 +782,8 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
   const [deleteId, setDeleteId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const itemsPerPage = 10;
-  
-  const filtered = medicines.filter(m => 
+
+  const filtered = medicines.filter(m =>
     (m.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (m.generic?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
@@ -822,7 +813,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
   return (
     <>
       <ConfirmationModal isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={confirmDelete} title="Remove Medicine?" message="This medicine will be removed from the Master Database across all doctors." confirmText="Remove" type="danger" isDarkMode={isDarkMode} />
-      
+
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
         <div className={`p-5 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div>
@@ -835,8 +826,8 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
               <input type="text" placeholder="Search..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
                 className={`w-full pl-8 pr-3 py-2 rounded-xl text-xs border outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all ${isDarkMode ? 'bg-white/5 border-white/10 text-white placeholder-slate-600 focus:border-indigo-500/50' : 'bg-gray-50 border-gray-200 text-slate-700 placeholder-slate-400'}`} />
             </div>
-            <button 
-              onClick={() => setIsAdding(!isAdding)} 
+            <button
+              onClick={() => setIsAdding(!isAdding)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold btn-hover-lift transition-all ${isAdding ? (isDarkMode ? 'bg-white/10 text-slate-300 border border-white/10' : 'bg-gray-100 text-slate-600 border border-gray-200') : 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/20'}`}
             >
               {isAdding ? <><X className="w-3.5 h-3.5" /> Cancel</> : <>+ Add</>}
@@ -850,14 +841,14 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
               <input key={i} placeholder={placeholder} required
                 className={`p-3 rounded-xl border text-xs outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all font-medium ${isDarkMode ? 'bg-black/20 border-white/10 text-white placeholder-slate-600' : 'bg-white border-gray-200 text-slate-900'}`}
                 value={i === 0 ? newItem.name : newItem.generic}
-                onChange={e => setNewItem({...newItem, [i === 0 ? 'name' : 'generic']: e.target.value})} />
+                onChange={e => setNewItem({ ...newItem, [i === 0 ? 'name' : 'generic']: e.target.value })} />
             ))}
             <input type="number" placeholder="Stock Qty" required
               className={`p-3 rounded-xl border text-xs outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all font-mono ${isDarkMode ? 'bg-black/20 border-white/10 text-white placeholder-slate-600' : 'bg-white border-gray-200 text-slate-900'}`}
-              value={newItem.stock} onChange={e => setNewItem({...newItem, stock: parseInt(e.target.value)})} />
+              value={newItem.stock} onChange={e => setNewItem({ ...newItem, stock: parseInt(e.target.value) })} />
             <input type="number" placeholder="Price (PHP)" required
               className={`p-3 rounded-xl border text-xs outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all font-mono ${isDarkMode ? 'bg-black/20 border-white/10 text-white placeholder-slate-600' : 'bg-white border-gray-200 text-slate-900'}`}
-              value={newItem.price} onChange={e => setNewItem({...newItem, price: parseFloat(e.target.value)})} />
+              value={newItem.price} onChange={e => setNewItem({ ...newItem, price: parseFloat(e.target.value) })} />
             <button type="submit" className="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-bold rounded-xl p-3 text-xs hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-500/20 btn-hover-lift">Save to DB</button>
           </form>
         )}
@@ -874,7 +865,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
                   <button onClick={() => setDeleteId(m.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl">
-                    <Trash2 className="w-3.5 h-3.5"/> Remove
+                    <Trash2 className="w-3.5 h-3.5" /> Remove
                   </button>
                 </MobileMenu>
               </div>
@@ -905,7 +896,7 @@ function InventoryView({ medicines, db, appId, isDarkMode, onNotify }) {
                   <td className="px-6 py-4 font-bold font-mono text-emerald-400">₱{m.price}</td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => setDeleteId(m.id)} className="p-2 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all btn-hover-lift">
-                      <Trash2 className="w-4 h-4"/>
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </td>
                 </tr>
@@ -935,7 +926,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
 
   const confirmDelete = async () => {
     setHiddenTickets(prev => [...prev, deleteId]);
-    try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'support_tickets', deleteId)); } catch (e) {}
+    try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'support_tickets', deleteId)); } catch (e) { }
     setDeleteId(null);
     onNotify("Ticket deleted");
   };
@@ -950,7 +941,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
   return (
     <>
       <ConfirmationModal isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={confirmDelete} title="Delete Ticket?" message="This support ticket will be permanently deleted." confirmText="Delete" type="danger" isDarkMode={isDarkMode} />
-      
+
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
         <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -961,9 +952,8 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
             <div className={`flex p-1 rounded-xl gap-1 ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
               {filterTabs.map(f => (
                 <button key={f} onClick={() => setFilter(f)}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all flex items-center gap-1.5 ${
-                    filter === f ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all flex items-center gap-1.5 ${filter === f ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'
+                    }`}
                 >
                   {f.replace('_', ' ')}
                   {counts[f] > 0 && <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${filter === f ? 'bg-white/20' : isDarkMode ? 'bg-white/10' : 'bg-slate-200'}`}>{counts[f]}</span>}
@@ -972,7 +962,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
             </div>
           </div>
         </div>
-        
+
         <div className="divide-y divide-white/5">
           {currentData.length === 0 ? (
             <div className="p-10 text-center">
@@ -980,15 +970,14 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
               <p className="text-xs text-slate-500 italic">No tickets found</p>
             </div>
           ) : currentData.map(t => (
-            <div key={t.id} className={`p-4 md:p-5 flex flex-col md:flex-row justify-between items-start gap-4 transition-colors ${
-              isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'
-            } ${t.priority === 'high' ? (isDarkMode ? 'border-l-2 border-rose-500' : 'border-l-2 border-rose-400 bg-rose-50/50') : ''}`}>
+            <div key={t.id} className={`p-4 md:p-5 flex flex-col md:flex-row justify-between items-start gap-4 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'
+              } ${t.priority === 'high' ? (isDarkMode ? 'border-l-2 border-rose-500' : 'border-l-2 border-rose-400 bg-rose-50/50') : ''}`}>
               <div className="flex gap-4 items-start w-full relative">
                 <div className="absolute top-0 right-0 md:hidden z-20">
                   <MobileMenu isDarkMode={isDarkMode}>
                     {t.status === 'open' && <button onClick={() => handleStatusUpdate(t, 'in_progress')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-indigo-400 hover:bg-indigo-500/10 rounded-xl">In Progress</button>}
                     {t.status !== 'resolved' && <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl">Resolve</button>}
-                    <button onClick={() => setDeleteId(t.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Delete</button>
+                    <button onClick={() => setDeleteId(t.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
                   </MobileMenu>
                 </div>
                 <div className={`p-3 rounded-xl flex-shrink-0 ${t.priority === 'high' ? 'bg-rose-500/15 text-rose-400' : isDarkMode ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-500'}`}>
@@ -998,11 +987,10 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h4 className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{t.subject}</h4>
                     {t.priority === 'high' && <span className="text-[9px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full">HIGH</span>}
-                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${
-                      t.status === 'open' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' 
-                      : t.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                      : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                    }`}>{t.status.replace('_', ' ')}</span>
+                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${t.status === 'open' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                        : t.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      }`}>{t.status.replace('_', ' ')}</span>
                   </div>
                   <p className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{t.message}</p>
                   <p className={`text-[10px] mt-2 font-mono ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
@@ -1010,7 +998,7 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
                   </p>
                 </div>
               </div>
-              
+
               <div className="hidden md:flex gap-2 self-center flex-shrink-0">
                 {t.status === 'open' && (
                   <button onClick={() => handleStatusUpdate(t, 'in_progress')} className="px-3 py-1.5 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 rounded-lg text-xs font-bold transition-all btn-hover-lift">
@@ -1019,11 +1007,11 @@ function SupportView({ tickets, db, appId, isDarkMode, onNotify }) {
                 )}
                 {t.status !== 'resolved' && (
                   <button onClick={() => handleStatusUpdate(t, 'resolved')} className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-lg shadow-emerald-500/20 btn-hover-lift">
-                    <CheckSquare className="w-3.5 h-3.5"/> Resolve
+                    <CheckSquare className="w-3.5 h-3.5" /> Resolve
                   </button>
                 )}
                 <button onClick={() => setDeleteId(t.id)} className="p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all btn-hover-lift">
-                  <Trash2 className="w-4 h-4"/>
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -1044,7 +1032,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const filteredDocs = doctors.filter(doc => 
+  const filteredDocs = doctors.filter(doc =>
     (doc.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (doc.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (doc.license?.toLowerCase() || '').includes(searchTerm.toLowerCase())
@@ -1065,17 +1053,16 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
               <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doctors.length} registered physicians</p>
             </div>
             <button onClick={onRefresh} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-400 hover:bg-white/5 hover:text-emerald-400' : 'text-slate-400 hover:bg-gray-100 hover:text-emerald-600'}`}>
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}/>
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
             <div className={`flex p-1 rounded-xl gap-1 ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
               {filterBtns.map(f => (
                 <button key={f} onClick={() => setFilter(f)}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all whitespace-nowrap ${
-                    filter === f ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all whitespace-nowrap ${filter === f ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'
+                    }`}
                 >{f}</button>
               ))}
             </div>
@@ -1095,11 +1082,11 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
             <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
-                  <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Eye className="w-3.5 h-3.5"/> View</button>
-                  {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5"/> Approve</button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5"/> Reject</button></>)}
-                  {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5"/> Revoke</button>}
-                  {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5"/> Restore</button>}
-                  <button onClick={() => onDelete(doc.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Delete</button>
+                  <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Eye className="w-3.5 h-3.5" /> View</button>
+                  {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5" /> Approve</button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5" /> Reject</button></>)}
+                  {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5" /> Revoke</button>}
+                  {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5" /> Restore</button>}
+                  <button onClick={() => onDelete(doc.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
                 </MobileMenu>
               </div>
               <div className="flex items-center gap-3">
@@ -1143,11 +1130,11 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
                   <td className="px-6 py-4"><StatusBadge status={doc.status} /></td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1.5">
-                      <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-500 hover:text-blue-400 hover:bg-blue-500/10' : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'}`} title="View"><Eye className="w-4 h-4"/></button>
-                      {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="p-2 text-emerald-400 bg-emerald-500/10 rounded-lg hover:bg-emerald-500/20 btn-hover-lift"><CheckCircle className="w-4 h-4"/></button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="p-2 text-rose-400 bg-rose-500/10 rounded-lg hover:bg-rose-500/20 btn-hover-lift"><XCircle className="w-4 h-4"/></button></>)}
+                      <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-500 hover:text-blue-400 hover:bg-blue-500/10' : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'}`} title="View"><Eye className="w-4 h-4" /></button>
+                      {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="p-2 text-emerald-400 bg-emerald-500/10 rounded-lg hover:bg-emerald-500/20 btn-hover-lift"><CheckCircle className="w-4 h-4" /></button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="p-2 text-rose-400 bg-rose-500/10 rounded-lg hover:bg-rose-500/20 btn-hover-lift"><XCircle className="w-4 h-4" /></button></>)}
                       {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="text-[10px] font-bold text-rose-400 border border-rose-500/30 px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10 btn-hover-lift">Revoke</button>}
                       {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, 'active')} className="text-[10px] font-bold text-emerald-400 border border-emerald-500/30 px-2.5 py-1.5 rounded-lg hover:bg-emerald-500/10 btn-hover-lift">Restore</button>}
-                      <button onClick={() => onDelete(doc.id)} className="p-2 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all btn-hover-lift ml-1"><Trash2 className="w-4 h-4"/></button>
+                      <button onClick={() => onDelete(doc.id)} className="p-2 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all btn-hover-lift ml-1"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </td>
                 </tr>
@@ -1157,7 +1144,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
         </div>
         <PaginationFooter currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} isDarkMode={isDarkMode} />
       </TableContainer>
-      
+
       {viewDoc && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
           <div className={`rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border animate-scale-in ${isDarkMode ? 'bg-[#0f1829] border-white/10' : 'bg-white border-gray-200'}`}>
@@ -1169,29 +1156,33 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
                   <p className="text-xs text-slate-500">Verification Details</p>
                 </div>
               </div>
-              <button onClick={() => setViewDoc(null)} className={`p-2 rounded-xl transition-all ${isDarkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-gray-100 text-slate-500'}`}><X className="w-5 h-5"/></button>
+              <button onClick={() => setViewDoc(null)} className={`p-2 rounded-xl transition-all ${isDarkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-gray-100 text-slate-500'}`}><X className="w-5 h-5" /></button>
             </div>
             <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
               <div className={`p-4 rounded-2xl border text-center ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                <FileBadge className="w-10 h-10 text-slate-500 mx-auto mb-2"/>
+                <FileBadge className="w-10 h-10 text-slate-500 mx-auto mb-2" />
                 <p className={`text-sm font-bold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>PRC License ID</p>
                 <p className="text-xs text-slate-500">No image uploaded</p>
               </div>
-              
+
               {[
-                { label: 'Account Credentials', fields: [
-                  { label: 'Full Name', value: viewDoc.name, span: 2 },
-                  { label: 'Email', value: viewDoc.email, mono: true, span: 2 },
-                  { label: 'Password', isPassword: true },
-                ]},
-                { label: 'Clinic Information', fields: [
-                  { label: 'Clinic Name', value: viewDoc.clinicDetails?.name || 'N/A', span: 2 },
-                  { label: 'Address', value: viewDoc.clinicDetails?.address || 'N/A', span: 2 },
-                  { label: 'Contact', value: viewDoc.clinicDetails?.contactNumber || 'N/A' },
-                  { label: 'License No', value: viewDoc.license, mono: true },
-                  { label: 'PTR No', value: viewDoc.clinicDetails?.ptr || 'N/A', mono: true },
-                  { label: 'S2 License', value: viewDoc.clinicDetails?.s2 || 'N/A', mono: true },
-                ]},
+                {
+                  label: 'Account Credentials', fields: [
+                    { label: 'Full Name', value: viewDoc.name, span: 2 },
+                    { label: 'Email', value: viewDoc.email, mono: true, span: 2 },
+                    { label: 'Password', isPassword: true },
+                  ]
+                },
+                {
+                  label: 'Clinic Information', fields: [
+                    { label: 'Clinic Name', value: viewDoc.clinicDetails?.name || 'N/A', span: 2 },
+                    { label: 'Address', value: viewDoc.clinicDetails?.address || 'N/A', span: 2 },
+                    { label: 'Contact', value: viewDoc.clinicDetails?.contactNumber || 'N/A' },
+                    { label: 'License No', value: viewDoc.license, mono: true },
+                    { label: 'PTR No', value: viewDoc.clinicDetails?.ptr || 'N/A', mono: true },
+                    { label: 'S2 License', value: viewDoc.clinicDetails?.s2 || 'N/A', mono: true },
+                  ]
+                },
               ].map(section => (
                 <div key={section.label}>
                   <h4 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{section.label}</h4>
@@ -1203,8 +1194,8 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
                           isEditingPassword ? (
                             <div className="flex items-center gap-2">
                               <input type="text" className={`flex-1 p-2 rounded-lg border text-xs outline-none focus:ring-2 focus:ring-emerald-500/30 font-mono ${isDarkMode ? 'bg-black/20 border-white/10 text-white' : 'bg-white border-gray-200 text-slate-900'}`} value={newPasswordVal} onChange={e => setNewPasswordVal(e.target.value)} placeholder="New password" />
-                              <button onClick={async () => { if (!newPasswordVal.trim()) return; await onUpdatePassword(viewDoc.id, newPasswordVal); setIsEditingPassword(false); setViewDoc(prev => ({...prev, password: newPasswordVal})); }} className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg btn-hover-lift"><CheckSquare className="w-4 h-4"/></button>
-                              <button onClick={() => setIsEditingPassword(false)} className="p-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg btn-hover-lift"><X className="w-4 h-4"/></button>
+                              <button onClick={async () => { if (!newPasswordVal.trim()) return; await onUpdatePassword(viewDoc.id, newPasswordVal); setIsEditingPassword(false); setViewDoc(prev => ({ ...prev, password: newPasswordVal })); }} className="p-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg btn-hover-lift"><CheckSquare className="w-4 h-4" /></button>
+                              <button onClick={() => setIsEditingPassword(false)} className="p-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg btn-hover-lift"><X className="w-4 h-4" /></button>
                             </div>
                           ) : (
                             <div className="flex items-center justify-between">
@@ -1241,10 +1232,10 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
   const currentData = machines.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const statusConfig = {
-    online: { cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', icon: <Wifi className="w-3 h-3"/>, dot: 'emerald' },
-    rebooting: { cls: 'bg-amber-500/15 text-amber-400 border-amber-500/20', icon: <RefreshCw className="w-3 h-3 animate-spin"/>, dot: 'amber' },
-    locked: { cls: 'bg-slate-500/15 text-slate-400 border-slate-500/20', icon: <Lock className="w-3 h-3"/>, dot: 'slate' },
-    offline: { cls: 'bg-rose-500/15 text-rose-400 border-rose-500/20', icon: <WifiOff className="w-3 h-3"/>, dot: 'rose' },
+    online: { cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', icon: <Wifi className="w-3 h-3" />, dot: 'emerald' },
+    rebooting: { cls: 'bg-amber-500/15 text-amber-400 border-amber-500/20', icon: <RefreshCw className="w-3 h-3 animate-spin" />, dot: 'amber' },
+    locked: { cls: 'bg-slate-500/15 text-slate-400 border-slate-500/20', icon: <Lock className="w-3 h-3" />, dot: 'slate' },
+    offline: { cls: 'bg-rose-500/15 text-rose-400 border-rose-500/20', icon: <WifiOff className="w-3 h-3" />, dot: 'rose' },
   };
 
   return (
@@ -1253,7 +1244,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
         <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Kiosk Network</h3>
         <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{machines.length} machines registered · {machines.filter(m => m.status === 'online').length} online</p>
       </div>
-      
+
       {/* Mobile */}
       <div className="md:hidden divide-y divide-white/5">
         {currentData.length === 0 ? (
@@ -1264,11 +1255,11 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
             <div key={m.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
                 <MobileMenu isDarkMode={isDarkMode}>
-                  <button onClick={() => onPing(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Activity className="w-3.5 h-3.5"/> Ping</button>
-                  <button onClick={() => onRunDiagnostics(m)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Wrench className="w-3.5 h-3.5"/> Diagnostics</button>
-                  <button onClick={() => onReboot(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Power className="w-3.5 h-3.5"/> Reboot</button>
-                  <button onClick={() => onLock(m.id, m.status)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}>{m.status === 'locked' ? <Unlock className="w-3.5 h-3.5"/> : <Lock className="w-3.5 h-3.5"/>} {m.status === 'locked' ? 'Unlock' : 'Lock'}</button>
-                  <button onClick={() => onDelete(m.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Remove</button>
+                  <button onClick={() => onPing(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Activity className="w-3.5 h-3.5" /> Ping</button>
+                  <button onClick={() => onRunDiagnostics(m)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Wrench className="w-3.5 h-3.5" /> Diagnostics</button>
+                  <button onClick={() => onReboot(m.id)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Power className="w-3.5 h-3.5" /> Reboot</button>
+                  <button onClick={() => onLock(m.id, m.status)} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}>{m.status === 'locked' ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />} {m.status === 'locked' ? 'Unlock' : 'Lock'}</button>
+                  <button onClick={() => onDelete(m.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5" /> Remove</button>
                 </MobileMenu>
               </div>
               <div>
@@ -1306,17 +1297,17 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1.5">
                       {[
-                        { action: () => onPing(m.id), icon: <Activity size={14}/>, title: 'Ping' },
-                        { action: () => onRunDiagnostics(m), icon: <Wrench size={14}/>, title: 'Diagnostics' },
-                        { action: () => onReboot(m.id), icon: <Power size={14}/>, title: 'Reboot' },
-                        { action: () => onLock(m.id, m.status), icon: m.status === 'locked' ? <Unlock size={14}/> : <Lock size={14}/>, title: m.status === 'locked' ? 'Unlock' : 'Lock' },
+                        { action: () => onPing(m.id), icon: <Activity size={14} />, title: 'Ping' },
+                        { action: () => onRunDiagnostics(m), icon: <Wrench size={14} />, title: 'Diagnostics' },
+                        { action: () => onReboot(m.id), icon: <Power size={14} />, title: 'Reboot' },
+                        { action: () => onLock(m.id, m.status), icon: m.status === 'locked' ? <Unlock size={14} /> : <Lock size={14} />, title: m.status === 'locked' ? 'Unlock' : 'Lock' },
                       ].map((btn, i) => (
                         <button key={i} onClick={btn.action} title={btn.title}
                           className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 text-slate-500 hover:text-slate-700'}`}>
                           {btn.icon}
                         </button>
                       ))}
-                      <button onClick={() => onDelete(m.id)} className="p-2 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg text-rose-400 btn-hover-lift ml-1"><Trash2 size={14}/></button>
+                      <button onClick={() => onDelete(m.id)} className="p-2 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg text-rose-400 btn-hover-lift ml-1"><Trash2 size={14} /></button>
                     </div>
                   </td>
                 </tr>
@@ -1344,20 +1335,20 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
           <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{transactions.length} records in view</p>
         </div>
         <button onClick={onClearView} className="flex items-center gap-1.5 px-3 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-xl text-xs font-bold uppercase tracking-wide transition-all btn-hover-lift border border-rose-500/20">
-          <Trash2 className="w-3.5 h-3.5"/> Clear View
+          <Trash2 className="w-3.5 h-3.5" /> Clear View
         </button>
       </div>
-      
+
       <div className="md:hidden divide-y divide-white/5">
         {currentData.length === 0 ? (
           <div className="p-10 text-center"><FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No transactions</p></div>
         ) : currentData.map(tx => (
           <div key={tx.id} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
             <div className="absolute top-4 right-4 z-20">
-              <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(tx.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
+              <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(tx.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5" /> Hide</button></MobileMenu>
             </div>
             <div><p className={`font-bold text-sm pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</p><p className="text-xs text-slate-500">{tx.patient?.name}</p><p className="text-[10px] font-mono text-slate-600 mt-1">{tx.id}</p></div>
-            <div className="flex gap-3 items-center"><span className="font-bold text-emerald-400 font-mono">₱{tx.grandTotal?.toFixed(2)}</span><PrescriptionStatusBadge status={tx.status || 'issued'}/></div>
+            <div className="flex gap-3 items-center"><span className="font-bold text-emerald-400 font-mono">₱{tx.grandTotal?.toFixed(2)}</span><PrescriptionStatusBadge status={tx.status || 'issued'} /></div>
           </div>
         ))}
       </div>
@@ -1376,7 +1367,7 @@ function TransactionsView({ transactions, onHide, onClearView, isDarkMode }) {
                 <td className={`px-6 py-4 font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{tx.doctorName}</td>
                 <td className={`px-6 py-4 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{tx.patient?.name}</td>
                 <td className="px-6 py-4 font-bold font-mono text-emerald-400">₱{tx.grandTotal?.toFixed(2)}</td>
-                <td className="px-6 py-4"><PrescriptionStatusBadge status={tx.status || 'issued'}/></td>
+                <td className="px-6 py-4"><PrescriptionStatusBadge status={tx.status || 'issued'} /></td>
                 <td className="px-6 py-4 text-center"><button onClick={() => onHide(tx.id)} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-600 hover:text-rose-400 hover:bg-rose-900/20' : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'}`}><Trash2 className="w-4 h-4" /></button></td>
               </tr>
             ))}
@@ -1402,17 +1393,17 @@ function AuditView({ logs, onHide, onClearView, isDarkMode }) {
           <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{logs.length} system events</p>
         </div>
         <button onClick={onClearView} className="flex items-center gap-1.5 px-3 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-xl text-xs font-bold uppercase tracking-wide transition-all btn-hover-lift border border-rose-500/20">
-          <Trash2 className="w-3.5 h-3.5"/> Clear View
+          <Trash2 className="w-3.5 h-3.5" /> Clear View
         </button>
       </div>
-      
+
       <div className="md:hidden divide-y divide-white/5">
         {currentData.length === 0 ? (
           <div className="p-10 text-center"><ClipboardList className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No audit logs</p></div>
         ) : currentData.map((log, i) => (
           <div key={i} className={`p-4 relative flex flex-col gap-2 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
             <div className="absolute top-4 right-4 z-20">
-              <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(log.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5"/> Hide</button></MobileMenu>
+              <MobileMenu isDarkMode={isDarkMode}><button onClick={() => onHide(log.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5" /> Hide</button></MobileMenu>
             </div>
             <p className={`font-bold text-sm pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{log.action}</p>
             <p className="text-xs text-slate-400">{log.details}</p>
@@ -1453,13 +1444,13 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
     if (!data?.length) return onNotify("No data to export", "error");
     const header = Object.keys(data[0]);
     const csv = [header.join(','), ...data.map(row => header.map(f => JSON.stringify(row[f] ?? '')).join(','))].join('\r\n');
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], {type:'text/csv'})), download: filename, hidden: true });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: filename, hidden: true });
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   };
 
   const handleFullBackup = () => {
     const backup = { timestamp: new Date().toISOString(), doctors, machines, transactions, auditLogs, medicines, supportTickets };
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'})), download: `medivend_backup_${Date.now()}.json`, hidden: true });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })), download: `medivend_backup_${Date.now()}.json`, hidden: true });
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   };
 
@@ -1475,12 +1466,11 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
         <p className={`font-display font-bold text-xs uppercase tracking-widest mb-4 px-3 ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>Settings</p>
         <nav className="space-y-1">
           {settingTabs.map(tab => (
-            <button key={tab.id} onClick={() => setActiveSettingTab(tab.id)} 
-              className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2.5 transition-all btn-hover-lift ${
-                activeSettingTab === tab.id 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
+            <button key={tab.id} onClick={() => setActiveSettingTab(tab.id)}
+              className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2.5 transition-all btn-hover-lift ${activeSettingTab === tab.id
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
                   : isDarkMode ? 'text-slate-400 hover:text-white hover:bg-white/5' : 'text-slate-500 hover:text-slate-900 hover:bg-gray-100'
-              }`}
+                }`}
             >
               {tab.icon} {tab.label}
             </button>
@@ -1509,13 +1499,13 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
               </div>
               {!isEditing ? (
                 <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-xl hover:bg-indigo-500/20 btn-hover-lift">
-                  <Edit2 className="w-3.5 h-3.5"/> Edit Profile
+                  <Edit2 className="w-3.5 h-3.5" /> Edit Profile
                 </button>
               ) : (
                 <div className="flex gap-2">
                   <button onClick={() => setIsEditing(false)} className={`px-3 py-2 text-xs font-bold rounded-xl border btn-hover-lift ${isDarkMode ? 'text-slate-400 border-white/10 hover:bg-white/5' : 'text-slate-600 border-gray-200 hover:bg-gray-100'}`}>Cancel</button>
                   <button onClick={onSave} className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-lg shadow-indigo-500/20 btn-hover-lift">
-                    <Save className="w-3.5 h-3.5"/> Save
+                    <Save className="w-3.5 h-3.5" /> Save
                   </button>
                 </div>
               )}
@@ -1528,18 +1518,18 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
               ].map(field => (
                 <div key={field.key}>
                   <label className={`block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2`}>{field.label}</label>
-                  <input 
+                  <input
                     type={field.type} disabled={!isEditing}
                     className={`w-full px-4 py-3 border rounded-xl outline-none text-sm transition-all ${isEditing ? 'focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50' : 'border-transparent cursor-default'} ${isDarkMode ? 'bg-white/5 text-slate-200 border-white/10' : 'bg-gray-50 text-slate-700 border-gray-200'} ${!isEditing ? (isDarkMode ? 'bg-transparent' : 'bg-transparent') : ''}`}
                     value={profile?.[field.key] || ''}
-                    onChange={e => setProfile({...profile, [field.key]: e.target.value})}
+                    onChange={e => setProfile({ ...profile, [field.key]: e.target.value })}
                   />
                 </div>
               ))}
             </div>
             <div className={`pt-5 border-t ${isDarkMode ? 'border-white/10' : 'border-gray-100'}`}>
               <button onClick={setShowPassword} className="flex items-center gap-2 text-xs text-indigo-400 font-bold hover:text-indigo-300 transition-colors btn-hover-lift">
-                <Lock className="w-3.5 h-3.5"/> Change Password
+                <Lock className="w-3.5 h-3.5" /> Change Password
               </button>
             </div>
           </div>
@@ -1551,7 +1541,7 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
               <h4 className={`font-display font-bold text-lg ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Security</h4>
               <p className="text-xs text-slate-500 mt-0.5">Manage access and authentication</p>
             </div>
-            
+
             <div>
               <h5 className={`text-xs font-bold text-slate-500 uppercase tracking-widest mb-3`}>Recent Login Activity</h5>
               {profile?.recentLogins?.length > 0 ? (
@@ -1589,9 +1579,8 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
                 { label: 'Full Backup', icon: <Database className="w-6 h-6" />, action: handleFullBackup, color: 'indigo' },
               ].map((item, i) => (
                 <button key={i} onClick={item.action}
-                  className={`flex flex-col items-center justify-center p-5 border rounded-2xl transition-all group btn-hover-lift ${
-                    item.dashed ? 'border-dashed' : ''
-                  } ${isDarkMode ? `border-white/10 hover:bg-${item.color}-500/5 hover:border-${item.color}-500/20` : `border-gray-200 hover:bg-${item.color}-50 hover:border-${item.color}-200`}`}
+                  className={`flex flex-col items-center justify-center p-5 border rounded-2xl transition-all group btn-hover-lift ${item.dashed ? 'border-dashed' : ''
+                    } ${isDarkMode ? `border-white/10 hover:bg-${item.color}-500/5 hover:border-${item.color}-500/20` : `border-gray-200 hover:bg-${item.color}-50 hover:border-${item.color}-200`}`}
                 >
                   <div className={`text-slate-500 group-hover:text-${item.color}-500 transition-colors mb-2`}>{item.icon}</div>
                   <span className={`text-xs font-bold text-slate-400 group-hover:text-${item.color}-500 transition-colors text-center`}>{item.label}</span>
@@ -1600,7 +1589,7 @@ function SettingsView({ profile, setProfile, onSave, isEditing, setIsEditing, se
             </div>
             <div className={`p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl`}>
               <div className="flex justify-between items-center mb-3">
-                <p className="text-sm font-bold text-amber-400 flex items-center gap-2"><HardDrive className="w-4 h-4"/> Storage</p>
+                <p className="text-sm font-bold text-amber-400 flex items-center gap-2"><HardDrive className="w-4 h-4" /> Storage</p>
                 <span className="text-xs font-mono text-amber-400">2.25 / 5 GB</span>
               </div>
               <div className="w-full bg-amber-500/20 h-2 rounded-full overflow-hidden">
@@ -1652,7 +1641,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
     await new Promise(r => setTimeout(r, 900));
     const targetUser = cloudProfile?.username || 'admin';
     const targetPass = cloudProfile?.password || 'admin123';
-    
+
     if (username === targetUser && password === targetPass) {
       try {
         const deviceName = /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile Device' : 'Desktop Session';
@@ -1673,20 +1662,20 @@ function AdminLogin({ onLogin, cloudProfile }) {
   return (
     <div className="flex h-screen w-full bg-[#060b18] font-sans overflow-hidden relative">
       <GlobalStyles />
-      
+
       {/* Animated grid background */}
       <div className="absolute inset-0 grid-bg opacity-50"></div>
-      
+
       {/* Glow orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay:'1s'}}></div>
-      
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+
       {/* Left panel */}
       <div className="w-full lg:w-1/2 h-full flex flex-col justify-center items-center p-6 relative z-10">
-        <div 
+        <div
           className="w-full max-w-md"
-          style={{ 
-            opacity: step >= 2 ? 1 : 0, 
+          style={{
+            opacity: step >= 2 ? 1 : 0,
             transform: step >= 2 ? 'none' : 'translateY(30px)',
             transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
@@ -1715,7 +1704,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Username</label>
                 <div className="relative">
                   <User className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500" />
-                  <input 
+                  <input
                     required type="text"
                     className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50 transition-all text-white text-sm placeholder-slate-600 font-medium"
                     placeholder="admin" value={username} onChange={e => setUsername(e.target.value)} disabled={isLocked}
@@ -1727,7 +1716,7 @@ function AdminLogin({ onLogin, cloudProfile }) {
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Password</label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500" />
-                  <input 
+                  <input
                     required type={showPassword ? "text" : "password"}
                     className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50 transition-all text-white text-sm placeholder-slate-600 font-mono"
                     placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} disabled={isLocked}
@@ -1739,29 +1728,28 @@ function AdminLogin({ onLogin, cloudProfile }) {
               </div>
 
               {error && (
-                <div className={`flex items-center gap-2 p-3 rounded-xl text-xs font-medium border animate-slide-up ${
-                  isLocked ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                }`}>
+                <div className={`flex items-center gap-2 p-3 rounded-xl text-xs font-medium border animate-slide-up ${isLocked ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                  }`}>
                   <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                   {isLocked ? `Locked. Retry in ${lockoutTimer}s` : error}
                 </div>
               )}
 
-              <button 
+              <button
                 type="submit" disabled={loading || isLocked}
                 className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all btn-hover-lift flex justify-center items-center gap-2 text-sm"
               >
                 <div className="animate-shimmer absolute inset-0 opacity-20"></div>
-                {loading ? <><RefreshCw className="w-4 h-4 animate-spin"/> Authenticating...</> : isLocked ? <><Lock className="w-4 h-4"/> Locked</> : <><Shield className="w-4 h-4"/> Access Portal</>}
+                {loading ? <><RefreshCw className="w-4 h-4 animate-spin" /> Authenticating...</> : isLocked ? <><Lock className="w-4 h-4" /> Locked</> : <><Shield className="w-4 h-4" /> Access Portal</>}
               </button>
             </form>
-            
+
             <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-center gap-2">
               <PulseDot color="emerald" />
               <span className="text-[11px] text-slate-600 font-mono">Secure Connection · TLS 1.3</span>
             </div>
           </div>
-          
+
           <p className="text-center text-[11px] text-slate-700 mt-6 font-mono">MediVend v2.5 · Unauthorized access is prohibited</p>
         </div>
       </div>
@@ -1770,11 +1758,11 @@ function AdminLogin({ onLogin, cloudProfile }) {
       <div className="hidden lg:flex w-1/2 bg-black/20 relative overflow-hidden items-center justify-center border-l border-white/5">
         <div className="absolute inset-0 hexagon-bg opacity-40"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-transparent to-blue-900/20"></div>
-        
-        <div 
+
+        <div
           className="relative z-10 text-center max-w-sm px-8"
-          style={{ 
-            opacity: step >= 3 ? 1 : 0, 
+          style={{
+            opacity: step >= 3 ? 1 : 0,
             transform: step >= 3 ? 'none' : 'translateX(30px)',
             transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s'
           }}
@@ -1792,15 +1780,15 @@ function AdminLogin({ onLogin, cloudProfile }) {
             </div>
             {[0, 1, 2].map(i => (
               <div key={i} className="absolute w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"
-                style={{ top: `${25 + i*20}%`, left: `${20 + i*25}%`, animationDelay: `${i * 0.5}s` }}>
+                style={{ top: `${25 + i * 20}%`, left: `${20 + i * 25}%`, animationDelay: `${i * 0.5}s` }}>
                 <div className="w-full h-full rounded-full bg-emerald-400 animate-ping opacity-75"></div>
               </div>
             ))}
           </div>
-          
+
           <h2 className="font-display font-black text-3xl text-white mb-3">All Systems Optimal</h2>
           <p className="text-slate-400 text-sm leading-relaxed">Real-time network monitoring active. All kiosks reporting normal status.</p>
-          
+
           <div className="mt-8 grid grid-cols-3 gap-3">
             {[
               { label: 'Uptime', value: '99.9%', color: 'emerald' },
@@ -1855,9 +1843,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
     setLoading(true);
     const subs = [
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'doctors')), snap => setDoctors(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
-      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions')), snap => { const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); setTransactions(list); setLoading(false); }, err => console.error(err)),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions')), snap => { const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)); setTransactions(list); setLoading(false); }, err => console.error(err)),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'machines')), snap => setMachines(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
-      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), limit(20)), snap => { const logs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.timestamp?.seconds||0)-(a.timestamp?.seconds||0)); setAuditLogs(logs); setLoading(false); }, err => { console.error(err); setLoading(false); }),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), limit(20)), snap => { const logs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0)); setAuditLogs(logs); setLoading(false); }, err => { console.error(err); setLoading(false); }),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'medicines')), snap => setMedicines(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'support_tickets')), snap => setSupportTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
     ];
@@ -1872,7 +1860,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
   const saveHiddenPreferences = async (updates) => {
     try {
       await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'admin_profile'), updates, { merge: true });
-      setAdminProfile(prev => ({...prev, ...updates}));
+      setAdminProfile(prev => ({ ...prev, ...updates }));
     } catch (e) { console.error("Failed to save view preferences:", e); }
   };
 
@@ -1904,7 +1892,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'doctors', docId));
           await addAuditLog("Doctor Deletion", `Removed doctor: ${docId}`);
           showNotification("Doctor account deleted");
-        } catch(e) { showNotification("Deletion failed: " + e.message, 'error'); }
+        } catch (e) { showNotification("Deletion failed: " + e.message, 'error'); }
       }
     });
   };
@@ -1914,7 +1902,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
       await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId), { lastPing: serverTimestamp(), status: 'online' }, { merge: true });
       showNotification(`Ping to ${machineId} — OK`);
       await addAuditLog("Ping", `Pinged ${machineId}`);
-    } catch(e) { showNotification("Ping failed: " + e.message, 'error'); }
+    } catch (e) { showNotification("Ping failed: " + e.message, 'error'); }
   };
 
   const handleRunDiagnostics = (machine) => {
@@ -1949,7 +1937,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           await setDoc(ref, { status: 'rebooting' }, { merge: true });
           showNotification(`Rebooting ${machineId}...`);
           setTimeout(async () => { await setDoc(ref, { status: 'offline' }, { merge: true }); setTimeout(async () => { await setDoc(ref, { status: 'online', lastPing: serverTimestamp() }, { merge: true }); showNotification(`${machineId} online`); await addAuditLog("Reboot", `Rebooted ${machineId}`); }, 3000); }, 1500);
-        } catch(e) { showNotification("Reboot failed: " + e.message, 'error'); }
+        } catch (e) { showNotification("Reboot failed: " + e.message, 'error'); }
       }
     });
   };
@@ -1966,7 +1954,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
         try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId), { status: newStatus }, { merge: true });
           await addAuditLog("Security", `${newStatus.toUpperCase()} ${machineId}`);
-        } catch(e) { showNotification("Command failed: " + e.message, 'error'); }
+        } catch (e) { showNotification("Command failed: " + e.message, 'error'); }
       }
     });
   };
@@ -1982,7 +1970,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
           await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId));
           await addAuditLog("Removal", `Removed kiosk ${machineId}`);
           showNotification("Kiosk removed");
-        } catch(e) { showNotification("Failed: " + e.message, 'error'); }
+        } catch (e) { showNotification("Failed: " + e.message, 'error'); }
       }
     });
   };
@@ -1993,7 +1981,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
         action, details, user: adminProfile.username,
         time: new Date().toLocaleTimeString(), timestamp: serverTimestamp()
       });
-    } catch(e) { console.error("Audit log failed:", e); }
+    } catch (e) { console.error("Audit log failed:", e); }
   };
 
   const handleBroadcast = async (msg, priority, target) => {
@@ -2069,7 +2057,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
       setIsEditingProfile(false);
       showNotification("Profile saved and synced");
       await addAuditLog("Profile Update", "Admin profile updated");
-    } catch(e) { showNotification("Save failed: " + e.message, 'error'); }
+    } catch (e) { showNotification("Save failed: " + e.message, 'error'); }
   };
 
   const handlePasswordUpdate = async (newPass) => {
@@ -2080,7 +2068,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
       setShowPasswordModal(false);
       showNotification("Password updated");
       await addAuditLog("Password Change", "Admin password updated");
-    } catch(e) { showNotification("Failed: " + e.message, 'error'); }
+    } catch (e) { showNotification("Failed: " + e.message, 'error'); }
   };
 
   const pendingDocs = doctors.filter(d => d.status === 'pending').length;
@@ -2105,31 +2093,36 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
   const navSections = [
     { label: 'Workspace', items: [{ id: 'overview', label: 'Dashboard', icon: <LayoutDashboard /> }] },
-    { label: 'Network', items: [
-      { id: 'doctors', label: 'Doctors', icon: <Users />, badge: pendingDocs },
-      { id: 'machines', label: 'Kiosks', icon: <Server /> },
-    ]},
-    { label: 'Inventory & Support', items: [
-      { id: 'inventory', label: 'Master List', icon: <Package /> },
-      { id: 'support', label: 'Support', icon: <LifeBuoy />, badge: openTickets > 0 ? openTickets : null },
-    ]},
-    { label: 'Compliance', items: [
-      { id: 'transactions', label: 'Logs', icon: <FileText /> },
-      { id: 'audit', label: 'Audit', icon: <ClipboardList /> },
-    ]},
+    {
+      label: 'Network', items: [
+        { id: 'doctors', label: 'Doctors', icon: <Users />, badge: pendingDocs },
+        { id: 'machines', label: 'Kiosks', icon: <Server /> },
+      ]
+    },
+    {
+      label: 'Inventory & Support', items: [
+        { id: 'inventory', label: 'Master List', icon: <Package /> },
+        { id: 'support', label: 'Support', icon: <LifeBuoy />, badge: openTickets > 0 ? openTickets : null },
+      ]
+    },
+    {
+      label: 'Compliance', items: [
+        { id: 'transactions', label: 'Logs', icon: <FileText /> },
+        { id: 'audit', label: 'Audit', icon: <ClipboardList /> },
+      ]
+    },
   ];
 
   return (
     <div className={`flex h-screen font-sans overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-[#060b18] text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
       <GlobalStyles />
-      
+
       {/* Notification */}
       {notification && (
-        <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold animate-slide-up glass border ${
-          notification.type === 'error' 
-            ? 'bg-rose-600/90 text-white border-rose-500/30 shadow-rose-500/20' 
+        <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold animate-slide-up glass border ${notification.type === 'error'
+            ? 'bg-rose-600/90 text-white border-rose-500/30 shadow-rose-500/20'
             : 'bg-emerald-600/90 text-white border-emerald-500/30 shadow-emerald-500/20'
-        }`}>
+          }`}>
           {notification.type === 'error' ? <AlertTriangle className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
           {notification.message}
         </div>
@@ -2143,10 +2136,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-30 w-64 border-r flex flex-col transform transition-all duration-300 ease-out ${
-        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-      } md:relative md:translate-x-0 ${isDarkMode ? 'bg-[#090e1d] border-white/5' : 'bg-white border-gray-100 shadow-xl'}`}>
-        
+      <aside className={`fixed inset-y-0 left-0 z-30 w-64 border-r flex flex-col transform transition-all duration-300 ease-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:relative md:translate-x-0 ${isDarkMode ? 'bg-[#090e1d] border-white/5' : 'bg-white border-gray-100 shadow-xl'}`}>
+
         {/* Logo area */}
         <div className={`relative p-5 border-b overflow-hidden ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/5 to-transparent"></div>
@@ -2169,7 +2161,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
             </button>
           </div>
         </div>
-        
+
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto custom-scrollbar">
           {navSections.map(section => (
@@ -2195,11 +2187,10 @@ function AdminDashboard({ onLogout, initialProfile }) {
               <p className="text-[10px] text-slate-500 truncate">{adminProfile?.email}</p>
             </div>
           </div>
-          <button 
-            onClick={onLogout} 
-            className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${
-              isDarkMode ? 'text-slate-500 border-white/5 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/20' : 'text-slate-400 border-gray-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200'
-            }`}
+          <button
+            onClick={onLogout}
+            className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${isDarkMode ? 'text-slate-500 border-white/5 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/20' : 'text-slate-400 border-gray-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200'
+              }`}
           >
             <LogOut className="w-3.5 h-3.5" /> Sign Out
           </button>
@@ -2208,7 +2199,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
       {/* Main content */}
       <div className={`flex-1 flex flex-col min-w-0 overflow-hidden relative ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
-        
+
         {/* Header */}
         <header className={`h-16 border-b flex items-center justify-between px-4 md:px-6 z-10 sticky top-0 transition-all glass ${isDarkMode ? 'bg-[#060b18]/90 border-white/5' : 'bg-white/90 border-gray-100 shadow-sm'}`}>
           <div className="flex items-center gap-3">
@@ -2224,7 +2215,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <div className={`hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-mono font-semibold ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-gray-100 border-gray-200 text-slate-600'}`}>
               <div className="relative">
@@ -2232,9 +2223,9 @@ function AdminDashboard({ onLogout, initialProfile }) {
               </div>
               {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </div>
-            
-            <button 
-              onClick={() => setIsDarkMode(!isDarkMode)} 
+
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
               className={`p-2 rounded-xl transition-all btn-hover-lift border ${isDarkMode ? 'bg-white/5 border-white/10 text-amber-400 hover:bg-white/10' : 'bg-gray-100 border-gray-200 text-indigo-500 hover:bg-gray-200'}`}
             >
               {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -2242,8 +2233,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
             {/* Notifications */}
             <div className="relative">
-              <button 
-                onClick={() => setIsNotifOpen(!isNotifOpen)} 
+              <button
+                onClick={() => setIsNotifOpen(!isNotifOpen)}
                 className={`p-2 rounded-xl transition-all btn-hover-lift border relative ${isDarkMode ? 'bg-white/5 border-white/10 text-slate-400 hover:text-indigo-400' : 'bg-gray-100 border-gray-200 text-slate-500 hover:text-indigo-600'}`}
               >
                 <Bell className="w-4 h-4" />
@@ -2264,7 +2255,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                     {pendingDocs > 0 && (
                       <button onClick={() => { setActiveTab('doctors'); setFilter('pending'); setIsNotifOpen(false); }} className={`w-full p-4 text-left flex items-center justify-between transition-all hover:bg-amber-500/5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-50'}`}>
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-xl bg-amber-500/10"><Users className="w-4 h-4 text-amber-400"/></div>
+                          <div className="p-2 rounded-xl bg-amber-500/10"><Users className="w-4 h-4 text-amber-400" /></div>
                           <div><p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Pending Approvals</p><p className="text-xs text-slate-500">Review doctor applications</p></div>
                         </div>
                         <span className="bg-amber-500/15 text-amber-400 text-xs px-2 py-1 rounded-xl font-bold border border-amber-500/20">{pendingDocs}</span>
@@ -2273,7 +2264,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                     {openTickets > 0 && (
                       <button onClick={() => { setActiveTab('support'); setIsNotifOpen(false); }} className={`w-full p-4 text-left flex items-center justify-between transition-all hover:bg-rose-500/5`}>
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-xl bg-rose-500/10"><LifeBuoy className="w-4 h-4 text-rose-400"/></div>
+                          <div className="p-2 rounded-xl bg-rose-500/10"><LifeBuoy className="w-4 h-4 text-rose-400" /></div>
                           <div><p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Open Tickets</p><p className="text-xs text-slate-500">Requires response</p></div>
                         </div>
                         <span className="bg-rose-500/15 text-rose-400 text-xs px-2 py-1 rounded-xl font-bold border border-rose-500/20">{openTickets}</span>
@@ -2292,7 +2283,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
             </div>
 
             {/* Avatar */}
-            <button 
+            <button
               onClick={() => setActiveTab('settings')}
               className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white font-display font-bold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all btn-hover-lift ring-2 ring-indigo-500/20 hover:ring-indigo-500/40"
             >
@@ -2303,17 +2294,17 @@ function AdminDashboard({ onLogout, initialProfile }) {
 
         {/* Main scrollable area */}
         <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
-          
+
           {/* DASHBOARD OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-6 max-w-7xl mx-auto">
-              
+
               {/* Stat cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { title: 'Pending Approvals', value: pendingDocs, icon: <Users className="w-5 h-5" />, color: 'amber', subtext: 'Needs attention', onClick: () => { setActiveTab('doctors'); setFilter('pending'); } },
-                  { title: 'All Doctors', value: doctors.length, icon: <Stethoscope className="w-5 h-5" />, color: 'blue', subtext: 'Registered network', onClick: () => setActiveTab('doctors') },
-                  { title: 'Master Inventory', value: medicines.length, icon: <Package className="w-5 h-5" />, color: 'emerald', subtext: 'Medicine SKUs', onClick: () => setActiveTab('inventory') },
+                  { title: 'All Doctors', value: doctors.length, icon: <Stethoscope className="w-5 h-5" />, color: 'blue', subtext: 'Registered network', onClick: () => { setActiveTab('doctors'); setFilter('all'); } },
+                  { title: 'Kiosks Online', value: machines.length > 0 ? `${activeMachines}/${machines.length}` : "0/0", icon: <Server className="w-5 h-5" />, color: 'emerald', subtext: 'Active vending units', onClick: () => setActiveTab('machines') },
                   { title: 'Security Events', value: displayedAuditLogs.length, icon: <AlertOctagon className="w-5 h-5" />, color: 'red', subtext: 'System events', onClick: () => setActiveTab('audit') },
                 ].map((card, i) => (
                   <div key={i} className="animate-slide-up" style={{ animationDelay: `${i * 0.07}s`, animationFillMode: 'both', opacity: 0 }}>
@@ -2334,11 +2325,11 @@ function AdminDashboard({ onLogout, initialProfile }) {
                     <span className="text-xs font-bold text-emerald-400">All Systems Operational</span>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <p className={`text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                      <Server className="w-3.5 h-3.5 text-emerald-400"/> System Connectivity
+                      <Server className="w-3.5 h-3.5 text-emerald-400" /> System Connectivity
                     </p>
                     <div className="space-y-4">
                       {[
@@ -2359,7 +2350,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                   </div>
                   <div>
                     <p className={`text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                      <Users className="w-3.5 h-3.5 text-blue-400"/> Provider Status
+                      <Users className="w-3.5 h-3.5 text-blue-400" /> Provider Status
                     </p>
                     <div className="space-y-4">
                       {[
@@ -2396,14 +2387,14 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <div className={`p-6 rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`} style={{ animationDelay: '0.35s', animationFillMode: 'both', opacity: 0 }}>
                   <h3 className={`font-display font-bold text-base mb-5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Quick Actions</h3>
                   <div className="space-y-2.5">
-                    <ActionButton onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} icon={<Users className="w-4 h-4"/>} label={`Review ${pendingDocs} Pending`} variant="primary" />
-                    <ActionButton onClick={() => setShowBroadcastModal(true)} icon={<Megaphone className="w-4 h-4"/>} label="Send Broadcast" variant="secondary" isDarkMode={isDarkMode} />
-                    <ActionButton onClick={() => setActiveTab('audit')} icon={<Shield className="w-4 h-4"/>} label="Security Audit" variant="secondary" isDarkMode={isDarkMode} />
-                    <ActionButton onClick={() => setActiveTab('support')} icon={<LifeBuoy className="w-4 h-4"/>} label={`Support ${openTickets > 0 ? `(${openTickets})` : ''}`} variant="secondary" isDarkMode={isDarkMode} />
+                    <ActionButton onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} icon={<Users className="w-4 h-4" />} label={`Review ${pendingDocs} Pending`} variant="primary" />
+                    <ActionButton onClick={() => setShowBroadcastModal(true)} icon={<Megaphone className="w-4 h-4" />} label="Send Broadcast" variant="secondary" isDarkMode={isDarkMode} />
+                    <ActionButton onClick={() => setActiveTab('audit')} icon={<Shield className="w-4 h-4" />} label="Security Audit" variant="secondary" isDarkMode={isDarkMode} />
+                    <ActionButton onClick={() => setActiveTab('support')} icon={<LifeBuoy className="w-4 h-4" />} label={`Support ${openTickets > 0 ? `(${openTickets})` : ''}`} variant="secondary" isDarkMode={isDarkMode} />
                   </div>
                 </div>
               </div>
-              
+
               {/* Activity Feed */}
               <div className={`p-6 rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`} style={{ animationDelay: '0.4s', animationFillMode: 'both', opacity: 0 }}>
                 <div className="flex items-center justify-between mb-5">
@@ -2438,7 +2429,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
             </div>
           )}
 
-          {activeTab === 'doctors' && <DoctorsView doctors={displayedDoctors} filter={filter} setFilter={setFilter} onRefresh={() => {}} onUpdateStatus={updateDoctorStatus} onUpdatePassword={handleDoctorPasswordUpdate} onDelete={handleDeleteDoctor} loading={loading} isDarkMode={isDarkMode} />}
+          {activeTab === 'doctors' && <DoctorsView doctors={displayedDoctors} filter={filter} setFilter={setFilter} onRefresh={() => { }} onUpdateStatus={updateDoctorStatus} onUpdatePassword={handleDoctorPasswordUpdate} onDelete={handleDeleteDoctor} loading={loading} isDarkMode={isDarkMode} />}
           {activeTab === 'machines' && <MachinesView machines={machines} onPing={handlePingMachine} onRunDiagnostics={handleRunDiagnostics} onReboot={handleRebootMachine} onLock={handleLockMachine} onDelete={handleDeleteMachine} isDarkMode={isDarkMode} />}
           {activeTab === 'inventory' && <InventoryView medicines={medicines} db={db} appId={appId} isDarkMode={isDarkMode} onNotify={showNotification} />}
           {activeTab === 'support' && <SupportView tickets={supportTickets} db={db} appId={appId} isDarkMode={isDarkMode} onNotify={showNotification} />}
@@ -2458,11 +2449,11 @@ function AdminDashboard({ onLogout, initialProfile }) {
               <div className={`p-5 border-b flex justify-between items-center flex-shrink-0 ${isDarkMode ? 'border-white/10 bg-gradient-to-r from-indigo-900/20 to-transparent' : 'border-gray-100'}`}>
                 <div>
                   <h3 className={`font-display font-bold text-lg flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-                    <Activity className="w-5 h-5 text-emerald-400"/> Kiosk Diagnostics
+                    <Activity className="w-5 h-5 text-emerald-400" /> Kiosk Diagnostics
                   </h3>
                   <p className={`text-xs mt-0.5 font-mono ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{diagnosticMachine.id} · {diagnosticMachine.location}</p>
                 </div>
-                <button onClick={() => setDiagnosticMachine(null)} className={`p-2 rounded-xl transition-all ${isDarkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-gray-100 text-slate-500'}`}><X className="w-5 h-5"/></button>
+                <button onClick={() => setDiagnosticMachine(null)} className={`p-2 rounded-xl transition-all ${isDarkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-gray-100 text-slate-500'}`}><X className="w-5 h-5" /></button>
               </div>
 
               <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
@@ -2475,21 +2466,21 @@ function AdminDashboard({ onLogout, initialProfile }) {
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Remote Commands</p>
                     <div className="grid grid-cols-2 gap-2">
                       {[
-                        { label: 'Ping', icon: <Activity size={14}/>, action: () => { handlePingMachine(diagnosticMachine.id); setDiagnosticMachine(null); } },
-                        { label: 'Reboot', icon: <Power size={14}/>, action: () => { handleRebootMachine(diagnosticMachine.id); setDiagnosticMachine(null); } },
+                        { label: 'Ping', icon: <Activity size={14} />, action: () => { handlePingMachine(diagnosticMachine.id); setDiagnosticMachine(null); } },
+                        { label: 'Reboot', icon: <Power size={14} />, action: () => { handleRebootMachine(diagnosticMachine.id); setDiagnosticMachine(null); } },
                       ].map((btn, i) => (
                         <button key={i} onClick={btn.action} className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white border border-white/10' : 'bg-gray-100 hover:bg-gray-200 text-slate-700 border border-gray-200'}`}>
                           {btn.icon} {btn.label}
                         </button>
                       ))}
                       <button onClick={() => { handleLockMachine(diagnosticMachine.id, diagnosticMachine.status); setDiagnosticMachine(null); }} className={`col-span-2 flex items-center justify-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all btn-hover-lift border ${diagnosticMachine.status === 'locked' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/25' : 'bg-rose-500/15 text-rose-400 border-rose-500/20 hover:bg-rose-500/25'}`}>
-                        {diagnosticMachine.status === 'locked' ? <><Unlock size={14}/> Unlock</> : <><Lock size={14}/> Lock Kiosk</>}
+                        {diagnosticMachine.status === 'locked' ? <><Unlock size={14} /> Unlock</> : <><Lock size={14} /> Lock Kiosk</>}
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div className={`p-4 border-t flex justify-end flex-shrink-0 ${isDarkMode ? 'bg-white/3 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
                 <button onClick={() => setDiagnosticMachine(null)} className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 to-indigo-400 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 btn-hover-lift">Close</button>
               </div>
