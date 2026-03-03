@@ -1230,7 +1230,7 @@ function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, on
   const [editingMachineId, setEditingMachineId] = useState(null);
   const [editingLocationStr, setEditingLocationStr] = useState('');
   const itemsPerPage = 10;
-  const handleEditLocation = (machine) => { \n    setEditingMachineId(machine.id); \n    setEditingLocationStr(machine.location || ''); \n }; \n\n  const saveLocationEditor = async (machineId) => { \n    try { \n      if (!editingLocationStr.trim()) { \n        setEditingMachineId(null); \n        return; \n } \n      await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'machines', machineId), { location: editingLocationStr }); \n      setEditingMachineId(null); \n } catch (err) { \n      console.error('Failed to update: ', err); \n } \n }; \n\n  const totalPages = Math.ceil(machines.length / itemsPerPage);
+  const totalPages = Math.ceil(machines.length / itemsPerPage);
   const currentData = machines.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleEditLocation = (machine) => {
