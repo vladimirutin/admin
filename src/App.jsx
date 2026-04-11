@@ -1225,6 +1225,123 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
   );
 }
 
+
+function PharmacistsView({ pharmacists, filter, setFilter, onRefresh, onUpdateStatus, onUpdatePassword, onDelete, loading, isDarkMode }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const filteredDocs = pharmacists.filter(doc =>
+    (doc.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (doc.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (doc.licenseNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (doc.pharmacyName?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredDocs.length / itemsPerPage);
+  const currentData = filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const filterBtns = ['pending', 'active', 'rejected', 'all'];
+
+  return (
+    <>
+      <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
+        <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Pharmacists Network</h3>
+              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{pharmacists.length} registered pharmacists</p>
+            </div>
+            <button onClick={onRefresh} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-400 hover:bg-white/5 hover:text-emerald-400' : 'text-slate-400 hover:bg-gray-100 hover:text-emerald-600'}`}>
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className={`flex p-1 rounded-xl gap-1 ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
+              {filterBtns.map(f => (
+                <button key={f} onClick={() => setFilter(f)}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all whitespace-nowrap ${filter === f ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'}`}
+                >{f}</button>
+              ))}
+            </div>
+            <div className="relative flex-1 max-w-xs">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+              <input type="text" placeholder="Search pharmacists..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                className={`w-full pl-8 pr-3 py-2 rounded-xl text-xs border outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all ${isDarkMode ? 'bg-white/5 border-white/10 text-white placeholder-slate-600' : 'bg-white border-gray-200 text-slate-700 placeholder-slate-400'}`} />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile */}
+        <div className="md:hidden divide-y divide-white/5">
+          {currentData.length === 0 ? (
+            <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No pharmacists found</p></div>
+          ) : currentData.map(doc => (
+            <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+              <div className="absolute top-4 right-4 z-20">
+                <MobileMenu isDarkMode={isDarkMode}>
+                  {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5" /> Approve</button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5" /> Reject</button></>)}
+                  {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5" /> Revoke</button>}
+                  {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5" /> Restore</button>}
+                  <button onClick={() => onDelete(doc.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
+                </MobileMenu>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-sm ${isDarkMode ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{doc.name?.charAt(0) || '?'}</div>
+                <div>
+                  <p className={`font-bold text-sm pr-10 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{doc.name}</p>
+                  <p className="text-xs text-emerald-400">{doc.pharmacyName}</p>
+                  <p className="text-xs text-slate-500">{doc.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <StatusBadge status={doc.status} />
+                <span className={`font-mono text-[10px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doc.licenseNumber || 'N/A'}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop */}
+        <div className="hidden md:block overflow-x-auto rounded-b-2xl">
+          <table className="w-full text-left">
+            <TableHeader isDarkMode={isDarkMode}>
+              <tr><th className="px-6 py-4">Pharmacist</th><th className="px-6 py-4">Workspace</th><th className="px-6 py-4">License</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Actions</th></tr>
+            </TableHeader>
+            <tbody className={`divide-y ${isDarkMode ? 'divide-white/5' : 'divide-gray-50'}`}>
+              {currentData.length === 0 ? (
+                <tr><td colSpan="5" className="p-10 text-center text-xs text-slate-500 italic">No pharmacists found</td></tr>
+              ) : currentData.map(doc => (
+                <tr key={doc.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-display font-bold text-xs ${isDarkMode ? 'bg-indigo-500/15 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{doc.name?.charAt(0) || '?'}</div>
+                      <div>
+                        <p className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{doc.name}</p>
+                        <p className={`text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doc.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4"><span className="text-xs text-emerald-400 font-bold">{doc.pharmacyName}</span></td>
+                  <td className={`px-6 py-4 font-mono text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{doc.licenseNumber || 'N/A'}</td>
+                  <td className="px-6 py-4"><StatusBadge status={doc.status} /></td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, 'active')} className="p-1.5 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors" title="Approve"><CheckCircle className="w-4 h-4" /></button><button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors" title="Reject"><XCircle className="w-4 h-4" /></button></>)}
+                      {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, 'rejected')} className="p-1.5 text-amber-400 hover:bg-amber-500/10 rounded-lg transition-colors" title="Revoke"><XCircle className="w-4 h-4" /></button>}
+                      {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, 'active')} className="p-1.5 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors" title="Restore"><CheckCircle className="w-4 h-4" /></button>}
+                      <button onClick={() => onDelete(doc.id)} className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </TableContainer>
+    </>
+  );
+}
+
 function MachinesView({ machines, onPing, onRunDiagnostics, onReboot, onLock, onDelete, isDarkMode }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [editingMachineId, setEditingMachineId] = useState(null);
@@ -1867,6 +1984,264 @@ function AdminLogin({ onLogin, cloudProfile }) {
   );
 }
 
+function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus, onUpdatePassword, onDelete, loading, isDarkMode }) {
+  const [viewDoc, setViewDoc] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [newPasswordVal, setNewPasswordVal] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const filteredDocs = providers.filter(doc =>
+    (doc.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (doc.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (doc.license?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (doc.licenseNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (doc.pharmacyName?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredDocs.length / itemsPerPage);
+  const currentData = filteredDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const filterBtns = ['pending', 'active', 'rejected', 'all'];
+
+  return (
+    <>
+      <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
+        <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Healthcare Professionals</h3>
+              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{providers.length} registered professionals</p>
+            </div>
+            <button onClick={onRefresh} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-400 hover:bg-white/5 hover:text-emerald-400' : 'text-slate-400 hover:bg-gray-100 hover:text-emerald-600'}`}>
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className={`flex p-1 rounded-xl gap-1 ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
+              {filterBtns.map(f => (
+                <button key={f} onClick={() => setFilter(f)}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all whitespace-nowrap ${filter === f ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'}`}
+                >{f}</button>
+              ))}
+            </div>
+            <div className="relative flex-1 max-w-xs">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+              <input type="text" placeholder="Search providers..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                className={`w-full pl-8 pr-3 py-2 rounded-xl text-xs border outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all ${isDarkMode ? 'bg-white/5 border-white/10 text-white placeholder-slate-600' : 'bg-white border-gray-200 text-slate-700 placeholder-slate-400'}`} />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile */}
+        <div className="md:hidden divide-y divide-white/5">
+          {currentData.length === 0 ? (
+            <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No providers found</p></div>
+          ) : currentData.map(doc => (
+            <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+              <div className="absolute top-4 right-4 z-20">
+                <MobileMenu isDarkMode={isDarkMode}>
+                  <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left rounded-xl ${isDarkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-gray-100'}`}><Eye className="w-3.5 h-3.5" /> View Info</button>
+                  {doc.status === 'pending' && (<><button onClick={() => onUpdateStatus(doc.id, doc.type, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5" /> Approve</button><button onClick={() => onUpdateStatus(doc.id, doc.type, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5" /> Reject</button></>)}
+                  {doc.status === 'active' && <button onClick={() => onUpdateStatus(doc.id, doc.type, 'rejected')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><XCircle className="w-3.5 h-3.5" /> Revoke</button>}
+                  {doc.status === 'rejected' && <button onClick={() => onUpdateStatus(doc.id, doc.type, 'active')} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-emerald-400 hover:bg-emerald-500/10 rounded-xl"><CheckCircle className="w-3.5 h-3.5" /> Restore</button>}
+                  <button onClick={() => onDelete(doc.id, doc.type)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-left text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
+                </MobileMenu>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-sm ${isDarkMode ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{doc.name?.charAt(0) || '?'}</div>
+                <div>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{doc.name}</p>
+                    {doc.type === 'doctor' ? (
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">Doctor</span>
+                    ) : (
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Pharmacist</span>
+                    )}
+                  </div>
+                  {doc.type === 'pharmacist' && <p className="text-xs text-emerald-400">{doc.pharmacyName}</p>}
+                  <p className="text-xs text-slate-500">{doc.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 mt-1">
+                <StatusBadge status={doc.status} />
+                <span className={`font-mono text-[10px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doc.licenseNumber || doc.license || 'N/A'}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop */}
+        <div className="hidden md:block overflow-x-auto rounded-b-2xl">
+          <table className="w-full text-left">
+            <TableHeader isDarkMode={isDarkMode}>
+              <tr><th className="px-6 py-4">Provider</th><th className="px-6 py-4">Role</th><th className="px-6 py-4">License</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Actions</th></tr>
+            </TableHeader>
+            <tbody className={`divide-y ${isDarkMode ? 'divide-white/5' : 'divide-gray-50'}`}>
+              {currentData.length === 0 ? (
+                <tr><td colSpan="5" className="p-10 text-center text-xs text-slate-500 italic">No providers found</td></tr>
+              ) : currentData.map(doc => (
+                <tr key={doc.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-display font-bold text-xs ${isDarkMode ? 'bg-indigo-500/15 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{doc.name?.charAt(0) || '?'}</div>
+                      <div>
+                        <p className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{doc.name}</p>
+                        <p className={`text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doc.email}</p>
+                        {doc.type === 'pharmacist' && <p className="text-[11px] text-emerald-400 mt-0.5">{doc.pharmacyName}</p>}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {doc.type === 'doctor' ? (
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2 py-1 rounded inline-flex items-center gap-1.5"><Stethoscope className="w-3.5 h-3.5" /> Doctor</span>
+                    ) : (
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded inline-flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> Pharmacist</span>
+                    )}
+                  </td>
+                  <td className={`px-6 py-4 font-mono text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{doc.licenseNumber || doc.license || 'N/A'}</td>
+                  <td className="px-6 py-4"><StatusBadge status={doc.status} /></td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-5">
+                      <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`p-1.5 transition-all hover:scale-110 ${isDarkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'}`} title="View Info"><Eye className="w-4 h-4" /></button>
+                      {doc.status === 'pending' && (<>
+                        <button onClick={() => onUpdateStatus(doc.id, doc.type, 'active')} className="px-4 py-1.5 border border-emerald-500/30 text-emerald-400 rounded-xl hover:bg-emerald-500/10 text-[11px] font-bold transition-all btn-hover-lift whitespace-nowrap">Approve</button>
+                        <button onClick={() => onUpdateStatus(doc.id, doc.type, 'rejected')} className="px-4 py-1.5 border border-rose-500/30 text-rose-400 rounded-xl hover:bg-rose-500/10 text-[11px] font-bold transition-all btn-hover-lift whitespace-nowrap">Reject</button>
+                      </>)}
+                      {doc.status === 'active' && (
+                        <button onClick={() => onUpdateStatus(doc.id, doc.type, 'rejected')} className="px-4 py-1.5 border border-rose-500/30 text-rose-400 rounded-xl hover:bg-rose-500/10 text-[11px] font-bold transition-all btn-hover-lift whitespace-nowrap">Revoke</button>
+                      )}
+                      {doc.status === 'rejected' && (
+                        <button onClick={() => onUpdateStatus(doc.id, doc.type, 'active')} className="px-4 py-1.5 border border-emerald-500/30 text-emerald-400 rounded-xl hover:bg-emerald-500/10 text-[11px] font-bold transition-all btn-hover-lift whitespace-nowrap">Restore</button>
+                      )}
+                      <button onClick={() => onDelete(doc.id, doc.type)} className={`p-1.5 transition-all hover:scale-110 ${isDarkMode ? 'text-slate-500 hover:text-rose-400' : 'text-slate-400 hover:text-rose-500'}`} title="Delete"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </TableContainer>
+
+      {/* Provider Details Modal */}
+      {viewDoc && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-scale-in">
+          <div className={`rounded-xl shadow-2xl max-w-sm w-full overflow-hidden border ${isDarkMode ? 'bg-[#151a28] border-white/5' : 'bg-white border-gray-200'}`}>
+            <div className={`p-5 flex justify-between items-start ${isDarkMode ? 'border-none bg-transparent' : 'border-gray-100 bg-transparent'}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-[14px] flex items-center justify-center font-display font-medium text-[15px] ${isDarkMode ? 'bg-[#29304e] text-[#b3bbed]' : 'bg-indigo-50 text-indigo-600'}`}>{viewDoc.name?.charAt(0) || '?'}</div>
+                <div>
+                  <h3 className={`font-display font-bold text-sm leading-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.name}</h3>
+                  <p className="text-[10px] text-slate-500">Verification Details</p>
+                </div>
+              </div>
+              <button onClick={() => setViewDoc(null)} className={`p-1 mt-1 rounded-md transition-all ${isDarkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-gray-100 text-slate-500'}`}><X className="w-4 h-4" /></button>
+            </div>
+            
+            <div className="px-5 pb-5 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+              <div className={`p-6 rounded-2xl flex flex-col items-center justify-center text-center ${isDarkMode ? 'bg-[#1d2433] border border-white/5' : 'bg-gray-50 border border-gray-200'}`}>
+                 <FileBadge strokeWidth={1.5} className="w-8 h-8 text-slate-400 opacity-60 mb-2" />
+                 <p className={`text-[13px] font-bold ${isDarkMode ? 'text-[#e2e8f0]' : 'text-slate-700'}`}>{viewDoc.type === 'doctor' ? 'PRC License ID' : 'Pharmacist License'}</p>
+                 <p className={`text-[10px] mt-1 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>No image uploaded</p>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className={`text-[9.5px] font-bold uppercase tracking-widest ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Account Credentials</h4>
+                <div className="flex flex-col gap-4 text-sm">
+                  <div>
+                    <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Full Name</p>
+                    <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.name}</p>
+                  </div>
+                  <div>
+                    <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Email</p>
+                    <p className={`text-[13px] font-mono font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.email || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Password</p>
+                    {isEditingPassword ? (
+                      <div className="flex items-center gap-2 mt-1">
+                        <input type="text" className={`flex-1 p-2 rounded-lg border text-xs outline-none focus:ring-2 focus:ring-emerald-500/30 font-mono ${isDarkMode ? 'bg-black/20 border-white/10 text-white' : 'bg-white border-gray-200 text-slate-900'}`} value={newPasswordVal} onChange={e => setNewPasswordVal(e.target.value)} placeholder="New password" />
+                        <button onClick={async () => { if (!newPasswordVal.trim()) return; await onUpdatePassword(viewDoc.id, viewDoc.type, newPasswordVal); setIsEditingPassword(false); setViewDoc(prev => ({ ...prev, password: newPasswordVal })); }} className="p-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md btn-hover-lift"><CheckSquare className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => setIsEditingPassword(false)} className="p-1 bg-rose-600 hover:bg-rose-500 text-white rounded-md btn-hover-lift"><X className="w-3.5 h-3.5" /></button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <p className={`text-lg font-black tracking-widest translate-y-[1px] leading-none ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{showPassword ? (viewDoc.password || 'N/A') : '••••••••'}</p>
+                        <div className="flex gap-2">
+                          <button onClick={() => { setIsEditingPassword(true); setNewPasswordVal(viewDoc.password || ''); }} className="text-[10px] font-bold text-emerald-400 hover:text-emerald-300">Edit</button>
+                          <button onClick={() => setShowPassword(!showPassword)} className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300">{showPassword ? 'Hide' : 'Show'}</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {viewDoc.type === 'doctor' ? (
+                <div className="space-y-4 pt-1">
+                  <h4 className={`text-[9.5px] font-bold uppercase tracking-widest ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Clinic Information</h4>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-4 text-sm">
+                    <div className="col-span-2">
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Clinic Name</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.clinicDetails?.name || viewDoc.clinicName || 'N/A'}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Address</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.clinicDetails?.address || viewDoc.clinicAddress || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Contact</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.clinicDetails?.contactNumber || viewDoc.contactNumber || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>License No</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.licenseNumber || viewDoc.license || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>PTR No</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.clinicDetails?.ptr || viewDoc.ptr || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>S2 License</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.clinicDetails?.s2 || viewDoc.s2 || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-1">
+                  <h4 className={`text-[9.5px] font-bold uppercase tracking-widest ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Pharmacy Affiliation</h4>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-4 text-sm">
+                    <div className="col-span-2">
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Pharmacy Name</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.pharmacyName || 'N/A'}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>Address</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.pharmacyAddress || 'N/A'}</p>
+                    </div>
+                    <div className="col-span-2">
+                       <p className={`text-[9.5px] uppercase font-bold mb-1 ${isDarkMode ? 'text-[#64748b]' : 'text-slate-500'}`}>License No</p>
+                      <p className={`text-[13px] font-medium ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{viewDoc.licenseNumber || viewDoc.license || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className={`p-5 pt-0 bg-transparent flex justify-end`}>
+              <button onClick={() => setViewDoc(null)} className="px-5 py-2 hover:bg-[#4f5ee3] bg-[#5a68ed] text-white rounded-lg text-[13px] font-bold transition-all shadow-md">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ==========================================
 // 5. ADMIN DASHBOARD (PREMIUM REDESIGN)
 // ==========================================
@@ -1884,6 +2259,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
   });
   const [activeTab, setActiveTab] = useState('overview');
   const [doctors, setDoctors] = useState([]);
+  const [pharmacists, setPharmacists] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [machines, setMachines] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
@@ -1913,6 +2289,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
     setLoading(true);
     const subs = [
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'doctors')), snap => setDoctors(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'pharmacists')), snap => setPharmacists(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions')), snap => { const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)); setTransactions(list); setLoading(false); }, err => console.error(err)),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'machines')), snap => setMachines(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), limit(20)), snap => { const logs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0)); setAuditLogs(logs); setLoading(false); }, err => { console.error(err); setLoading(false); }),
@@ -1972,6 +2349,39 @@ function AdminDashboard({ onLogout, initialProfile }) {
           await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'doctors', docId));
           await addAuditLog("Doctor Deletion", `Removed doctor: ${docId}`);
           showNotification("Doctor account deleted");
+        } catch (e) { showNotification("Deletion failed: " + e.message, 'error'); }
+      }
+    });
+  };
+
+  const updatePharmacistStatus = async (pharmacistId, newStatus) => {
+    try {
+      await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'pharmacists', pharmacistId), { status: newStatus, adminReviewedAt: serverTimestamp() }, { merge: true });
+      await addAuditLog('Pharmacist Status Update', `Set ${pharmacistId} to ${newStatus}`);
+      showNotification(`Pharmacist status updated to ${newStatus}`);
+    } catch (e) { showNotification("Update failed: " + e.message, 'error'); }
+  };
+
+  const handlePharmacistPasswordUpdate = async (pharmacistId, newPassword) => {
+    if (!newPassword) return;
+    try {
+      await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'pharmacists', pharmacistId), { password: newPassword });
+      await addAuditLog("Pharmacist Mgmt", `Updated password for pharmacist ${pharmacistId}`);
+      showNotification("Pharmacist password updated");
+    } catch (e) { showNotification("Update failed: " + e.message, 'error'); }
+  };
+
+  const handleDeletePharmacist = (pharmacistId) => {
+    setConfirmConfig({
+      title: "Delete Pharmacist Account?",
+      message: `Permanently remove ${pharmacistId}?\n\nThis action cannot be undone.`,
+      type: 'danger', confirmText: 'Delete Account',
+      onConfirm: async () => {
+        setConfirmConfig(null);
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'pharmacists', pharmacistId));
+          await addAuditLog("Pharmacist Deletion", `Removed pharmacist: ${pharmacistId}`);
+          showNotification("Pharmacist account deleted");
         } catch (e) { showNotification("Deletion failed: " + e.message, 'error'); }
       }
     });
@@ -2152,10 +2562,12 @@ function AdminDashboard({ onLogout, initialProfile }) {
   };
 
   const pendingDocs = doctors.filter(d => d.status === 'pending').length;
+  const pendingPharmacists = pharmacists.filter(p => p.status === 'pending').length;
+  const displayedPharmacists = pharmacists.filter(p => filter === 'all' ? true : p.status === filter);
   const activeDocs = doctors.filter(d => d.status === 'active').length;
   const activeMachines = machines.filter(m => m.status === 'online').length;
   const openTickets = supportTickets.filter(t => t.status === 'open').length;
-  const totalNotifications = pendingDocs + openTickets;
+  const totalNotifications = pendingDocs + pendingPharmacists + openTickets;
   const displayedDoctors = doctors.filter(d => filter === 'all' ? true : d.status === filter);
   const displayedTransactions = transactions.filter(t => !hiddenTxIds.includes(t.id));
   const displayedAuditLogs = auditLogs.filter(l => !hiddenAuditIds.includes(l.id));
@@ -2175,7 +2587,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
     { label: 'Workspace', items: [{ id: 'overview', label: 'Dashboard', icon: <LayoutDashboard /> }] },
     {
       label: 'Network', items: [
-        { id: 'doctors', label: 'Doctors', icon: <Users />, badge: pendingDocs },
+        { id: 'providers', label: 'Professionals', icon: <Users />, badge: (pendingDocs + pendingPharmacists) > 0 ? (pendingDocs + pendingPharmacists) : null },
         { id: 'machines', label: 'Kiosks', icon: <Server /> },
       ]
     },
@@ -2333,7 +2745,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                       {totalNotifications > 0 && <span className="text-[10px] font-bold bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/20">{totalNotifications} new</span>}
                     </div>
                     {pendingDocs > 0 && (
-                      <button onClick={() => { setActiveTab('doctors'); setFilter('pending'); setIsNotifOpen(false); }} className={`w-full p-4 text-left flex items-center justify-between transition-all hover:bg-amber-500/5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-50'}`}>
+                      <button onClick={() => { setActiveTab('providers'); setFilter('pending'); setIsNotifOpen(false); }} className={`w-full p-4 text-left flex items-center justify-between transition-all hover:bg-amber-500/5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-50'}`}>
                         <div className="flex items-center gap-3">
                           <div className="p-2 rounded-xl bg-amber-500/10"><Users className="w-4 h-4 text-amber-400" /></div>
                           <div><p className={`font-bold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Pending Approvals</p><p className="text-xs text-slate-500">Review doctor applications</p></div>
@@ -2382,8 +2794,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
               {/* Stat cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { title: 'Pending Approvals', value: pendingDocs, icon: <Users className="w-5 h-5" />, color: 'amber', subtext: 'Needs attention', onClick: () => { setActiveTab('doctors'); setFilter('pending'); } },
-                  { title: 'All Doctors', value: doctors.length, icon: <Stethoscope className="w-5 h-5" />, color: 'blue', subtext: 'Registered network', onClick: () => { setActiveTab('doctors'); setFilter('all'); } },
+                  { title: 'Pending Approvals', value: pendingDocs + pendingPharmacists, icon: <Users className="w-5 h-5" />, color: 'amber', subtext: `${pendingDocs} MDs • ${pendingPharmacists} Pharm.`, onClick: () => { setActiveTab('providers'); setFilter('pending'); } },
+                  { title: 'All Professionals', value: doctors.length + pharmacists.length, icon: <Stethoscope className="w-5 h-5" />, color: 'blue', subtext: `${doctors.length} MDs • ${pharmacists.length} Pharm.`, onClick: () => { setActiveTab('providers'); setFilter('all'); } },
                   { title: 'Kiosks Online', value: machines.length > 0 ? `${activeMachines}/${machines.length}` : "0/0", icon: <Server className="w-5 h-5" />, color: 'emerald', subtext: 'Active vending units', onClick: () => setActiveTab('machines') },
                   { title: 'Security Events', value: displayedAuditLogs.length, icon: <AlertOctagon className="w-5 h-5" />, color: 'red', subtext: 'System events', onClick: () => setActiveTab('audit') },
                 ].map((card, i) => (
@@ -2467,7 +2879,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
                 <div className={`p-6 rounded-2xl border animate-slide-up ${isDarkMode ? 'bg-[#0d1424] border-white/5' : 'bg-white border-gray-100 shadow-sm'}`} style={{ animationDelay: '0.35s', animationFillMode: 'both', opacity: 0 }}>
                   <h3 className={`font-display font-bold text-base mb-5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Quick Actions</h3>
                   <div className="space-y-2.5">
-                    <ActionButton onClick={() => { setActiveTab('doctors'); setFilter('pending'); }} icon={<Users className="w-4 h-4" />} label={`Review ${pendingDocs} Pending`} variant="primary" />
+                    <ActionButton onClick={() => { setActiveTab('providers'); setFilter('pending'); }} icon={<Users className="w-4 h-4" />} label={`Review ${pendingDocs} Pending`} variant="primary" />
                     <ActionButton onClick={() => setShowBroadcastModal(true)} icon={<Megaphone className="w-4 h-4" />} label="Send Broadcast" variant="secondary" isDarkMode={isDarkMode} />
                     <ActionButton onClick={() => setActiveTab('audit')} icon={<Shield className="w-4 h-4" />} label="Security Audit" variant="secondary" isDarkMode={isDarkMode} />
                     <ActionButton onClick={() => setActiveTab('support')} icon={<LifeBuoy className="w-4 h-4" />} label={`Support ${openTickets > 0 ? `(${openTickets})` : ''}`} variant="secondary" isDarkMode={isDarkMode} />
@@ -2509,7 +2921,20 @@ function AdminDashboard({ onLogout, initialProfile }) {
             </div>
           )}
 
-          {activeTab === 'doctors' && <DoctorsView doctors={displayedDoctors} filter={filter} setFilter={setFilter} onRefresh={() => { }} onUpdateStatus={updateDoctorStatus} onUpdatePassword={handleDoctorPasswordUpdate} onDelete={handleDeleteDoctor} loading={loading} isDarkMode={isDarkMode} />}
+          {activeTab === 'providers' && <ProvidersView 
+            providers={[
+              ...displayedDoctors.map(d => ({ ...d, type: 'doctor' })),
+              ...displayedPharmacists.map(p => ({ ...p, type: 'pharmacist' }))
+            ].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))} 
+            filter={filter} 
+            setFilter={setFilter} 
+            onRefresh={() => { }} 
+            onUpdateStatus={(id, type, status) => type === 'doctor' ? updateDoctorStatus(id, status) : updatePharmacistStatus(id, status)} 
+            onUpdatePassword={async (id, type, newPassword) => { try { await updateDoc(doc(db, type === 'doctor' ? 'doctors' : 'pharmacists', id), { password: newPassword }); } catch(err) { console.error('Failed to update password:', err); } }}
+            onDelete={(id, type) => type === 'doctor' ? handleDeleteDoctor(id) : handleDeletePharmacist(id)} 
+            loading={loading} 
+            isDarkMode={isDarkMode} 
+          />}
           {activeTab === 'machines' && <MachinesView machines={machines} onPing={handlePingMachine} onRunDiagnostics={handleRunDiagnostics} onReboot={handleRebootMachine} onLock={handleLockMachine} onDelete={handleDeleteMachine} isDarkMode={isDarkMode} />}
           {activeTab === 'inventory' && <InventoryView medicines={medicines} db={db} appId={appId} isDarkMode={isDarkMode} onNotify={showNotification} />}
           {activeTab === 'support' && <SupportView tickets={supportTickets} db={db} appId={appId} isDarkMode={isDarkMode} onNotify={showNotification} />}
