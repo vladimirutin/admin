@@ -2030,7 +2030,7 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
             </div>
             <div className="relative flex-1 max-w-xs">
               <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
-              <input type="text" placeholder="Search providers..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+              <input type="text" placeholder="Search professionals..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
                 className={`w-full pl-8 pr-3 py-2 rounded-xl text-xs border outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all ${isDarkMode ? 'bg-white/5 border-white/10 text-white placeholder-slate-600' : 'bg-white border-gray-200 text-slate-700 placeholder-slate-400'}`} />
             </div>
           </div>
@@ -2039,7 +2039,7 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
         {/* Mobile */}
         <div className="md:hidden divide-y divide-white/5">
           {currentData.length === 0 ? (
-            <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No providers found</p></div>
+            <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No professionals found</p></div>
           ) : currentData.map(doc => (
             <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
               <div className="absolute top-4 right-4 z-20">
@@ -2078,11 +2078,11 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
         <div className="hidden md:block overflow-x-auto rounded-b-2xl">
           <table className="w-full text-left">
             <TableHeader isDarkMode={isDarkMode}>
-              <tr><th className="px-6 py-4">Provider</th><th className="px-6 py-4">Role</th><th className="px-6 py-4">License</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Actions</th></tr>
+              <tr><th className="px-6 py-4">Professional</th><th className="px-6 py-4">License</th><th className="px-6 py-4">Status</th><th className="px-6 py-4">Profession</th><th className="px-6 py-4 text-right">Actions</th></tr>
             </TableHeader>
             <tbody className={`divide-y ${isDarkMode ? 'divide-white/5' : 'divide-gray-50'}`}>
               {currentData.length === 0 ? (
-                <tr><td colSpan="5" className="p-10 text-center text-xs text-slate-500 italic">No providers found</td></tr>
+                <tr><td colSpan="5" className="p-10 text-center text-xs text-slate-500 italic">No professionals found</td></tr>
               ) : currentData.map(doc => (
                 <tr key={doc.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                   <td className="px-6 py-4">
@@ -2095,6 +2095,8 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
                       </div>
                     </div>
                   </td>
+                  <td className={`px-6 py-4 font-mono text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{doc.licenseNumber || doc.license || 'N/A'}</td>
+                  <td className="px-6 py-4"><StatusBadge status={doc.status} /></td>
                   <td className="px-6 py-4">
                     {doc.type === 'doctor' ? (
                       <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2 py-1 rounded inline-flex items-center gap-1.5"><Stethoscope className="w-3.5 h-3.5" /> Doctor</span>
@@ -2102,8 +2104,6 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
                       <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded inline-flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> Pharmacist</span>
                     )}
                   </td>
-                  <td className={`px-6 py-4 font-mono text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{doc.licenseNumber || doc.license || 'N/A'}</td>
-                  <td className="px-6 py-4"><StatusBadge status={doc.status} /></td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-5">
                       <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`p-1.5 transition-all hover:scale-110 ${isDarkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'}`} title="View Info"><Eye className="w-4 h-4" /></button>

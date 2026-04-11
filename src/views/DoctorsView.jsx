@@ -29,8 +29,8 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
                 <div className={`p-5 border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
                     <div className="flex justify-between items-center mb-4">
                         <div>
-                            <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Medical Practitioners</h3>
-                            <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doctors.length} registered physicians</p>
+                            <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Healthcare Professionals</h3>
+                            <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doctors.length} registered professionals</p>
                         </div>
                         <button onClick={onRefresh} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-400 hover:bg-white/5 hover:text-emerald-400' : 'text-slate-400 hover:bg-gray-100 hover:text-emerald-600'}`}>
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -48,7 +48,7 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
                         </div>
                         <div className="relative flex-1 max-w-xs">
                             <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
-                            <input type="text" placeholder="Search doctors..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                            <input type="text" placeholder="Search professionals..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
                                 className={`w-full pl-8 pr-3 py-2 rounded-xl text-xs border outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all ${isDarkMode ? 'bg-white/5 border-white/10 text-white placeholder-slate-600' : 'bg-white border-gray-200 text-slate-700 placeholder-slate-400'}`} />
                         </div>
                     </div>
@@ -57,7 +57,7 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
                 {/* Mobile */}
                 <div className="md:hidden divide-y divide-white/5">
                     {currentData.length === 0 ? (
-                        <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No doctors found</p></div>
+                        <div className="p-10 text-center"><Users className="w-8 h-8 text-slate-600 mx-auto mb-2" /><p className="text-xs text-slate-500 italic">No professionals found</p></div>
                     ) : currentData.map(doc => (
                         <div key={doc.id} className={`p-4 relative flex flex-col gap-3 transition-colors ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                             <div className="absolute top-4 right-4 z-20">
@@ -88,11 +88,11 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
                 <div className="hidden md:block overflow-x-auto rounded-b-2xl">
                     <table className="w-full text-left">
                         <TableHeader isDarkMode={isDarkMode}>
-                            <tr><th className="px-6 py-4">Physician</th><th className="px-6 py-4">License</th><th className="px-6 py-4">Status</th><th className="px-6 py-4 text-right">Actions</th></tr>
+                            <tr><th className="px-6 py-4">Professional</th><th className="px-6 py-4">License</th><th className="px-6 py-4">Status</th><th className="px-6 py-4">Profession</th><th className="px-6 py-4 text-right">Actions</th></tr>
                         </TableHeader>
                         <tbody className={`divide-y ${isDarkMode ? 'divide-white/5' : 'divide-gray-50'}`}>
                             {currentData.length === 0 ? (
-                                <tr><td colSpan="4" className="p-10 text-center text-xs text-slate-500 italic">No doctors found</td></tr>
+                                <tr><td colSpan="5" className="p-10 text-center text-xs text-slate-500 italic">No professionals found</td></tr>
                             ) : currentData.map(doc => (
                                 <tr key={doc.id} className={`table-row-hover ${isDarkMode ? 'hover:bg-white/3' : 'hover:bg-gray-50'}`}>
                                     <td className="px-6 py-4">
@@ -108,6 +108,13 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
                                         <span className={`font-mono text-[11px] px-2 py-1 rounded-lg ${isDarkMode ? 'bg-white/5 text-slate-400' : 'bg-gray-100 text-slate-600'}`}>{doc.license}</span>
                                     </td>
                                     <td className="px-6 py-4"><StatusBadge status={doc.status} /></td>
+                                    <td className="px-6 py-4">
+                                        {doc.type === 'pharmacist' ? (
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded inline-flex items-center gap-1.5">Pharmacist</span>
+                                        ) : (
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2 py-1 rounded inline-flex items-center gap-1.5">Doctor</span>
+                                        )}
+                                    </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-1.5">
                                             <button onClick={() => { setViewDoc(doc); setShowPassword(false); setIsEditingPassword(false); }} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-500 hover:text-blue-400 hover:bg-blue-500/10' : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'}`} title="View"><Eye className="w-4 h-4" /></button>
