@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { initializeApp } from "firebase/app";
 import {
-  getFirestore, collection, query, getDocs, doc, updateDoc, limit,
+  getFirestore, collection, query, getDocs, doc, updateDoc, limit, orderBy,
   serverTimestamp, deleteDoc, getDoc, setDoc, onSnapshot, addDoc, where
 } from "firebase/firestore";
 import { signInAnonymously, getAuth } from "firebase/auth";
@@ -2292,7 +2292,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'pharmacists')), snap => setPharmacists(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'prescriptions')), snap => { const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)); setTransactions(list); setLoading(false); }, err => console.error(err)),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'machines')), snap => setMachines(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err)),
-      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), limit(20)), snap => { const logs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0)); setAuditLogs(logs); setLoading(false); }, err => { console.error(err); setLoading(false); }),
+      onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), orderBy('timestamp', 'desc'), limit(50)), snap => { const logs = snap.docs.map(d => ({ id: d.id, ...d.data() })); setAuditLogs(logs); setLoading(false); }, err => { console.error(err); setLoading(false); }),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'medicines')), snap => setMedicines(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
       onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'support_tickets')), snap => setSupportTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })))),
     ];
