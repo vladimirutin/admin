@@ -658,18 +658,17 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
 
           <div>
             <label className={`text-[10px] font-bold uppercase tracking-widest mb-2 block ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Target</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
-                { id: 'all', label: 'All Network', icon: <Globe className="w-4 h-4" />, color: 'indigo' },
-                { id: 'doctors', label: 'Doctors Only', icon: <Users className="w-4 h-4" />, color: 'blue' },
-                { id: 'kiosks', label: 'Kiosks Only', icon: <Server className="w-4 h-4" />, color: 'emerald' },
+                { id: 'all', label: 'All Network', icon: <Globe className="w-4 h-4" />, active: 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20' },
+                { id: 'doctors', label: 'Doctors Only', icon: <Stethoscope className="w-4 h-4" />, active: 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20' },
+                { id: 'pharmacists', label: 'Pharmacists', icon: <Users className="w-4 h-4" />, active: 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20' },
+                { id: 'kiosks', label: 'Kiosks Only', icon: <Server className="w-4 h-4" />, active: 'bg-amber-600 text-white border-amber-600 shadow-lg shadow-amber-500/20' },
               ].map(t => (
                 <button
                   key={t.id} onClick={() => setTarget(t.id)}
                   className={`flex flex-col items-center justify-center py-3 rounded-xl border transition-all btn-hover-lift ${target === t.id
-                    ? t.color === 'indigo' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20'
-                      : t.color === 'blue' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
-                        : 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20'
+                    ? t.active
                     : isDarkMode ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-gray-200 text-slate-600 hover:bg-gray-50'
                     }`}
                 >
