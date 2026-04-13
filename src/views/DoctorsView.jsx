@@ -11,6 +11,7 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
     const [newPasswordVal, setNewPasswordVal] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [showLicenseFullscreen, setShowLicenseFullscreen] = useState(false);
+    const [fullscreenImageType, setFullscreenImageType] = useState('license');
     const itemsPerPage = 10;
 
     const filteredDocs = doctors.filter(doc =>
@@ -147,27 +148,52 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
                             <button onClick={() => setViewDoc(null)} className={`p-2 rounded-xl transition-all ${isDarkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-gray-100 text-slate-500'}`}><X className="w-5 h-5" /></button>
                         </div>
                             <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
+                            {/* Verification Photos */}
+                            <div className="grid grid-cols-2 gap-3">
                             {/* PRC License ID Image */}
                             <div className={`rounded-2xl border overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
                                 {viewDoc.licenseImage ? (
-                                    <div className="relative group cursor-pointer" onClick={() => setShowLicenseFullscreen(true)}>
-                                        <img src={viewDoc.licenseImage} alt="PRC License ID" className="w-full h-48 object-cover" />
+                                    <div className="relative group cursor-pointer" onClick={() => { setFullscreenImageType('license'); setShowLicenseFullscreen(true); }}>
+                                        <img src={viewDoc.licenseImage} alt="PRC License ID" className="w-full h-40 object-cover" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                                            <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white text-xs font-bold">
-                                                <ZoomIn className="w-4 h-4" /> Click to view full size
+                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-xl text-white text-[10px] font-bold">
+                                                <ZoomIn className="w-3.5 h-3.5" /> View full
                                             </div>
                                         </div>
-                                        <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-[9px] font-bold flex items-center gap-1 ${isDarkMode ? 'bg-emerald-500/90 text-white' : 'bg-emerald-500 text-white'}`}>
-                                            <FileBadge className="w-3 h-3" /> PRC License ID
+                                        <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-[8px] font-bold flex items-center gap-1 ${isDarkMode ? 'bg-indigo-500/90 text-white' : 'bg-indigo-500 text-white'}`}>
+                                            <FileBadge className="w-2.5 h-2.5" /> PRC License
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="p-4 text-center">
-                                        <FileBadge className="w-10 h-10 text-slate-500 mx-auto mb-2" />
-                                        <p className={`text-sm font-bold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>PRC License ID</p>
-                                        <p className="text-xs text-slate-500">No image uploaded</p>
+                                    <div className="p-4 text-center h-40 flex flex-col items-center justify-center">
+                                        <FileBadge className="w-8 h-8 text-slate-500 mb-1.5" />
+                                        <p className={`text-xs font-bold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>PRC License</p>
+                                        <p className="text-[10px] text-slate-500">No image</p>
                                     </div>
                                 )}
+                            </div>
+                            {/* Selfie Photo */}
+                            <div className={`rounded-2xl border overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                                {viewDoc.selfieImage ? (
+                                    <div className="relative group cursor-pointer" onClick={() => { setFullscreenImageType('selfie'); setShowLicenseFullscreen(true); }}>
+                                        <img src={viewDoc.selfieImage} alt="Owner Selfie" className="w-full h-40 object-cover" />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-xl text-white text-[10px] font-bold">
+                                                <ZoomIn className="w-3.5 h-3.5" /> View full
+                                            </div>
+                                        </div>
+                                        <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-[8px] font-bold flex items-center gap-1 ${isDarkMode ? 'bg-cyan-500/90 text-white' : 'bg-cyan-500 text-white'}`}>
+                                            <Users className="w-2.5 h-2.5" /> Owner Photo
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="p-4 text-center h-40 flex flex-col items-center justify-center">
+                                        <Users className="w-8 h-8 text-slate-500 mb-1.5" />
+                                        <p className={`text-xs font-bold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>Owner Photo</p>
+                                        <p className="text-[10px] text-slate-500">No image</p>
+                                    </div>
+                                )}
+                            </div>
                             </div>
 
                             {[
@@ -227,19 +253,32 @@ export function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateSta
                 </div>
             )}
 
-            {/* Fullscreen License Image Viewer */}
-            {showLicenseFullscreen && viewDoc?.licenseImage && (
+            {/* Fullscreen Image Viewer */}
+            {showLicenseFullscreen && (viewDoc?.licenseImage || viewDoc?.selfieImage) && (
                 <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 cursor-pointer" onClick={() => setShowLicenseFullscreen(false)}>
                     <div className="relative max-w-3xl w-full animate-scale-in" onClick={e => e.stopPropagation()}>
                         <button onClick={() => setShowLicenseFullscreen(false)} className="absolute -top-12 right-0 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all">
                             <X className="w-5 h-5" />
                         </button>
+                        {/* Tab Switcher */}
+                        <div className="flex gap-2 mb-3 justify-center">
+                            {viewDoc?.licenseImage && (
+                                <button onClick={() => setFullscreenImageType('license')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${fullscreenImageType === 'license' ? 'bg-indigo-600 text-white' : 'bg-white/10 text-slate-300 hover:bg-white/20'}`}>
+                                    <FileBadge className="w-3.5 h-3.5 inline mr-1.5" />PRC License ID
+                                </button>
+                            )}
+                            {viewDoc?.selfieImage && (
+                                <button onClick={() => setFullscreenImageType('selfie')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${fullscreenImageType === 'selfie' ? 'bg-cyan-600 text-white' : 'bg-white/10 text-slate-300 hover:bg-white/20'}`}>
+                                    <Users className="w-3.5 h-3.5 inline mr-1.5" />Owner Photo
+                                </button>
+                            )}
+                        </div>
                         <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                            <img src={viewDoc.licenseImage} alt="PRC License ID - Full View" className="w-full max-h-[80vh] object-contain bg-black" />
+                            <img src={fullscreenImageType === 'license' ? viewDoc.licenseImage : viewDoc.selfieImage} alt={fullscreenImageType === 'license' ? 'PRC License ID - Full View' : 'Owner Selfie - Full View'} className="w-full max-h-[75vh] object-contain bg-black" />
                         </div>
                         <div className="flex items-center justify-center gap-2 mt-3 text-slate-400 text-xs">
-                            <FileBadge className="w-3.5 h-3.5" />
-                            <span className="font-bold">PRC License ID — {viewDoc.name}</span>
+                            {fullscreenImageType === 'license' ? <FileBadge className="w-3.5 h-3.5" /> : <Users className="w-3.5 h-3.5" />}
+                            <span className="font-bold">{fullscreenImageType === 'license' ? 'PRC License ID' : 'Owner Photo'} — {viewDoc.name}</span>
                         </div>
                     </div>
                 </div>
