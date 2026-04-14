@@ -1914,12 +1914,16 @@ function AdminLogin({ onLogin, cloudProfile }) {
     <div className="flex h-screen w-full bg-[#060b18] font-sans overflow-hidden relative">
       <GlobalStyles />
 
-      {/* Animated grid background */}
-      <div className="absolute inset-0 grid-bg opacity-50"></div>
+      {/* Layer 1: Hexagonal Grid (Indigo Tint) */}
+      <div className="absolute inset-0 opacity-50" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50V16l28-16 28 16v34L28 66zm0 34L0 84V50l28-16 28 16v34L28 100z' fill='none' stroke='%236366f1' stroke-width='0.5' stroke-opacity='0.12'/%3E%3C/svg%3E\")" }} />
+      {/* Layer 2: Hex grid edge fade */}
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 30%, #060b18 75%)' }} />
+      {/* Layer 3: Constellation particles (Indigo/Cyan Tint) */}
+      <div className="absolute inset-0 opacity-80" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Ccircle cx='50' cy='80' r='1.5' fill='%236366f1' opacity='0.6'/%3E%3Ccircle cx='150' cy='40' r='1' fill='%2394a3b8' opacity='0.4'/%3E%3Ccircle cx='250' cy='100' r='1.8' fill='%236366f1' opacity='0.5'/%3E%3Ccircle cx='350' cy='60' r='1' fill='%2394a3b8' opacity='0.3'/%3E%3Ccircle cx='100' cy='180' r='1.2' fill='%2306b6d4' opacity='0.5'/%3E%3Ccircle cx='200' cy='200' r='2' fill='%236366f1' opacity='0.4'/%3E%3Ccircle cx='300' cy='150' r='1' fill='%2394a3b8' opacity='0.3'/%3E%3Ccircle cx='80' cy='300' r='1.5' fill='%2394a3b8' opacity='0.4'/%3E%3Ccircle cx='180' cy='330' r='1' fill='%236366f1' opacity='0.5'/%3E%3Ccircle cx='320' cy='280' r='1.8' fill='%2306b6d4' opacity='0.4'/%3E%3Ccircle cx='380' cy='350' r='1' fill='%2394a3b8' opacity='0.3'/%3E%3Ccircle cx='30' cy='370' r='1.2' fill='%236366f1' opacity='0.4'/%3E%3Cline x1='50' y1='80' x2='150' y2='40' stroke='%236366f1' stroke-width='0.3' opacity='0.15'/%3E%3Cline x1='150' y1='40' x2='250' y2='100' stroke='%2394a3b8' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='250' y1='100' x2='350' y2='60' stroke='%236366f1' stroke-width='0.3' opacity='0.12'/%3E%3Cline x1='100' y1='180' x2='200' y2='200' stroke='%2306b6d4' stroke-width='0.3' opacity='0.12'/%3E%3Cline x1='200' y1='200' x2='300' y2='150' stroke='%2394a3b8' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='50' y1='80' x2='100' y2='180' stroke='%2394a3b8' stroke-width='0.3' opacity='0.08'/%3E%3Cline x1='250' y1='100' x2='200' y2='200' stroke='%236366f1' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='80' y1='300' x2='180' y2='330' stroke='%236366f1' stroke-width='0.3' opacity='0.12'/%3E%3Cline x1='320' y1='280' x2='380' y2='350' stroke='%2306b6d4' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='300' y1='150' x2='320' y2='280' stroke='%2394a3b8' stroke-width='0.3' opacity='0.08'/%3E%3Cline x1='180' y1='330' x2='320' y2='280' stroke='%236366f1' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='30' y1='370' x2='80' y2='300' stroke='%2394a3b8' stroke-width='0.3' opacity='0.1'/%3E%3C/svg%3E\")" }} />
 
       {/* Glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" style={{ animationDelay: '1s' }}></div>
 
       {/* Left panel */}
       <div className="w-full lg:w-1/2 h-full flex flex-col justify-center items-center p-6 relative z-10">
@@ -2065,6 +2069,8 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [newPasswordVal, setNewPasswordVal] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showLicenseFullscreen, setShowLicenseFullscreen] = useState(false);
+  const [fullscreenImageType, setFullscreenImageType] = useState('license');
   const itemsPerPage = 10;
 
   const filteredDocs = providers.filter(doc =>
@@ -2217,10 +2223,52 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
             </div>
             
             <div className="px-5 pb-5 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
-              <div className={`p-6 rounded-2xl flex flex-col items-center justify-center text-center ${isDarkMode ? 'bg-[#1d2433] border border-white/5' : 'bg-gray-50 border border-gray-200'}`}>
-                 <FileBadge strokeWidth={1.5} className="w-8 h-8 text-slate-400 opacity-60 mb-2" />
-                 <p className={`text-[13px] font-bold ${isDarkMode ? 'text-[#e2e8f0]' : 'text-slate-700'}`}>{viewDoc.type === 'doctor' ? 'PRC License ID' : 'Pharmacist License'}</p>
-                 <p className={`text-[10px] mt-1 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>No image uploaded</p>
+              {/* Verification Photos */}
+              <div className="grid grid-cols-2 gap-3">
+              {/* PRC License ID Image */}
+              <div className={`rounded-2xl border overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                {viewDoc.licenseImage ? (
+                  <div className="relative group cursor-pointer" onClick={() => { setFullscreenImageType('license'); setShowLicenseFullscreen(true); }}>
+                    <img src={viewDoc.licenseImage} alt="PRC License ID" className="w-full h-32 object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-xl text-white text-[10px] font-bold">
+                        <Eye className="w-3.5 h-3.5" /> View full
+                      </div>
+                    </div>
+                    <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-[8px] font-bold flex items-center gap-1 ${isDarkMode ? 'bg-indigo-500/90 text-white' : 'bg-indigo-500 text-white'}`}>
+                      <FileBadge className="w-2.5 h-2.5" /> {viewDoc.type === 'doctor' ? 'PRC License' : 'Pharmacist'}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 text-center h-32 flex flex-col items-center justify-center">
+                    <FileBadge className="w-8 h-8 text-slate-500 mb-1.5" />
+                    <p className={`text-[10px] text-center font-bold px-2 leading-tight ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{viewDoc.type === 'doctor' ? 'PRC License' : 'Pharmacist'}</p>
+                    <p className="text-[10px] text-slate-500 mt-1">No image</p>
+                  </div>
+                )}
+              </div>
+              {/* Selfie Photo */}
+              <div className={`rounded-2xl border overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                {viewDoc.selfieImage ? (
+                  <div className="relative group cursor-pointer" onClick={() => { setFullscreenImageType('selfie'); setShowLicenseFullscreen(true); }}>
+                    <img src={viewDoc.selfieImage} alt="Owner Selfie" className="w-full h-32 object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-xl text-white text-[10px] font-bold">
+                        <Eye className="w-3.5 h-3.5" /> View full
+                      </div>
+                    </div>
+                    <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-[8px] font-bold flex items-center gap-1 ${isDarkMode ? 'bg-cyan-500/90 text-white' : 'bg-cyan-500 text-white'}`}>
+                      <Users className="w-2.5 h-2.5" /> Owner Photo
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 text-center h-32 flex flex-col items-center justify-center">
+                    <Users className="w-8 h-8 text-slate-500 mb-1.5" />
+                    <p className={`text-[10px] font-bold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>Owner Photo</p>
+                    <p className="text-[10px] text-slate-500 mt-1">No image</p>
+                  </div>
+                )}
+              </div>
               </div>
 
               <div className="space-y-4">
@@ -2308,6 +2356,38 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
             
             <div className={`p-5 pt-0 bg-transparent flex justify-end`}>
               <button onClick={() => setViewDoc(null)} className="px-5 py-2 hover:bg-[#4f5ee3] bg-[#5a68ed] text-white rounded-lg text-[13px] font-bold transition-all shadow-md">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Image Viewer */}
+      {showLicenseFullscreen && (viewDoc?.licenseImage || viewDoc?.selfieImage) && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 cursor-pointer" onClick={() => setShowLicenseFullscreen(false)}>
+          <div className="relative max-w-5xl w-full flex flex-col items-center justify-center animate-scale-in" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowLicenseFullscreen(false)} className="absolute -top-12 right-0 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all">
+              <X className="w-6 h-6" />
+            </button>
+            <div className="mb-4 flex items-center gap-3 p-1.5 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
+              {viewDoc.licenseImage && (
+                <button onClick={() => setFullscreenImageType('license')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${fullscreenImageType === 'license' ? 'bg-indigo-600 text-white' : 'bg-white/10 text-slate-300 hover:bg-white/20'}`}>
+                  PRC License
+                </button>
+              )}
+              {viewDoc.selfieImage && (
+                <button onClick={() => setFullscreenImageType('selfie')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${fullscreenImageType === 'selfie' ? 'bg-cyan-600 text-white' : 'bg-white/10 text-slate-300 hover:bg-white/20'}`}>
+                  Owner Selfie
+                </button>
+              )}
+            </div>
+            <div className="bg-black/50 rounded-3xl overflow-hidden border border-white/10 relative shadow-2xl w-full">
+              <img src={fullscreenImageType === 'license' ? viewDoc.licenseImage : viewDoc.selfieImage} alt={fullscreenImageType === 'license' ? 'PRC License ID - Full View' : 'Owner Selfie - Full View'} className="w-full max-h-[75vh] object-contain bg-black" />
+              <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end pointer-events-none">
+                <div className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 flex items-center gap-2 text-white shadow-xl">
+                  {fullscreenImageType === 'license' ? <FileBadge className="w-3.5 h-3.5" /> : <Users className="w-3.5 h-3.5" />}
+                  <span className="font-bold">{fullscreenImageType === 'license' ? 'PRC License ID' : 'Owner Photo'} — {viewDoc.name}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2680,8 +2760,20 @@ function AdminDashboard({ onLogout, initialProfile }) {
   ];
 
   return (
-    <div className={`flex h-screen font-sans overflow-hidden transition-colors duration-500 ${isDarkMode ? 'bg-[#060b18] text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
+    <div className={`flex h-screen font-sans overflow-hidden transition-colors duration-500 relative ${isDarkMode ? 'bg-[#060b18] text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
       <GlobalStyles />
+      
+      {/* Background overlays for dark mode */}
+      {isDarkMode && (
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          {/* Layer 1: Hexagonal Grid (Indigo Tint) */}
+          <div className="absolute inset-0 opacity-50 mix-blend-screen" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50V16l28-16 28 16v34L28 66zm0 34L0 84V50l28-16 28 16v34L28 100z' fill='none' stroke='%236366f1' stroke-width='0.5' stroke-opacity='0.12'/%3E%3C/svg%3E\")" }} />
+          {/* Layer 2: Hex grid edge fade */}
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 30%, #060b18 75%)' }} />
+          {/* Layer 3: Constellation particles (Indigo/Cyan Tint) */}
+          <div className="absolute inset-0 opacity-80 mix-blend-screen pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Ccircle cx='50' cy='80' r='1.5' fill='%236366f1' opacity='0.6'/%3E%3Ccircle cx='150' cy='40' r='1' fill='%2394a3b8' opacity='0.4'/%3E%3Ccircle cx='250' cy='100' r='1.8' fill='%236366f1' opacity='0.5'/%3E%3Ccircle cx='350' cy='60' r='1' fill='%2394a3b8' opacity='0.3'/%3E%3Ccircle cx='100' cy='180' r='1.2' fill='%2306b6d4' opacity='0.5'/%3E%3Ccircle cx='200' cy='200' r='2' fill='%236366f1' opacity='0.4'/%3E%3Ccircle cx='300' cy='150' r='1' fill='%2394a3b8' opacity='0.3'/%3E%3Ccircle cx='80' cy='300' r='1.5' fill='%2394a3b8' opacity='0.4'/%3E%3Ccircle cx='180' cy='330' r='1' fill='%236366f1' opacity='0.5'/%3E%3Ccircle cx='320' cy='280' r='1.8' fill='%2306b6d4' opacity='0.4'/%3E%3Ccircle cx='380' cy='350' r='1' fill='%2394a3b8' opacity='0.3'/%3E%3Ccircle cx='30' cy='370' r='1.2' fill='%236366f1' opacity='0.4'/%3E%3Cline x1='50' y1='80' x2='150' y2='40' stroke='%236366f1' stroke-width='0.3' opacity='0.15'/%3E%3Cline x1='150' y1='40' x2='250' y2='100' stroke='%2394a3b8' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='250' y1='100' x2='350' y2='60' stroke='%236366f1' stroke-width='0.3' opacity='0.12'/%3E%3Cline x1='100' y1='180' x2='200' y2='200' stroke='%2306b6d4' stroke-width='0.3' opacity='0.12'/%3E%3Cline x1='200' y1='200' x2='300' y2='150' stroke='%2394a3b8' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='50' y1='80' x2='100' y2='180' stroke='%2394a3b8' stroke-width='0.3' opacity='0.08'/%3E%3Cline x1='250' y1='100' x2='200' y2='200' stroke='%236366f1' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='80' y1='300' x2='180' y2='330' stroke='%236366f1' stroke-width='0.3' opacity='0.12'/%3E%3Cline x1='320' y1='280' x2='380' y2='350' stroke='%2306b6d4' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='300' y1='150' x2='320' y2='280' stroke='%2394a3b8' stroke-width='0.3' opacity='0.08'/%3E%3Cline x1='180' y1='330' x2='320' y2='280' stroke='%236366f1' stroke-width='0.3' opacity='0.1'/%3E%3Cline x1='30' y1='370' x2='80' y2='300' stroke='%2394a3b8' stroke-width='0.3' opacity='0.1'/%3E%3C/svg%3E\")" }} />
+        </div>
+      )}
 
       {/* Notification */}
       {notification && (
@@ -2764,7 +2856,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
       </aside>
 
       {/* Main content */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-hidden relative ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
+      <div className={`flex-1 flex flex-col min-w-0 overflow-hidden relative z-10 ${isDarkMode ? 'bg-transparent' : 'bg-slate-50'}`}>
 
         {/* Header */}
         <header className={`h-16 border-b flex items-center justify-between px-4 md:px-6 z-10 sticky top-0 transition-all glass ${isDarkMode ? 'bg-[#060b18]/90 border-white/5' : 'bg-white/90 border-gray-100 shadow-sm'}`}>
@@ -2859,7 +2951,7 @@ function AdminDashboard({ onLogout, initialProfile }) {
         </header>
 
         {/* Main scrollable area */}
-        <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 ${isDarkMode ? 'bg-[#060b18]' : 'bg-slate-50'}`}>
+        <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 ${isDarkMode ? 'bg-transparent' : 'bg-slate-50'}`}>
 
           {/* DASHBOARD OVERVIEW */}
           {activeTab === 'overview' && (
