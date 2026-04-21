@@ -709,11 +709,21 @@ function BroadcastModal({ onClose, onSend, isDarkMode }) {
 }
 
 function TopPrescribedChart({ transactions, isDarkMode }) {
+  // Map old mock data names to the new inventory names
+  const nameMap = {
+    "Amoxicillin": "Acetylcysteine",
+    "Rifampicin": "Diosmectite",
+    "Paracetamol": "Sodium Alginate",
+    "Ibuprofen": "Oral Rehydration Salts",
+    "Omeprazole": "Saccharomyces boulardii"
+  };
+
   const freqMap = {};
   if (transactions?.length > 0) {
     transactions.forEach(tx => {
       (tx.items || []).forEach(item => {
-        const name = item.name || item.medicine || "Unknown";
+        let name = item.name || item.medicine || "Unknown";
+        name = nameMap[name] || name; // Apply mapping if name exists in map
         const qty = Number(item.qty || item.quantity || 1);
         freqMap[name] = (freqMap[name] || 0) + qty;
       });
@@ -1051,7 +1061,7 @@ function DoctorsView({ doctors, filter, setFilter, onRefresh, onUpdateStatus, on
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Medical Practitioners</h3>
-              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doctors.length} registered physicians</p>
+              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{doctors.length} registered physicians · Page {currentPage} of {totalPages || 1}</p>
             </div>
             <button onClick={onRefresh} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-400 hover:bg-white/5 hover:text-emerald-400' : 'text-slate-400 hover:bg-gray-100 hover:text-emerald-600'}`}>
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -1411,6 +1421,7 @@ function PharmacistsView({ pharmacists, filter, setFilter, onRefresh, onUpdateSt
             </tbody>
           </table>
         </div>
+        <PaginationFooter currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} isDarkMode={isDarkMode} />
       </TableContainer>
     </>
   );
@@ -2086,6 +2097,9 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
 
   const filterBtns = ['pending', 'active', 'rejected', 'all'];
 
+  const docsCount = providers.filter(p => p.type === 'doctor').length;
+  const pharmsCount = providers.filter(p => p.type === 'pharmacist').length;
+
   return (
     <>
       <TableContainer isDarkMode={isDarkMode} className="max-w-7xl mx-auto">
@@ -2093,7 +2107,13 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className={`font-display font-bold text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Healthcare Professionals</h3>
-              <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{providers.length} registered professionals</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className={`text-xs font-bold ${isDarkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>{providers.length} Total</span>
+                <span className="text-[10px] text-slate-500">•</span>
+                <p className={`text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{docsCount} Doctors</p>
+                <span className="text-[10px] text-slate-500">•</span>
+                <p className={`text-[11px] ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{pharmsCount} Pharmacists</p>
+              </div>
             </div>
             <button onClick={onRefresh} className={`p-2 rounded-lg transition-all btn-hover-lift ${isDarkMode ? 'text-slate-400 hover:bg-white/5 hover:text-emerald-400' : 'text-slate-400 hover:bg-gray-100 hover:text-emerald-600'}`}>
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -2205,6 +2225,7 @@ function ProvidersView({ providers, filter, setFilter, onRefresh, onUpdateStatus
             </tbody>
           </table>
         </div>
+        <PaginationFooter currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} isDarkMode={isDarkMode} />
       </TableContainer>
 
       {/* Provider Details Modal */}
@@ -2719,6 +2740,11 @@ function AdminDashboard({ onLogout, initialProfile }) {
   const pendingPharmacists = pharmacists.filter(p => p.status === 'pending').length;
   const displayedPharmacists = pharmacists.filter(p => filter === 'all' ? true : p.status === filter);
   const activeDocs = doctors.filter(d => d.status === 'active').length;
+  const activePharmacists = pharmacists.filter(p => p.status === 'active').length;
+  const totalActiveProfs = activeDocs + activePharmacists;
+  const totalPendingProfs = pendingDocs + pendingPharmacists;
+  const totalProfs = doctors.length + pharmacists.length;
+
   const activeMachines = machines.filter(m => m.status === 'online').length;
   const openTickets = supportTickets.filter(t => t.status === 'open').length;
   const totalNotifications = pendingDocs + pendingPharmacists + openTickets;
@@ -3012,8 +3038,8 @@ function AdminDashboard({ onLogout, initialProfile }) {
                     </p>
                     <div className="space-y-4">
                       {[
-                        { label: `Active Physicians (${activeDocs})`, pct: doctors.length > 0 ? (activeDocs / doctors.length) * 100 : 0, color: 'from-blue-500 to-cyan-400', textColor: 'text-blue-400' },
-                        { label: `Pending Review (${pendingDocs})`, pct: doctors.length > 0 ? (pendingDocs / doctors.length) * 100 : 0, color: 'from-amber-500 to-orange-400', textColor: 'text-amber-400' },
+                        { label: `Active Professionals (${totalActiveProfs})`, pct: totalProfs > 0 ? (totalActiveProfs / totalProfs) * 100 : 0, color: 'from-blue-500 to-cyan-400', textColor: 'text-blue-400' },
+                        { label: `Pending Review (${totalPendingProfs})`, pct: totalProfs > 0 ? (totalPendingProfs / totalProfs) * 100 : 0, color: 'from-amber-500 to-orange-400', textColor: 'text-amber-400' },
                       ].map((bar, i) => (
                         <div key={i}>
                           <div className="flex justify-between text-xs mb-2">
